@@ -2,7 +2,7 @@
   "hub": "PSN",
   "pre_range": "2026-06-10 to 2026-06-16",
   "post_range": "2026-06-18 to 2026-06-23",
-  "generated_at": "2026-06-24T15:05:04.147577",
+  "generated_at": "2026-06-24T16:07:44.862162",
   "days": [
     {
       "date": "2026-06-10",
@@ -59,6 +59,13 @@
       "lastmile_cnt": 351,
       "total_to_rdl_sum": 32629.1,
       "total_to_rdl_cnt": 351,
+      "dp_tl_created_to_picked_sum": 254.4,
+      "dp_tl_created_to_picked_cnt": 253,
+      "dp_tl_picked_to_packed_sum": 235.8,
+      "dp_tl_picked_to_packed_cnt": 253,
+      "dp_tl_packed_to_dispatched_sum": 397.7,
+      "dp_tl_packed_to_dispatched_cnt": 252,
+      "hub": "PSN",
       "period": "pre"
     },
     {
@@ -116,6 +123,13 @@
       "lastmile_cnt": 227,
       "total_to_rdl_sum": 12304.0,
       "total_to_rdl_cnt": 227,
+      "dp_tl_created_to_picked_sum": 237.2,
+      "dp_tl_created_to_picked_cnt": 183,
+      "dp_tl_picked_to_packed_sum": 142.5,
+      "dp_tl_picked_to_packed_cnt": 183,
+      "dp_tl_packed_to_dispatched_sum": 216.1,
+      "dp_tl_packed_to_dispatched_cnt": 183,
+      "hub": "PSN",
       "period": "pre"
     },
     {
@@ -173,6 +187,13 @@
       "lastmile_cnt": 391,
       "total_to_rdl_sum": 40145.8,
       "total_to_rdl_cnt": 391,
+      "dp_tl_created_to_picked_sum": 257.7,
+      "dp_tl_created_to_picked_cnt": 244,
+      "dp_tl_picked_to_packed_sum": 196.0,
+      "dp_tl_picked_to_packed_cnt": 244,
+      "dp_tl_packed_to_dispatched_sum": 452.4,
+      "dp_tl_packed_to_dispatched_cnt": 244,
+      "hub": "PSN",
       "period": "pre"
     },
     {
@@ -230,6 +251,13 @@
       "lastmile_cnt": 386,
       "total_to_rdl_sum": 44987.4,
       "total_to_rdl_cnt": 386,
+      "dp_tl_created_to_picked_sum": 201.6,
+      "dp_tl_created_to_picked_cnt": 192,
+      "dp_tl_picked_to_packed_sum": 205.5,
+      "dp_tl_picked_to_packed_cnt": 192,
+      "dp_tl_packed_to_dispatched_sum": 535.1,
+      "dp_tl_packed_to_dispatched_cnt": 192,
+      "hub": "PSN",
       "period": "pre"
     },
     {
@@ -287,6 +315,13 @@
       "lastmile_cnt": 342,
       "total_to_rdl_sum": 46569.4,
       "total_to_rdl_cnt": 342,
+      "dp_tl_created_to_picked_sum": 259.0,
+      "dp_tl_created_to_picked_cnt": 219,
+      "dp_tl_picked_to_packed_sum": 211.2,
+      "dp_tl_picked_to_packed_cnt": 219,
+      "dp_tl_packed_to_dispatched_sum": 439.5,
+      "dp_tl_packed_to_dispatched_cnt": 219,
+      "hub": "PSN",
       "period": "pre"
     },
     {
@@ -344,6 +379,13 @@
       "lastmile_cnt": 223,
       "total_to_rdl_sum": 20079.4,
       "total_to_rdl_cnt": 223,
+      "dp_tl_created_to_picked_sum": 152.5,
+      "dp_tl_created_to_picked_cnt": 162,
+      "dp_tl_picked_to_packed_sum": 127.7,
+      "dp_tl_picked_to_packed_cnt": 162,
+      "dp_tl_packed_to_dispatched_sum": 254.6,
+      "dp_tl_packed_to_dispatched_cnt": 162,
+      "hub": "PSN",
       "period": "pre"
     },
     {
@@ -401,6 +443,13 @@
       "lastmile_cnt": 245,
       "total_to_rdl_sum": 17252.1,
       "total_to_rdl_cnt": 245,
+      "dp_tl_created_to_picked_sum": 154.7,
+      "dp_tl_created_to_picked_cnt": 164,
+      "dp_tl_picked_to_packed_sum": 136.8,
+      "dp_tl_picked_to_packed_cnt": 164,
+      "dp_tl_packed_to_dispatched_sum": 182.5,
+      "dp_tl_packed_to_dispatched_cnt": 164,
+      "hub": "PSN",
       "period": "pre"
     },
     {
@@ -458,6 +507,13 @@
       "lastmile_cnt": 385,
       "total_to_rdl_sum": 43538.0,
       "total_to_rdl_cnt": 385,
+      "dp_tl_created_to_picked_sum": 218.2,
+      "dp_tl_created_to_picked_cnt": 252,
+      "dp_tl_picked_to_packed_sum": 211.0,
+      "dp_tl_picked_to_packed_cnt": 252,
+      "dp_tl_packed_to_dispatched_sum": 475.5,
+      "dp_tl_packed_to_dispatched_cnt": 252,
+      "hub": "PSN",
       "period": "post"
     },
     {
@@ -515,6 +571,13 @@
       "lastmile_cnt": 240,
       "total_to_rdl_sum": 19981.7,
       "total_to_rdl_cnt": 239,
+      "dp_tl_created_to_picked_sum": 149.4,
+      "dp_tl_created_to_picked_cnt": 178,
+      "dp_tl_picked_to_packed_sum": 147.1,
+      "dp_tl_picked_to_packed_cnt": 178,
+      "dp_tl_packed_to_dispatched_sum": 796.9,
+      "dp_tl_packed_to_dispatched_cnt": 178,
+      "hub": "PSN",
       "period": "post"
     },
     {
@@ -572,6 +635,13 @@
       "lastmile_cnt": 361,
       "total_to_rdl_sum": 40680.2,
       "total_to_rdl_cnt": 361,
+      "dp_tl_created_to_picked_sum": 231.2,
+      "dp_tl_created_to_picked_cnt": 248,
+      "dp_tl_picked_to_packed_sum": 208.5,
+      "dp_tl_picked_to_packed_cnt": 248,
+      "dp_tl_packed_to_dispatched_sum": 1584.3,
+      "dp_tl_packed_to_dispatched_cnt": 248,
+      "hub": "PSN",
       "period": "post"
     },
     {
@@ -629,6 +699,13 @@
       "lastmile_cnt": 379,
       "total_to_rdl_sum": 37250.1,
       "total_to_rdl_cnt": 378,
+      "dp_tl_created_to_picked_sum": 194.3,
+      "dp_tl_created_to_picked_cnt": 229,
+      "dp_tl_picked_to_packed_sum": 173.7,
+      "dp_tl_picked_to_packed_cnt": 229,
+      "dp_tl_packed_to_dispatched_sum": 1107.3,
+      "dp_tl_packed_to_dispatched_cnt": 229,
+      "hub": "PSN",
       "period": "post"
     },
     {
@@ -686,6 +763,13 @@
       "lastmile_cnt": 361,
       "total_to_rdl_sum": 42217.6,
       "total_to_rdl_cnt": 361,
+      "dp_tl_created_to_picked_sum": 184.5,
+      "dp_tl_created_to_picked_cnt": 213,
+      "dp_tl_picked_to_packed_sum": 209.4,
+      "dp_tl_picked_to_packed_cnt": 213,
+      "dp_tl_packed_to_dispatched_sum": 1140.1,
+      "dp_tl_packed_to_dispatched_cnt": 213,
+      "hub": "PSN",
       "period": "post"
     },
     {
@@ -743,6 +827,13 @@
       "lastmile_cnt": 214,
       "total_to_rdl_sum": 13897.0,
       "total_to_rdl_cnt": 214,
+      "dp_tl_created_to_picked_sum": 124.0,
+      "dp_tl_created_to_picked_cnt": 146,
+      "dp_tl_picked_to_packed_sum": 97.8,
+      "dp_tl_picked_to_packed_cnt": 146,
+      "dp_tl_packed_to_dispatched_sum": 617.9,
+      "dp_tl_packed_to_dispatched_cnt": 146,
+      "hub": "PSN",
       "period": "post"
     },
     {
@@ -800,6 +891,13 @@
       "lastmile_cnt": 214,
       "total_to_rdl_sum": 13228.0,
       "total_to_rdl_cnt": 213,
+      "dp_tl_created_to_picked_sum": 136.8,
+      "dp_tl_created_to_picked_cnt": 166,
+      "dp_tl_picked_to_packed_sum": 103.7,
+      "dp_tl_picked_to_packed_cnt": 166,
+      "dp_tl_packed_to_dispatched_sum": 818.1,
+      "dp_tl_packed_to_dispatched_cnt": 166,
+      "hub": "PSN",
       "period": "post"
     }
   ]
