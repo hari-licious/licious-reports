@@ -1,0 +1,31 @@
+Month,Variant,GH Outcome,GH Bucket,GH PV (Conversations),GH PV (Helpmain Clickstream),GH Option Select Count,CTR,Shipment (Variant Level),GH Conversation Count,Shipment (Bucket Level),Suggested to Agent,Suggested to Agent %,Tickets Created,Ticket Created %,O2C
+2026-04,control,Total,All,1956.0,135821.0,,,1517.0,,,,,,,
+2026-04,control,Clicked an Option,All,,,1509.0,0.7715,1517.0,,,,,,,
+2026-04,control,Dropped Off,All,,,,,,447.0,413.0,,,,,
+2026-04,control,Clicked an Option,Clicked - Rest of the Options,,,,,,1125.0,967.0,358.0,0.3182,389.0,0.3458,0.4023
+2026-04,control,Clicked an Option,Clicked - Other Issues,,,,,,384.0,366.0,381.0,0.9922,222.0,0.5781,0.6066
+2026-04,test,Total,All,934.0,4277.0,,,810.0,,,,,,,
+2026-04,test,Clicked an Option,All,,,916.0,0.9807,810.0,,,,,,,
+2026-04,test,Dropped Off,All,,,,,,18.0,17.0,,,,,
+2026-04,test,Clicked an Option,Clicked - Rest of the Options,,,,,,26.0,26.0,0.0,0.0000,4.0,0.1538,0.1538
+2026-04,test,Clicked an Option,Clicked - My Issue Is Not Listed,,,,,,890.0,774.0,376.0,0.4225,440.0,0.4944,0.5685
+2026-05,control,Total,All,1696.0,145635.0,,,1286.0,,,,,,,
+2026-05,control,Clicked an Option,All,,,1291.0,0.7612,1286.0,,,,,,,
+2026-05,control,Dropped Off,All,,,,,,405.0,365.0,,,,,
+2026-05,control,Clicked an Option,Clicked - Rest of the Options,,,,,,900.0,759.0,356.0,0.3956,294.0,0.3267,0.3874
+2026-05,control,Clicked an Option,Clicked - Other Issues,,,,,,391.0,364.0,389.0,0.9949,199.0,0.5090,0.5467
+2026-05,test,Total,All,996.0,4234.0,,,816.0,,,,,,,
+2026-05,test,Clicked an Option,All,,,986.0,0.9900,816.0,,,,,,,
+2026-05,test,Dropped Off,All,,,,,,10.0,10.0,,,,,
+2026-05,test,Clicked an Option,Clicked - Rest of the Options,,,,,,20.0,17.0,0.0,0.0000,3.0,0.1500,0.1765
+2026-05,test,Clicked an Option,Clicked - My Issue Is Not Listed,,,,,,966.0,799.0,475.0,0.4917,528.0,0.5466,0.6608
+2026-06,control,Total,All,30423.0,39901.0,,,24463.0,,,,,,,
+2026-06,control,Clicked an Option,All,,,26115.0,0.8584,24463.0,,,,,,,
+2026-06,control,Dropped Off,All,,,,,,4308.0,4160.0,,,,,
+2026-06,control,Clicked an Option,Clicked - Rest of the Options,,,,,,21870.0,18546.0,9247.0,0.4228,7023.0,0.3211,0.3787
+2026-06,control,Clicked an Option,Clicked - Other Issues,,,,,,4245.0,3939.0,4235.0,0.9976,2568.0,0.6049,0.6519
+2026-06,test,Total,All,852.0,1189.0,,,707.0,,,,,,,
+2026-06,test,Clicked an Option,All,,,685.0,0.8040,707.0,,,,,,,
+2026-06,test,Dropped Off,All,,,,,,167.0,161.0,,,,,
+2026-06,test,Clicked an Option,Clicked - Rest of the Options,,,,,,405.0,382.0,0.0,0.0000,81.0,0.2000,0.2120
+2026-06,test,Clicked an Option,Clicked - My Issue Is Not Listed,,,,,,280.0,230.0,112.0,0.4000,129.0,0.4607,0.5609
