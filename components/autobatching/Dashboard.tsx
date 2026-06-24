@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import {
   BarChart, Bar, XAxis, YAxis,
-  CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList,
 } from "recharts";
 import type { RawDay } from "@/lib/autobatching";
 
@@ -186,6 +186,7 @@ interface MetricRow {
   higherIsBetter?: boolean;
   neutral?: boolean;
   decimals?: number;
+  warn?: boolean;
 }
 
 function ComparisonTable({ rows }: { rows: MetricRow[] }) {
@@ -211,7 +212,10 @@ function ComparisonTable({ rows }: { rows: MetricRow[] }) {
 
             return (
               <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors">
-                <td className="px-4 py-3 text-sm text-gray-700">{row.label}</td>
+                <td className="px-4 py-3 text-sm text-gray-700">
+                  {row.label}
+                  {row.warn && <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">⚠ &gt;25%</span>}
+                </td>
                 <td className="px-4 py-3 text-sm text-gray-400 text-right tabular-nums">{fmt(row.pre, dec, u)}</td>
                 <td className="px-4 py-3 text-sm font-semibold text-gray-900 text-right tabular-nums">{fmt(row.post, dec, u)}</td>
                 <td className="px-4 py-3 text-right">
@@ -279,26 +283,6 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
   return <h2 className="text-sm font-semibold text-gray-700 mb-3">{children}</h2>;
 }
 
-// ── Comparability strip ───────────────────────────────────────────────────────
-
-function CompareStat({ label, preVal, postVal, warn }: {
-  label: string; preVal: string; postVal: string; warn: boolean;
-}) {
-  return (
-    <div>
-      <p className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase mb-1">{label}</p>
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-500">Pre: <span className="text-gray-800 font-medium">{preVal}</span></span>
-        <span className="text-gray-300">·</span>
-        <span className="text-sm text-gray-500">Post: <span className="text-gray-800 font-medium">{postVal}</span></span>
-        {warn && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">⚠ &gt;25%</span>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // ── Chart config ──────────────────────────────────────────────────────────────
 
 const tooltipStyle = {
@@ -309,6 +293,38 @@ const tooltipStyle = {
   fontSize: 12,
   color: "#111827",
 };
+
+// ── Glossary ──────────────────────────────────────────────────────────────────
+
+const GLOSSARY = [
+  { term: "DP (Dynamic Promise)",          definition: "Express order with a ≤20 min promise window. Identified by wms_order_type = 'EXPRESS' AND expressminutes < 30." },
+  { term: "Express",                        definition: "Express order with a >30 min promise window (wms_order_type = 'EXPRESS' AND expressminutes ≥ 30)." },
+  { term: "Scheduled",                      definition: "Scheduled slot order (wms_order_type = 'SCHEDULED'). Created the day before the promise date in WMS." },
+  { term: "Batched Orders %",               definition: "Orders that left the hub on a trip with >1 order, as a % of all Licious-dispatched orders. Formula: batched_orders / total_licious_dispatched." },
+  { term: "Avg Orders / Trip",              definition: "Total Licious-dispatched orders ÷ total trips. Higher = more efficient batching." },
+  { term: "Single-Order Trips %",          definition: "Trips with exactly 1 order as a % of all trips. Lower is better post-autobatching." },
+  { term: "Avg Orders / DE",               definition: "Total Licious-dispatched orders ÷ total DE headcount across the selected period." },
+  { term: "Orders / Login Hr (OPH)",       definition: "Total orders ÷ total DE login hours. Measures throughput per hour of DE availability." },
+  { term: "Trips / DE",                    definition: "Total trips ÷ total DE headcount. Measures how many trips each DE runs on average." },
+  { term: "SLA",                            definition: "On-time delivery. Licious fleet: measured at RDL vs promiseddeliverytime. 3P fleet: measured at Delivered timestamp." },
+  { term: "RDL (Reached Delivery Location)", definition: "Shipment state when the DE arrives at the customer's location. Used as the SLA event for Licious fleet." },
+  { term: "Avg Breach (mins)",             definition: "Average minutes late across all breached orders (rdl_time > promised_delivery_time)." },
+  { term: "Trip Breach Rate %",            definition: "% of batched trips (>1 order) where at least one order breached SLA." },
+  { term: "First-Order Breach %",          definition: "Of all breached batched trips: % where the breach was the first delivery on the trip." },
+  { term: "Last-Order Breach %",           definition: "Of all breached batched trips: % where the breach was the last delivery on the trip." },
+  { term: "Avg Breach Position",           definition: "0.0 = breach was first delivery, 1.0 = breach was last delivery. Mid-values indicate mid-trip breaches." },
+  { term: "Created→Picked",               definition: "Time from WMS ORDER_CREATED to PICKED status. Covers picklist generation + picker travel + item picking." },
+  { term: "Picked→Packed",                definition: "Time from PICKED to PACKED in WMS. Packing station processing time." },
+  { term: "Packed→Dispatched",            definition: "Time from PACKED in WMS to DISPATCHED in LMS. Covers staging wait, rider allotment, and OTP acceptance." },
+  { term: "Dispatched→OFD",              definition: "Time from LMS DISPATCHED to OUT_FOR_DELIVERY. Hub exit to first customer en route." },
+  { term: "OFD→RDL",                     definition: "Time from OUT_FOR_DELIVERY to REACHED_DELIVERY_LOCATION. Travel time to customer doorstep." },
+  { term: "Allotted→Accepted (Scheduled)", definition: "Time from RIDER_ALLOTTED to RIDER_ACCEPTED for scheduled orders. Rider OTP acceptance window." },
+  { term: "Accepted→Dispatched (Scheduled)", definition: "Time from RIDER_ACCEPTED to DISPATCHED for scheduled orders. Pickup readiness lag." },
+  { term: "DE (Delivery Executive)",       definition: "Last-mile delivery rider. Headcount sourced from rider_events login data, filtered to hours with active logins." },
+  { term: "Pre Period",                    definition: "Baseline period before autobatching v2 went live. Default: 2026-06-10 to 2026-06-16." },
+  { term: "Post Period",                   definition: "Period after autobatching v2 went live. Default: 2026-06-18 onwards. 2026-06-17 is a gap day and excluded." },
+  { term: "Gap Day (Jun 17)",              definition: "2026-06-17 is tagged 'gap' and excluded from both pre and post aggregations to avoid partial-day contamination." },
+];
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
@@ -322,6 +338,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const [postStart,     setPostStart]     = useState(initPostDays[0]?.date ?? "");
   const [postEnd,       setPostEnd]       = useState(initPostDays[initPostDays.length - 1]?.date ?? "");
   const [timelineType,  setTimelineType]  = useState<"dp" | "express" | "scheduled">("dp");
+  const [activeTab,     setActiveTab]     = useState<"metrics" | "glossary">("metrics");
 
   const availableHubs = useMemo(
     () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
@@ -395,141 +412,178 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
     return `${dd}/${mm} ${hh}:${min}`;
   }, [generated_at]);
 
-  const inputCls  = "bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400 shadow-sm";
+  const inputCls   = "bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400 shadow-sm";
   const typeBtnCls = (t: string) =>
     `px-3 py-1 text-xs font-semibold rounded-full transition-colors ${timelineType === t ? "bg-blue-600 text-white" : "bg-white border border-gray-200 text-gray-500 hover:border-gray-400"}`;
+  const tabCls = (t: string) =>
+    `px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === t ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"}`;
 
   return (
     <div className="min-h-screen bg-zinc-100 p-6">
 
-      {/* Refresh banner */}
-      {refreshLabel && (
-        <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5 mb-5 w-fit">
-          <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse inline-block" />
-          <span className="text-xs text-blue-700 font-medium">Data refreshed at {refreshLabel}</span>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
+      {/* Header row: title + refresh */}
+      <div className="flex items-start justify-between mb-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900" style={{ fontFamily: "var(--font-space-grotesk)" }}>
             Autobatching v2
           </h1>
           <p className="text-sm text-gray-500 mt-1">Pre vs Post impact · {hub}</p>
         </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-10">Hub</span>
-            <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
-              {availableHubs.length > 0
-                ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
-                : <option value={hub}>{hub}</option>}
-            </select>
+        {refreshLabel && (
+          <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse inline-block" />
+            <span className="text-xs text-blue-700 font-medium">Data refreshed at {refreshLabel}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-10">Pre</span>
-            <input type="date" value={preStart} min={preMin} max={preEnd}   onChange={e => setPreStart(e.target.value)} className={inputCls} />
-            <span className="text-gray-300 text-sm">→</span>
-            <input type="date" value={preEnd}   min={preStart} max={preMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-10">Post</span>
-            <input type="date" value={postStart} min={postMin} max={postEnd}   onChange={e => setPostStart(e.target.value)} className={inputCls} />
-            <span className="text-gray-300 text-sm">→</span>
-            <input type="date" value={postEnd}   min={postStart} max={postMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
-          </div>
+        )}
+      </div>
+
+      {/* Filters — single row, left-aligned */}
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Hub</span>
+          <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
+            {availableHubs.length > 0
+              ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
+              : <option value={hub}>{hub}</option>}
+          </select>
+        </div>
+        <span className="text-gray-200 text-sm">|</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Pre</span>
+          <input type="date" value={preStart} min={preMin} max={preEnd}   onChange={e => setPreStart(e.target.value)} className={inputCls} />
+          <span className="text-gray-300 text-sm">→</span>
+          <input type="date" value={preEnd}   min={preStart} max={preMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
+        </div>
+        <span className="text-gray-200 text-sm">|</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Post</span>
+          <input type="date" value={postStart} min={postMin} max={postEnd}   onChange={e => setPostStart(e.target.value)} className={inputCls} />
+          <span className="text-gray-300 text-sm">→</span>
+          <input type="date" value={postEnd}   min={postStart} max={postMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
         </div>
       </div>
 
-      {/* Comparability */}
-      <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm mb-5">
-        <SectionHeader>Comparability</SectionHeader>
-        <div className="flex flex-col sm:flex-row gap-5">
-          <CompareStat label="Days"          preVal={String(preAgg.num_days)}                        postVal={String(postAgg.num_days)}                        warn={false} />
-          <CompareStat label="Total Orders"  preVal={preAgg.total_orders_sum.toFixed(0)}             postVal={postAgg.total_orders_sum.toFixed(0)}             warn={false} />
-          <CompareStat label="Avg Daily Orders" preVal={preAgg.avg_daily_orders.toFixed(0)}         postVal={postAgg.avg_daily_orders.toFixed(0)}         warn={ordersWarn} />
-          <CompareStat label="Avg Daily DEs" preVal={preAgg.avg_daily_riders.toFixed(0)}             postVal={postAgg.avg_daily_riders.toFixed(0)}             warn={ridersWarn} />
+      {/* Tab bar */}
+      <div className="flex border-b border-gray-200 mb-6">
+        <button className={tabCls("metrics")}  onClick={() => setActiveTab("metrics")}>Metrics</button>
+        <button className={tabCls("glossary")} onClick={() => setActiveTab("glossary")}>Glossary</button>
+      </div>
+
+      {activeTab === "glossary" ? (
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50">
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-1/3">Term</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Definition</th>
+              </tr>
+            </thead>
+            <tbody>
+              {GLOSSARY.map((g, i) => (
+                <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors">
+                  <td className="px-4 py-3 text-sm font-semibold text-gray-800 align-top">{g.term}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 align-top">{g.definition}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>
-
-      {/* Order Mix */}
-      <div className="mb-5">
-        <SectionHeader>Order Mix · Count &amp; Share of Dispatched Licious Orders</SectionHeader>
-        <OrderMixTable pre={preAgg} post={postAgg} />
-      </div>
-
-      {/* Batch Metrics */}
-      <div className="mb-5">
-        <SectionHeader>Batch Metrics — Success Signal</SectionHeader>
-        <ComparisonTable rows={[
-          { label: "Batched Orders %",        pre: preAgg.batched_orders_pct * 100,    post: postAgg.batched_orders_pct * 100,    unit: "%", higherIsBetter: true,  decimals: 1 },
-          { label: "Avg Orders / Trip",       pre: preAgg.avg_orders_per_trip,          post: postAgg.avg_orders_per_trip,          higherIsBetter: true,  decimals: 2 },
-          { label: "Single-Order Trips %",    pre: preAgg.single_order_trips_pct * 100, post: postAgg.single_order_trips_pct * 100, unit: "%", higherIsBetter: false, decimals: 1 },
-          { label: "Avg Orders / DE",         pre: preAgg.avg_orders_per_de,            post: postAgg.avg_orders_per_de,            higherIsBetter: true,  decimals: 1 },
-          { label: "Orders / Login Hr (OPH)", pre: preAgg.orders_per_login_hour,        post: postAgg.orders_per_login_hour,        higherIsBetter: true,  decimals: 2 },
-          { label: "Trips / DE",              pre: preAgg.trips_per_de,                 post: postAgg.trips_per_de,                 higherIsBetter: true,  decimals: 2 },
-        ]} />
-      </div>
-
-      {/* Batching by Order Type */}
-      <div className="mb-5">
-        <SectionHeader>Batching by Order Type · % of Orders Batched</SectionHeader>
-        <ComparisonTable rows={[
-          { label: "DP Batched %",        pre: preAgg.dp_batched_pct * 100,        post: postAgg.dp_batched_pct * 100,        unit: "%", higherIsBetter: true, decimals: 1 },
-          { label: "Express Batched %",   pre: preAgg.express_batched_pct * 100,   post: postAgg.express_batched_pct * 100,   unit: "%", higherIsBetter: true, decimals: 1 },
-          { label: "Scheduled Batched %", pre: preAgg.scheduled_batched_pct * 100, post: postAgg.scheduled_batched_pct * 100, unit: "%", higherIsBetter: true, decimals: 1 },
-        ]} />
-      </div>
-
-      {/* SLA */}
-      <div className="mb-5">
-        <SectionHeader>SLA — Check Signal · Licious at RDL · 3P at Delivered</SectionHeader>
-        <ComparisonTable rows={[
-          { label: "Overall SLA %",           pre: preAgg.overall_sla_pct * 100,   post: postAgg.overall_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
-          { label: "DP SLA %",                pre: preAgg.dp_sla_pct * 100,        post: postAgg.dp_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
-          { label: "Express SLA %",           pre: preAgg.express_sla_pct * 100,   post: postAgg.express_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
-          { label: "Scheduled SLA %",         pre: preAgg.scheduled_sla_pct * 100, post: postAgg.scheduled_sla_pct * 100, unit: "%", higherIsBetter: true,  decimals: 1 },
-          { label: "3P SLA % (at Delivered)", pre: preAgg.p3_sla_pct * 100,       post: postAgg.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
-          { label: "Avg Breach (mins)",       pre: preAgg.avg_breach_mins,          post: postAgg.avg_breach_mins,         higherIsBetter: false, decimals: 1 },
-        ]} />
-      </div>
-
-      {/* Trip-level SLA */}
-      <div className="mb-5">
-        <SectionHeader>Trip-level SLA · Batched Trips · Trip Breached if Any Order Breached</SectionHeader>
-        <ComparisonTable rows={[
-          { label: "Trip Breach Rate %",           pre: preAgg.trip_breach_rate * 100,       post: postAgg.trip_breach_rate * 100,       unit: "%", higherIsBetter: false, decimals: 1 },
-          { label: "First-Order Breach % (of breached trips)", pre: preAgg.first_order_breach_pct * 100, post: postAgg.first_order_breach_pct * 100, unit: "%", neutral: true, decimals: 1 },
-          { label: "Last-Order Breach % (of breached trips)",  pre: preAgg.last_order_breach_pct * 100,  post: postAgg.last_order_breach_pct * 100,  unit: "%", neutral: true, decimals: 1 },
-          { label: "Avg Breach Position (0=first, 1=last)",    pre: preAgg.avg_breach_position,          post: postAgg.avg_breach_position,          neutral: true, decimals: 2 },
-        ]} />
-      </div>
-
-      {/* Order Timeline */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <SectionHeader>Order Timeline · Avg Mins per Stage</SectionHeader>
-          <div className="flex gap-1.5 mb-3">
-            <button className={typeBtnCls("dp")}        onClick={() => setTimelineType("dp")}>DP</button>
-            <button className={typeBtnCls("express")}   onClick={() => setTimelineType("express")}>Express</button>
-            <button className={typeBtnCls("scheduled")} onClick={() => setTimelineType("scheduled")}>Scheduled</button>
+      ) : (
+        <>
+          {/* Comparability */}
+          <div className="mb-5">
+            <SectionHeader>Comparability</SectionHeader>
+            <ComparisonTable rows={[
+              { label: "Days",             pre: preAgg.num_days,            post: postAgg.num_days,            neutral: true, decimals: 0 },
+              { label: "Total Orders",     pre: preAgg.total_orders_sum,    post: postAgg.total_orders_sum,    neutral: true, decimals: 0 },
+              { label: "Avg Daily Orders", pre: preAgg.avg_daily_orders,    post: postAgg.avg_daily_orders,    neutral: true, decimals: 1, warn: ordersWarn },
+              { label: "Avg Daily DEs",   pre: preAgg.avg_daily_riders,    post: postAgg.avg_daily_riders,    neutral: true, decimals: 1, warn: ridersWarn },
+            ]} />
           </div>
-        </div>
-        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={timelineData} margin={{ top: 4, right: 16, left: -8, bottom: 0 }} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-              <XAxis dataKey="stage" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={v => `${v}m`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)} mins`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 10, color: "#6B7280" }} />
-              <Bar dataKey="pre"  name="Pre"  fill="#94A3B8" radius={[4, 4, 0, 0]} barSize={28} />
-              <Bar dataKey="post" name="Post" fill="#2563EB" radius={[4, 4, 0, 0]} barSize={28} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+
+          {/* Order Mix */}
+          <div className="mb-5">
+            <SectionHeader>Order Mix · Count &amp; Share of Dispatched Licious Orders</SectionHeader>
+            <OrderMixTable pre={preAgg} post={postAgg} />
+          </div>
+
+          {/* Batch Metrics */}
+          <div className="mb-5">
+            <SectionHeader>Batch Metrics — Success Signal</SectionHeader>
+            <ComparisonTable rows={[
+              { label: "Batched Orders %",        pre: preAgg.batched_orders_pct * 100,    post: postAgg.batched_orders_pct * 100,    unit: "%", higherIsBetter: true,  decimals: 1 },
+              { label: "Avg Orders / Trip",       pre: preAgg.avg_orders_per_trip,          post: postAgg.avg_orders_per_trip,          higherIsBetter: true,  decimals: 2 },
+              { label: "Single-Order Trips %",    pre: preAgg.single_order_trips_pct * 100, post: postAgg.single_order_trips_pct * 100, unit: "%", higherIsBetter: false, decimals: 1 },
+              { label: "Avg Orders / DE",         pre: preAgg.avg_orders_per_de,            post: postAgg.avg_orders_per_de,            higherIsBetter: true,  decimals: 1 },
+              { label: "Orders / Login Hr (OPH)", pre: preAgg.orders_per_login_hour,        post: postAgg.orders_per_login_hour,        higherIsBetter: true,  decimals: 2 },
+              { label: "Trips / DE",              pre: preAgg.trips_per_de,                 post: postAgg.trips_per_de,                 higherIsBetter: true,  decimals: 2 },
+            ]} />
+          </div>
+
+          {/* Batching by Order Type */}
+          <div className="mb-5">
+            <SectionHeader>Batching by Order Type · % of Orders Batched</SectionHeader>
+            <ComparisonTable rows={[
+              { label: "DP Batched %",        pre: preAgg.dp_batched_pct * 100,        post: postAgg.dp_batched_pct * 100,        unit: "%", higherIsBetter: true, decimals: 1 },
+              { label: "Express Batched %",   pre: preAgg.express_batched_pct * 100,   post: postAgg.express_batched_pct * 100,   unit: "%", higherIsBetter: true, decimals: 1 },
+              { label: "Scheduled Batched %", pre: preAgg.scheduled_batched_pct * 100, post: postAgg.scheduled_batched_pct * 100, unit: "%", higherIsBetter: true, decimals: 1 },
+            ]} />
+          </div>
+
+          {/* SLA */}
+          <div className="mb-5">
+            <SectionHeader>SLA — Check Signal · Licious at RDL · 3P at Delivered</SectionHeader>
+            <ComparisonTable rows={[
+              { label: "Overall SLA %",           pre: preAgg.overall_sla_pct * 100,   post: postAgg.overall_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
+              { label: "DP SLA %",                pre: preAgg.dp_sla_pct * 100,        post: postAgg.dp_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
+              { label: "Express SLA %",           pre: preAgg.express_sla_pct * 100,   post: postAgg.express_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
+              { label: "Scheduled SLA %",         pre: preAgg.scheduled_sla_pct * 100, post: postAgg.scheduled_sla_pct * 100, unit: "%", higherIsBetter: true,  decimals: 1 },
+              { label: "3P SLA % (at Delivered)", pre: preAgg.p3_sla_pct * 100,       post: postAgg.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
+              { label: "Avg Breach (mins)",       pre: preAgg.avg_breach_mins,          post: postAgg.avg_breach_mins,         higherIsBetter: false, decimals: 1 },
+            ]} />
+          </div>
+
+          {/* Trip-level SLA */}
+          <div className="mb-5">
+            <SectionHeader>Trip-level SLA · Batched Trips · Trip Breached if Any Order Breached</SectionHeader>
+            <ComparisonTable rows={[
+              { label: "Trip Breach Rate %",                        pre: preAgg.trip_breach_rate * 100,       post: postAgg.trip_breach_rate * 100,       unit: "%", higherIsBetter: false, decimals: 1 },
+              { label: "First-Order Breach % (of breached trips)",  pre: preAgg.first_order_breach_pct * 100, post: postAgg.first_order_breach_pct * 100, unit: "%", neutral: true, decimals: 1 },
+              { label: "Last-Order Breach % (of breached trips)",   pre: preAgg.last_order_breach_pct * 100,  post: postAgg.last_order_breach_pct * 100,  unit: "%", neutral: true, decimals: 1 },
+              { label: "Avg Breach Position (0=first, 1=last)",     pre: preAgg.avg_breach_position,          post: postAgg.avg_breach_position,          neutral: true, decimals: 2 },
+            ]} />
+          </div>
+
+          {/* Order Timeline */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <SectionHeader>Order Timeline · Avg Mins per Stage</SectionHeader>
+              <div className="flex gap-1.5">
+                <button className={typeBtnCls("dp")}        onClick={() => setTimelineType("dp")}>DP</button>
+                <button className={typeBtnCls("express")}   onClick={() => setTimelineType("express")}>Express</button>
+                <button className={typeBtnCls("scheduled")} onClick={() => setTimelineType("scheduled")}>Scheduled</button>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={timelineData} margin={{ top: 22, right: 16, left: -8, bottom: 0 }} barGap={4}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+                  <XAxis dataKey="stage" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+                  <YAxis tickFormatter={v => `${v}m`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)} mins`]} />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 10, color: "#6B7280" }} />
+                  <Bar dataKey="pre"  name="Pre"  fill="#94A3B8" radius={[4, 4, 0, 0]} barSize={28}>
+                    <LabelList dataKey="pre"  position="top" style={{ fontSize: 10, fill: "#94A3B8", fontWeight: 600 }} formatter={(v) => `${v}m`} />
+                  </Bar>
+                  <Bar dataKey="post" name="Post" fill="#2563EB" radius={[4, 4, 0, 0]} barSize={28}>
+                    <LabelList dataKey="post" position="top" style={{ fontSize: 10, fill: "#2563EB", fontWeight: 600 }} formatter={(v) => `${v}m`} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </>
+      )}
 
     </div>
   );
