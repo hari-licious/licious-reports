@@ -18,71 +18,154 @@ interface Props {
 
 interface Aggregated {
   num_days: number;
+  total_orders_sum: number;
   avg_daily_orders: number;
   avg_daily_riders: number;
+  // Order mix
+  dp_orders_total: number;
+  express_orders_total: number;
+  scheduled_orders_total: number;
+  dp_orders_pct: number;
+  express_orders_pct: number;
+  scheduled_orders_pct: number;
+  // Batch metrics
   batched_orders_pct: number;
   avg_orders_per_trip: number;
   single_order_trips_pct: number;
   avg_orders_per_de: number;
   orders_per_login_hour: number;
   trips_per_de: number;
+  // Batching by type
+  dp_batched_pct: number;
+  express_batched_pct: number;
+  scheduled_batched_pct: number;
+  // SLA
   overall_sla_pct: number;
   scheduled_sla_pct: number;
   express_sla_pct: number;
   dp_sla_pct: number;
   p3_sla_pct: number;
   avg_breach_mins: number;
+  // Trip SLA
+  trip_breach_rate: number;
+  first_order_breach_pct: number;
+  last_order_breach_pct: number;
+  avg_breach_position: number;
+  // DP timeline
   avg_dp_created_to_picked_mins: number;
   avg_dp_picked_to_packed_mins: number;
   avg_dp_packed_to_dispatched_mins: number;
+  avg_dp_dispatch_to_ofd_mins: number;
+  avg_dp_ofd_to_rdl_mins: number;
+  // Express timeline
+  avg_express_created_to_picked_mins: number;
+  avg_express_picked_to_packed_mins: number;
+  avg_express_packed_to_dispatched_mins: number;
+  avg_express_dispatch_to_ofd_mins: number;
+  avg_express_ofd_to_rdl_mins: number;
+  // Scheduled timeline
+  avg_sched_allotted_to_accepted_mins: number;
+  avg_sched_accepted_to_dispatched_mins: number;
+  avg_sched_dispatch_to_ofd_mins: number;
+  avg_sched_ofd_to_rdl_mins: number;
 }
 
 function div(a: number, b: number) { return b > 0 ? a / b : 0; }
 
 function aggregate(days: RawDay[]): Aggregated {
-  if (days.length === 0) return {
-    num_days: 0, avg_daily_orders: 0, avg_daily_riders: 0,
+  const zero: Aggregated = {
+    num_days: 0, total_orders_sum: 0, avg_daily_orders: 0, avg_daily_riders: 0,
+    dp_orders_total: 0, express_orders_total: 0, scheduled_orders_total: 0,
+    dp_orders_pct: 0, express_orders_pct: 0, scheduled_orders_pct: 0,
     batched_orders_pct: 0, avg_orders_per_trip: 0, single_order_trips_pct: 0,
     avg_orders_per_de: 0, orders_per_login_hour: 0, trips_per_de: 0,
+    dp_batched_pct: 0, express_batched_pct: 0, scheduled_batched_pct: 0,
     overall_sla_pct: 0, scheduled_sla_pct: 0, express_sla_pct: 0,
     dp_sla_pct: 0, p3_sla_pct: 0, avg_breach_mins: 0,
+    trip_breach_rate: 0, first_order_breach_pct: 0, last_order_breach_pct: 0, avg_breach_position: 0,
     avg_dp_created_to_picked_mins: 0, avg_dp_picked_to_packed_mins: 0, avg_dp_packed_to_dispatched_mins: 0,
+    avg_dp_dispatch_to_ofd_mins: 0, avg_dp_ofd_to_rdl_mins: 0,
+    avg_express_created_to_picked_mins: 0, avg_express_picked_to_packed_mins: 0,
+    avg_express_packed_to_dispatched_mins: 0, avg_express_dispatch_to_ofd_mins: 0, avg_express_ofd_to_rdl_mins: 0,
+    avg_sched_allotted_to_accepted_mins: 0, avg_sched_accepted_to_dispatched_mins: 0,
+    avg_sched_dispatch_to_ofd_mins: 0, avg_sched_ofd_to_rdl_mins: 0,
   };
+  if (days.length === 0) return zero;
 
-  const n  = days.length;
-  const s  = <K extends keyof RawDay>(k: K) => days.reduce((acc, d) => acc + ((d[k] as number) ?? 0), 0);
+  const n = days.length;
+  const s = <K extends keyof RawDay>(k: K) => days.reduce((acc, d) => acc + ((d[k] as number) ?? 0), 0);
 
-  const total_orders        = s("total_orders");
-  const total_licious_disp  = s("total_licious_dispatched");
-  const total_orders_batched= s("total_orders_batched");
-  const total_trips         = s("total_trips");
-  const single_order_trips  = s("single_order_trips");
-  const total_login_hrs     = s("total_login_hrs");
-  const total_de_hc         = s("de_hc");
-  const orders_with_rdl     = s("orders_with_rdl");
-  const on_time_orders      = s("on_time_orders");
-  const breach_mins_sum     = s("breach_mins_sum");
-  const breach_count        = s("breach_count");
+  const total_orders         = s("total_orders");
+  const total_licious_disp   = s("total_licious_dispatched");
+  const total_orders_batched = s("total_orders_batched");
+  const total_trips          = s("total_trips");
+  const single_order_trips   = s("single_order_trips");
+  const total_login_hrs      = s("total_login_hrs");
+  const total_de_hc          = s("de_hc");
+  const orders_with_rdl      = s("orders_with_rdl");
+  const breach_mins_sum      = s("breach_mins_sum");
+  const breach_count         = s("breach_count");
+  const dp_orders            = s("dp_orders");
+  const express_orders       = s("express_orders");
+  const scheduled_orders     = s("scheduled_orders");
+  const total_licious_sla    = s("total_licious");
+  const trip_batched         = s("trip_sla_batched_trips");
+  const trip_breached        = s("trip_sla_breached_trips");
+  const first_breach         = s("trip_sla_first_order_breach");
+  const last_breach          = s("trip_sla_last_order_breach");
 
   return {
-    num_days: n,
-    avg_daily_orders:                 div(total_orders, n),
-    avg_daily_riders:                 div(total_de_hc, n),
-    batched_orders_pct:               div(total_orders_batched, total_licious_disp),
-    avg_orders_per_trip:              div(total_licious_disp, total_trips),
-    single_order_trips_pct:           div(single_order_trips, total_trips),
-    avg_orders_per_de:                div(total_licious_disp, total_de_hc),
-    orders_per_login_hour:            div(total_orders, total_login_hrs),
-    trips_per_de:                     div(total_trips, total_de_hc),
-    overall_sla_pct:                  div(s("on_time_orders"), orders_with_rdl),
-    scheduled_sla_pct:                div(s("scheduled_on_time"), s("scheduled_with_rdl")),
-    express_sla_pct:                  div(s("express_on_time"), s("express_with_rdl")),
-    dp_sla_pct:                       div(s("dp_on_time"), s("dp_with_rdl")),
-    p3_sla_pct:                       div(s("p3_on_time"), s("p3_delivered")),
-    avg_breach_mins:                  div(breach_mins_sum, breach_count),
-    avg_dp_created_to_picked_mins:    div(s("dp_tl_created_to_picked_sum"), s("dp_tl_created_to_picked_cnt")),
-    avg_dp_picked_to_packed_mins:     div(s("dp_tl_picked_to_packed_sum"), s("dp_tl_picked_to_packed_cnt")),
+    num_days:              n,
+    total_orders_sum:      total_orders,
+    avg_daily_orders:      div(total_orders, n),
+    avg_daily_riders:      div(total_de_hc, n),
+
+    dp_orders_total:       dp_orders,
+    express_orders_total:  express_orders,
+    scheduled_orders_total:scheduled_orders,
+    dp_orders_pct:         div(dp_orders,        total_licious_sla),
+    express_orders_pct:    div(express_orders,   total_licious_sla),
+    scheduled_orders_pct:  div(scheduled_orders, total_licious_sla),
+
+    batched_orders_pct:    div(total_orders_batched, total_licious_disp),
+    avg_orders_per_trip:   div(total_licious_disp, total_trips),
+    single_order_trips_pct:div(single_order_trips, total_trips),
+    avg_orders_per_de:     div(total_licious_disp, total_de_hc),
+    orders_per_login_hour: div(total_orders, total_login_hrs),
+    trips_per_de:          div(total_trips, total_de_hc),
+
+    dp_batched_pct:        div(s("dp_batched"),        dp_orders),
+    express_batched_pct:   div(s("express_batched"),   express_orders),
+    scheduled_batched_pct: div(s("scheduled_batched"), scheduled_orders),
+
+    overall_sla_pct:       div(s("on_time_orders"),      orders_with_rdl),
+    scheduled_sla_pct:     div(s("scheduled_on_time"),   s("scheduled_with_rdl")),
+    express_sla_pct:       div(s("express_on_time"),     s("express_with_rdl")),
+    dp_sla_pct:            div(s("dp_on_time"),          s("dp_with_rdl")),
+    p3_sla_pct:            div(s("p3_on_time"),          s("p3_delivered")),
+    avg_breach_mins:       div(breach_mins_sum, breach_count),
+
+    trip_breach_rate:           div(trip_breached, trip_batched),
+    first_order_breach_pct:     div(first_breach, trip_breached),
+    last_order_breach_pct:      div(last_breach,  trip_breached),
+    avg_breach_position:        div(s("trip_sla_breach_pos_sum"), s("trip_sla_breach_pos_cnt")),
+
+    avg_dp_created_to_picked_mins:    div(s("dp_tl_created_to_picked_sum"),    s("dp_tl_created_to_picked_cnt")),
+    avg_dp_picked_to_packed_mins:     div(s("dp_tl_picked_to_packed_sum"),     s("dp_tl_picked_to_packed_cnt")),
     avg_dp_packed_to_dispatched_mins: div(s("dp_tl_packed_to_dispatched_sum"), s("dp_tl_packed_to_dispatched_cnt")),
+    avg_dp_dispatch_to_ofd_mins:      div(s("dp_tl_dispatch_to_ofd_sum"),      s("dp_tl_dispatch_to_ofd_cnt")),
+    avg_dp_ofd_to_rdl_mins:           div(s("dp_tl_ofd_to_rdl_sum"),           s("dp_tl_ofd_to_rdl_cnt")),
+
+    avg_express_created_to_picked_mins:    div(s("express_tl_created_to_picked_sum"),    s("express_tl_created_to_picked_cnt")),
+    avg_express_picked_to_packed_mins:     div(s("express_tl_picked_to_packed_sum"),     s("express_tl_picked_to_packed_cnt")),
+    avg_express_packed_to_dispatched_mins: div(s("express_tl_packed_to_dispatched_sum"), s("express_tl_packed_to_dispatched_cnt")),
+    avg_express_dispatch_to_ofd_mins:      div(s("express_tl_dispatch_to_ofd_sum"),      s("express_tl_dispatch_to_ofd_cnt")),
+    avg_express_ofd_to_rdl_mins:           div(s("express_tl_ofd_to_rdl_sum"),           s("express_tl_ofd_to_rdl_cnt")),
+
+    avg_sched_allotted_to_accepted_mins:   div(s("sched_tl_allotted_to_accepted_sum"),   s("sched_tl_allotted_to_accepted_cnt")),
+    avg_sched_accepted_to_dispatched_mins: div(s("sched_tl_accepted_to_dispatched_sum"), s("sched_tl_accepted_to_dispatched_cnt")),
+    avg_sched_dispatch_to_ofd_mins:        div(s("sched_tl_dispatch_to_ofd_sum"),        s("sched_tl_dispatch_to_ofd_cnt")),
+    avg_sched_ofd_to_rdl_mins:             div(s("sched_tl_ofd_to_rdl_sum"),             s("sched_tl_ofd_to_rdl_cnt")),
   };
 }
 
@@ -154,6 +237,42 @@ function ComparisonTable({ rows }: { rows: MetricRow[] }) {
   );
 }
 
+// ── Order mix table ───────────────────────────────────────────────────────────
+
+function OrderMixTable({ pre, post }: { pre: Aggregated; post: Aggregated }) {
+  const rows = [
+    { label: "DP Orders",        preCount: pre.dp_orders_total,         postCount: post.dp_orders_total,         prePct: pre.dp_orders_pct,         postPct: post.dp_orders_pct },
+    { label: "Express Orders",   preCount: pre.express_orders_total,    postCount: post.express_orders_total,    prePct: pre.express_orders_pct,    postPct: post.express_orders_pct },
+    { label: "Scheduled Orders", preCount: pre.scheduled_orders_total,  postCount: post.scheduled_orders_total,  prePct: pre.scheduled_orders_pct,  postPct: post.scheduled_orders_pct },
+  ];
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-gray-100 bg-gray-50">
+            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-1/2">Order Type</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Pre</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Post</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors">
+              <td className="px-4 py-3 text-sm text-gray-700">{row.label}</td>
+              <td className="px-4 py-3 text-sm text-gray-400 text-right tabular-nums">
+                {row.preCount.toFixed(0)}&nbsp;<span className="text-gray-300">·</span>&nbsp;{(row.prePct * 100).toFixed(1)}%
+              </td>
+              <td className="px-4 py-3 text-sm font-semibold text-gray-900 text-right tabular-nums">
+                {row.postCount.toFixed(0)}&nbsp;<span className="text-gray-300">·</span>&nbsp;{(row.postPct * 100).toFixed(1)}%
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 // ── Section header ────────────────────────────────────────────────────────────
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
@@ -197,11 +316,12 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const initPreDays  = days.filter(d => d.period === "pre");
   const initPostDays = days.filter(d => d.period === "post");
 
-  const [selectedHub, setSelectedHub] = useState<string>(days[0]?.hub ?? hub);
-  const [preStart,  setPreStart]  = useState(initPreDays[0]?.date ?? "");
-  const [preEnd,    setPreEnd]    = useState(initPreDays[initPreDays.length - 1]?.date ?? "");
-  const [postStart, setPostStart] = useState(initPostDays[0]?.date ?? "");
-  const [postEnd,   setPostEnd]   = useState(initPostDays[initPostDays.length - 1]?.date ?? "");
+  const [selectedHub,   setSelectedHub]   = useState<string>(days[0]?.hub ?? hub);
+  const [preStart,      setPreStart]      = useState(initPreDays[0]?.date ?? "");
+  const [preEnd,        setPreEnd]        = useState(initPreDays[initPreDays.length - 1]?.date ?? "");
+  const [postStart,     setPostStart]     = useState(initPostDays[0]?.date ?? "");
+  const [postEnd,       setPostEnd]       = useState(initPostDays[initPostDays.length - 1]?.date ?? "");
+  const [timelineType,  setTimelineType]  = useState<"dp" | "express" | "scheduled">("dp");
 
   const availableHubs = useMemo(
     () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
@@ -225,20 +345,70 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const ridersWarn = preAgg.avg_daily_riders > 0
     && Math.abs(postAgg.avg_daily_riders - preAgg.avg_daily_riders) / preAgg.avg_daily_riders > 0.25;
 
-  const preTotal  = preAgg.avg_dp_created_to_picked_mins  + preAgg.avg_dp_picked_to_packed_mins  + preAgg.avg_dp_packed_to_dispatched_mins;
-  const postTotal = postAgg.avg_dp_created_to_picked_mins + postAgg.avg_dp_picked_to_packed_mins + postAgg.avg_dp_packed_to_dispatched_mins;
-  const timelineData = [
-    { stage: "Created→Picked",    pre: +preAgg.avg_dp_created_to_picked_mins.toFixed(1),    post: +postAgg.avg_dp_created_to_picked_mins.toFixed(1) },
-    { stage: "Picked→Packed",     pre: +preAgg.avg_dp_picked_to_packed_mins.toFixed(1),     post: +postAgg.avg_dp_picked_to_packed_mins.toFixed(1) },
-    { stage: "Packed→Dispatched", pre: +preAgg.avg_dp_packed_to_dispatched_mins.toFixed(1), post: +postAgg.avg_dp_packed_to_dispatched_mins.toFixed(1) },
-    { stage: "Total",             pre: +preTotal.toFixed(1),                                post: +postTotal.toFixed(1) },
-  ];
+  // Timeline data per type
+  const timelineData = useMemo(() => {
+    if (timelineType === "dp") {
+      const preTotal  = preAgg.avg_dp_created_to_picked_mins + preAgg.avg_dp_picked_to_packed_mins + preAgg.avg_dp_packed_to_dispatched_mins + preAgg.avg_dp_dispatch_to_ofd_mins + preAgg.avg_dp_ofd_to_rdl_mins;
+      const postTotal = postAgg.avg_dp_created_to_picked_mins + postAgg.avg_dp_picked_to_packed_mins + postAgg.avg_dp_packed_to_dispatched_mins + postAgg.avg_dp_dispatch_to_ofd_mins + postAgg.avg_dp_ofd_to_rdl_mins;
+      return [
+        { stage: "Created→Picked",    pre: +preAgg.avg_dp_created_to_picked_mins.toFixed(1),    post: +postAgg.avg_dp_created_to_picked_mins.toFixed(1) },
+        { stage: "Picked→Packed",     pre: +preAgg.avg_dp_picked_to_packed_mins.toFixed(1),     post: +postAgg.avg_dp_picked_to_packed_mins.toFixed(1) },
+        { stage: "Packed→Dispatched", pre: +preAgg.avg_dp_packed_to_dispatched_mins.toFixed(1), post: +postAgg.avg_dp_packed_to_dispatched_mins.toFixed(1) },
+        { stage: "Dispatched→OFD",    pre: +preAgg.avg_dp_dispatch_to_ofd_mins.toFixed(1),      post: +postAgg.avg_dp_dispatch_to_ofd_mins.toFixed(1) },
+        { stage: "OFD→RDL",           pre: +preAgg.avg_dp_ofd_to_rdl_mins.toFixed(1),           post: +postAgg.avg_dp_ofd_to_rdl_mins.toFixed(1) },
+        { stage: "Total",             pre: +preTotal.toFixed(1),                                 post: +postTotal.toFixed(1) },
+      ];
+    }
+    if (timelineType === "express") {
+      const preTotal  = preAgg.avg_express_created_to_picked_mins + preAgg.avg_express_picked_to_packed_mins + preAgg.avg_express_packed_to_dispatched_mins + preAgg.avg_express_dispatch_to_ofd_mins + preAgg.avg_express_ofd_to_rdl_mins;
+      const postTotal = postAgg.avg_express_created_to_picked_mins + postAgg.avg_express_picked_to_packed_mins + postAgg.avg_express_packed_to_dispatched_mins + postAgg.avg_express_dispatch_to_ofd_mins + postAgg.avg_express_ofd_to_rdl_mins;
+      return [
+        { stage: "Created→Picked",    pre: +preAgg.avg_express_created_to_picked_mins.toFixed(1),    post: +postAgg.avg_express_created_to_picked_mins.toFixed(1) },
+        { stage: "Picked→Packed",     pre: +preAgg.avg_express_picked_to_packed_mins.toFixed(1),     post: +postAgg.avg_express_picked_to_packed_mins.toFixed(1) },
+        { stage: "Packed→Dispatched", pre: +preAgg.avg_express_packed_to_dispatched_mins.toFixed(1), post: +postAgg.avg_express_packed_to_dispatched_mins.toFixed(1) },
+        { stage: "Dispatched→OFD",    pre: +preAgg.avg_express_dispatch_to_ofd_mins.toFixed(1),      post: +postAgg.avg_express_dispatch_to_ofd_mins.toFixed(1) },
+        { stage: "OFD→RDL",           pre: +preAgg.avg_express_ofd_to_rdl_mins.toFixed(1),           post: +postAgg.avg_express_ofd_to_rdl_mins.toFixed(1) },
+        { stage: "Total",             pre: +preTotal.toFixed(1),                                      post: +postTotal.toFixed(1) },
+      ];
+    }
+    // scheduled
+    const preTotal  = preAgg.avg_sched_allotted_to_accepted_mins + preAgg.avg_sched_accepted_to_dispatched_mins + preAgg.avg_sched_dispatch_to_ofd_mins + preAgg.avg_sched_ofd_to_rdl_mins;
+    const postTotal = postAgg.avg_sched_allotted_to_accepted_mins + postAgg.avg_sched_accepted_to_dispatched_mins + postAgg.avg_sched_dispatch_to_ofd_mins + postAgg.avg_sched_ofd_to_rdl_mins;
+    return [
+      { stage: "Allotted→Accepted",   pre: +preAgg.avg_sched_allotted_to_accepted_mins.toFixed(1),   post: +postAgg.avg_sched_allotted_to_accepted_mins.toFixed(1) },
+      { stage: "Accepted→Dispatched", pre: +preAgg.avg_sched_accepted_to_dispatched_mins.toFixed(1), post: +postAgg.avg_sched_accepted_to_dispatched_mins.toFixed(1) },
+      { stage: "Dispatched→OFD",      pre: +preAgg.avg_sched_dispatch_to_ofd_mins.toFixed(1),        post: +postAgg.avg_sched_dispatch_to_ofd_mins.toFixed(1) },
+      { stage: "OFD→RDL",             pre: +preAgg.avg_sched_ofd_to_rdl_mins.toFixed(1),             post: +postAgg.avg_sched_ofd_to_rdl_mins.toFixed(1) },
+      { stage: "Total",               pre: +preTotal.toFixed(1),                                      post: +postTotal.toFixed(1) },
+    ];
+  }, [timelineType, preAgg, postAgg]);
 
-  const generatedDate = generated_at ? generated_at.slice(0, 10) : "—";
-  const inputCls = "bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400 shadow-sm";
+  // Refresh banner
+  const refreshLabel = useMemo(() => {
+    if (!generated_at) return null;
+    const d = new Date(generated_at);
+    if (isNaN(d.getTime())) return null;
+    const dd   = d.getDate().toString().padStart(2, "0");
+    const mm   = (d.getMonth() + 1).toString().padStart(2, "0");
+    const hh   = d.getHours().toString().padStart(2, "0");
+    const min  = d.getMinutes().toString().padStart(2, "0");
+    return `${dd}/${mm} ${hh}:${min}`;
+  }, [generated_at]);
+
+  const inputCls  = "bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400 shadow-sm";
+  const typeBtnCls = (t: string) =>
+    `px-3 py-1 text-xs font-semibold rounded-full transition-colors ${timelineType === t ? "bg-blue-600 text-white" : "bg-white border border-gray-200 text-gray-500 hover:border-gray-400"}`;
 
   return (
     <div className="min-h-screen bg-zinc-100 p-6">
+
+      {/* Refresh banner */}
+      {refreshLabel && (
+        <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5 mb-5 w-fit">
+          <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse inline-block" />
+          <span className="text-xs text-blue-700 font-medium">Data refreshed at {refreshLabel}</span>
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
@@ -246,7 +416,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900" style={{ fontFamily: "var(--font-space-grotesk)" }}>
             Autobatching v2
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Data as of <span className="text-gray-700 font-medium">{generatedDate}</span></p>
+          <p className="text-sm text-gray-500 mt-1">Pre vs Post impact · {hub}</p>
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -276,10 +446,17 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm mb-5">
         <SectionHeader>Comparability</SectionHeader>
         <div className="flex flex-col sm:flex-row gap-5">
-          <CompareStat label="Days"             preVal={String(preAgg.num_days)}            postVal={String(postAgg.num_days)}            warn={false} />
-          <CompareStat label="Avg Daily Orders" preVal={preAgg.avg_daily_orders.toFixed(0)} postVal={postAgg.avg_daily_orders.toFixed(0)} warn={ordersWarn} />
-          <CompareStat label="Avg Daily DEs"    preVal={preAgg.avg_daily_riders.toFixed(0)} postVal={postAgg.avg_daily_riders.toFixed(0)} warn={ridersWarn} />
+          <CompareStat label="Days"          preVal={String(preAgg.num_days)}                        postVal={String(postAgg.num_days)}                        warn={false} />
+          <CompareStat label="Total Orders"  preVal={preAgg.total_orders_sum.toFixed(0)}             postVal={postAgg.total_orders_sum.toFixed(0)}             warn={false} />
+          <CompareStat label="Avg Daily Orders" preVal={preAgg.avg_daily_orders.toFixed(0)}         postVal={postAgg.avg_daily_orders.toFixed(0)}         warn={ordersWarn} />
+          <CompareStat label="Avg Daily DEs" preVal={preAgg.avg_daily_riders.toFixed(0)}             postVal={postAgg.avg_daily_riders.toFixed(0)}             warn={ridersWarn} />
         </div>
+      </div>
+
+      {/* Order Mix */}
+      <div className="mb-5">
+        <SectionHeader>Order Mix · Count &amp; Share of Dispatched Licious Orders</SectionHeader>
+        <OrderMixTable pre={preAgg} post={postAgg} />
       </div>
 
       {/* Batch Metrics */}
@@ -292,6 +469,16 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           { label: "Avg Orders / DE",         pre: preAgg.avg_orders_per_de,            post: postAgg.avg_orders_per_de,            higherIsBetter: true,  decimals: 1 },
           { label: "Orders / Login Hr (OPH)", pre: preAgg.orders_per_login_hour,        post: postAgg.orders_per_login_hour,        higherIsBetter: true,  decimals: 2 },
           { label: "Trips / DE",              pre: preAgg.trips_per_de,                 post: postAgg.trips_per_de,                 higherIsBetter: true,  decimals: 2 },
+        ]} />
+      </div>
+
+      {/* Batching by Order Type */}
+      <div className="mb-5">
+        <SectionHeader>Batching by Order Type · % of Orders Batched</SectionHeader>
+        <ComparisonTable rows={[
+          { label: "DP Batched %",        pre: preAgg.dp_batched_pct * 100,        post: postAgg.dp_batched_pct * 100,        unit: "%", higherIsBetter: true, decimals: 1 },
+          { label: "Express Batched %",   pre: preAgg.express_batched_pct * 100,   post: postAgg.express_batched_pct * 100,   unit: "%", higherIsBetter: true, decimals: 1 },
+          { label: "Scheduled Batched %", pre: preAgg.scheduled_batched_pct * 100, post: postAgg.scheduled_batched_pct * 100, unit: "%", higherIsBetter: true, decimals: 1 },
         ]} />
       </div>
 
@@ -308,9 +495,27 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
         ]} />
       </div>
 
-      {/* Warehouse Order Timeline */}
+      {/* Trip-level SLA */}
+      <div className="mb-5">
+        <SectionHeader>Trip-level SLA · Batched Trips · Trip Breached if Any Order Breached</SectionHeader>
+        <ComparisonTable rows={[
+          { label: "Trip Breach Rate %",           pre: preAgg.trip_breach_rate * 100,       post: postAgg.trip_breach_rate * 100,       unit: "%", higherIsBetter: false, decimals: 1 },
+          { label: "First-Order Breach % (of breached trips)", pre: preAgg.first_order_breach_pct * 100, post: postAgg.first_order_breach_pct * 100, unit: "%", neutral: true, decimals: 1 },
+          { label: "Last-Order Breach % (of breached trips)",  pre: preAgg.last_order_breach_pct * 100,  post: postAgg.last_order_breach_pct * 100,  unit: "%", neutral: true, decimals: 1 },
+          { label: "Avg Breach Position (0=first, 1=last)",    pre: preAgg.avg_breach_position,          post: postAgg.avg_breach_position,          neutral: true, decimals: 2 },
+        ]} />
+      </div>
+
+      {/* Order Timeline */}
       <div>
-        <SectionHeader>Warehouse Order Timeline · DP Orders · Avg Mins per Stage</SectionHeader>
+        <div className="flex items-center justify-between mb-3">
+          <SectionHeader>Order Timeline · Avg Mins per Stage</SectionHeader>
+          <div className="flex gap-1.5 mb-3">
+            <button className={typeBtnCls("dp")}        onClick={() => setTimelineType("dp")}>DP</button>
+            <button className={typeBtnCls("express")}   onClick={() => setTimelineType("express")}>Express</button>
+            <button className={typeBtnCls("scheduled")} onClick={() => setTimelineType("scheduled")}>Scheduled</button>
+          </div>
+        </div>
         <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={timelineData} margin={{ top: 4, right: 16, left: -8, bottom: 0 }} barGap={4}>

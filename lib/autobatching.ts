@@ -76,6 +76,47 @@ export interface RawDay {
   dp_tl_picked_to_packed_cnt: number;
   dp_tl_packed_to_dispatched_sum: number;
   dp_tl_packed_to_dispatched_cnt: number;
+
+  // DP last-mile timeline
+  dp_tl_dispatch_to_ofd_sum: number;
+  dp_tl_dispatch_to_ofd_cnt: number;
+  dp_tl_ofd_to_rdl_sum: number;
+  dp_tl_ofd_to_rdl_cnt: number;
+
+  // Express warehouse + last-mile timeline
+  express_tl_created_to_picked_sum: number;
+  express_tl_created_to_picked_cnt: number;
+  express_tl_picked_to_packed_sum: number;
+  express_tl_picked_to_packed_cnt: number;
+  express_tl_packed_to_dispatched_sum: number;
+  express_tl_packed_to_dispatched_cnt: number;
+  express_tl_dispatch_to_ofd_sum: number;
+  express_tl_dispatch_to_ofd_cnt: number;
+  express_tl_ofd_to_rdl_sum: number;
+  express_tl_ofd_to_rdl_cnt: number;
+
+  // Scheduled last-mile timeline
+  sched_tl_allotted_to_accepted_sum: number;
+  sched_tl_allotted_to_accepted_cnt: number;
+  sched_tl_accepted_to_dispatched_sum: number;
+  sched_tl_accepted_to_dispatched_cnt: number;
+  sched_tl_dispatch_to_ofd_sum: number;
+  sched_tl_dispatch_to_ofd_cnt: number;
+  sched_tl_ofd_to_rdl_sum: number;
+  sched_tl_ofd_to_rdl_cnt: number;
+
+  // Batching by order type (from SLA query)
+  dp_batched: number;
+  express_batched: number;
+  scheduled_batched: number;
+
+  // Trip-level SLA
+  trip_sla_batched_trips: number;
+  trip_sla_breached_trips: number;
+  trip_sla_first_order_breach: number;
+  trip_sla_last_order_breach: number;
+  trip_sla_breach_pos_sum: number;
+  trip_sla_breach_pos_cnt: number;
 }
 
 export interface AutobatchingData {
