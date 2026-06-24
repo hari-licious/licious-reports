@@ -2,7 +2,7 @@
   "hub": "PSN",
   "pre_range": "2026-06-10 to 2026-06-16",
   "post_range": "2026-06-18 to 2026-06-23",
-  "generated_at": "2026-06-24T16:07:44.862162",
+  "generated_at": "2026-06-24T16:51:27.532392",
   "days": [
     {
       "date": "2026-06-10",
@@ -514,7 +514,7 @@
       "dp_tl_packed_to_dispatched_sum": 475.5,
       "dp_tl_packed_to_dispatched_cnt": 252,
       "hub": "PSN",
-      "period": "post"
+      "period": "gap"
     },
     {
       "date": "2026-06-18",

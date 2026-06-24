@@ -21,8 +21,6 @@ interface Aggregated {
   total_orders: number;
   avg_daily_orders: number;
   avg_daily_riders: number;
-  dispatched_licious_pct: number;
-  dispatched_3p_pct: number;
   batched_orders_pct: number;
   avg_orders_per_trip: number;
   single_order_trips_pct: number;
@@ -47,8 +45,7 @@ function div(num: number, den: number): number {
 function aggregate(days: RawDay[]): Aggregated {
   const zero: Aggregated = {
     num_days: 0, total_orders: 0, avg_daily_orders: 0, avg_daily_riders: 0,
-    dispatched_licious_pct: 0, dispatched_3p_pct: 0, batched_orders_pct: 0,
-    avg_orders_per_trip: 0, single_order_trips_pct: 0,
+    batched_orders_pct: 0, avg_orders_per_trip: 0, single_order_trips_pct: 0,
     avg_orders_per_de: 0, orders_per_login_hour: 0, trips_per_de: 0,
     overall_sla_pct: 0, scheduled_sla_pct: 0, express_sla_pct: 0,
     dp_sla_pct: 0, p3_sla_pct: 0, avg_breach_mins: 0,
@@ -58,13 +55,12 @@ function aggregate(days: RawDay[]): Aggregated {
 
   const n = days.length;
   const total_orders         = days.reduce((s, d) => s + (d.total_orders ?? 0), 0);
-  const dispatched_licious   = days.reduce((s, d) => s + (d.dispatched_licious ?? 0), 0);
-  const dispatched_3p        = days.reduce((s, d) => s + (d.dispatched_3p ?? 0), 0);
   const total_licious_disp   = days.reduce((s, d) => s + (d.total_licious_dispatched ?? 0), 0);
   const total_orders_batched = days.reduce((s, d) => s + (d.total_orders_batched ?? 0), 0);
   const total_trips          = days.reduce((s, d) => s + (d.total_trips ?? 0), 0);
   const single_order_trips   = days.reduce((s, d) => s + (d.single_order_trips ?? 0), 0);
   const total_login_hrs      = days.reduce((s, d) => s + (d.total_login_hrs ?? 0), 0);
+  const total_de_hc          = days.reduce((s, d) => s + (d.de_hc ?? 0), 0);
   const orders_with_rdl      = days.reduce((s, d) => s + (d.orders_with_rdl ?? 0), 0);
   const on_time_orders       = days.reduce((s, d) => s + (d.on_time_orders ?? 0), 0);
   const breach_mins_sum      = days.reduce((s, d) => s + (d.breach_mins_sum ?? 0), 0);
@@ -77,30 +73,23 @@ function aggregate(days: RawDay[]): Aggregated {
   const dp_on_time           = days.reduce((s, d) => s + (d.dp_on_time ?? 0), 0);
   const p3_delivered         = days.reduce((s, d) => s + (d.p3_delivered ?? 0), 0);
   const p3_on_time           = days.reduce((s, d) => s + (d.p3_on_time ?? 0), 0);
-  const dp_c2p_sum  = days.reduce((s, d) => s + (d.dp_tl_created_to_picked_sum ?? 0), 0);
-  const dp_c2p_cnt  = days.reduce((s, d) => s + (d.dp_tl_created_to_picked_cnt ?? 0), 0);
-  const dp_p2p_sum  = days.reduce((s, d) => s + (d.dp_tl_picked_to_packed_sum ?? 0), 0);
-  const dp_p2p_cnt  = days.reduce((s, d) => s + (d.dp_tl_picked_to_packed_cnt ?? 0), 0);
-  const dp_p2d_sum  = days.reduce((s, d) => s + (d.dp_tl_packed_to_dispatched_sum ?? 0), 0);
-  const dp_p2d_cnt  = days.reduce((s, d) => s + (d.dp_tl_packed_to_dispatched_cnt ?? 0), 0);
-
-  const total_de_hc       = days.reduce((s, d) => s + (d.de_hc ?? 0), 0);
-  const avg_daily_riders  = div(total_de_hc, n);
-  const avg_orders_per_de = div(total_licious_disp, total_de_hc);
-  const trips_per_de      = div(total_trips, total_de_hc);
+  const dp_c2p_sum = days.reduce((s, d) => s + (d.dp_tl_created_to_picked_sum ?? 0), 0);
+  const dp_c2p_cnt = days.reduce((s, d) => s + (d.dp_tl_created_to_picked_cnt ?? 0), 0);
+  const dp_p2p_sum = days.reduce((s, d) => s + (d.dp_tl_picked_to_packed_sum ?? 0), 0);
+  const dp_p2p_cnt = days.reduce((s, d) => s + (d.dp_tl_picked_to_packed_cnt ?? 0), 0);
+  const dp_p2d_sum = days.reduce((s, d) => s + (d.dp_tl_packed_to_dispatched_sum ?? 0), 0);
+  const dp_p2d_cnt = days.reduce((s, d) => s + (d.dp_tl_packed_to_dispatched_cnt ?? 0), 0);
 
   return {
     num_days: n, total_orders,
     avg_daily_orders:                 div(total_orders, n),
-    avg_daily_riders,
-    dispatched_licious_pct:           div(dispatched_licious, total_orders),
-    dispatched_3p_pct:                div(dispatched_3p, total_orders),
+    avg_daily_riders:                 div(total_de_hc, n),
     batched_orders_pct:               div(total_orders_batched, total_licious_disp),
     avg_orders_per_trip:              div(total_licious_disp, total_trips),
     single_order_trips_pct:           div(single_order_trips, total_trips),
-    avg_orders_per_de,
+    avg_orders_per_de:                div(total_licious_disp, total_de_hc),
     orders_per_login_hour:            div(total_orders, total_login_hrs),
-    trips_per_de,
+    trips_per_de:                     div(total_trips, total_de_hc),
     overall_sla_pct:                  div(on_time_orders, orders_with_rdl),
     scheduled_sla_pct:                div(scheduled_on_time, scheduled_with_rdl),
     express_sla_pct:                  div(express_on_time, express_with_rdl),
@@ -116,7 +105,7 @@ function aggregate(days: RawDay[]): Aggregated {
 // ── MetricCard ────────────────────────────────────────────────────────────────
 
 function fmt(v: number, decimals = 1, unit = ""): string {
-  if (!isFinite(v)) return "—";
+  if (!isFinite(v) || v === 0) return "—";
   return `${v.toFixed(decimals)}${unit}`;
 }
 
@@ -125,33 +114,44 @@ function MetricCard({ label, pre, post, unit, higherIsBetter, neutral, decimals 
   higherIsBetter?: boolean; neutral?: boolean; decimals?: number;
 }) {
   const delta    = post - pre;
-  const absDelta = Math.abs(delta);
   const pctDelta = pre !== 0 ? (delta / Math.abs(pre)) * 100 : 0;
   const isGood   = neutral ? null : higherIsBetter ? delta > 0 : delta < 0;
   const sign     = delta >= 0 ? "+" : "−";
-  const arrow    = delta >= 0 ? "↑" : "↓";
+  const u        = unit ?? "";
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">{label}</p>
-      <div className="flex items-end gap-4 mb-3">
+    <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+      <p className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase mb-3">{label}</p>
+      <div className={`grid ${neutral ? "grid-cols-2" : "grid-cols-3"} gap-2`}>
         <div>
-          <p className="text-xs text-gray-400 mb-0.5">Pre</p>
-          <p className="text-xl font-semibold text-gray-500">{fmt(pre, decimals, unit ?? "")}</p>
+          <p className="text-[10px] text-gray-400 mb-1">Pre</p>
+          <p className="text-base font-semibold text-gray-500 tabular-nums">{fmt(pre, decimals, u)}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-400 mb-0.5">Post</p>
-          <p className="text-2xl font-bold text-gray-900">{fmt(post, decimals, unit ?? "")}</p>
+          <p className="text-[10px] text-gray-400 mb-1">Post</p>
+          <p className="text-base font-bold text-gray-900 tabular-nums">{fmt(post, decimals, u)}</p>
         </div>
+        {!neutral && (
+          <div>
+            <p className="text-[10px] text-gray-400 mb-1">Change</p>
+            <p className={`text-base font-semibold tabular-nums ${isGood ? "text-green-600" : "text-red-500"}`}>
+              {sign}{fmt(Math.abs(delta), decimals, u)}
+            </p>
+            <p className={`text-[10px] mt-0.5 ${isGood ? "text-green-500" : "text-red-400"}`}>
+              {sign}{Math.abs(pctDelta).toFixed(1)}%
+            </p>
+          </div>
+        )}
       </div>
-      {!neutral && (
-        <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
-          isGood ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
-        }`}>
-          {arrow} {sign}{fmt(absDelta, decimals, unit ?? "")} ({sign}{Math.abs(pctDelta).toFixed(1)}%)
-        </span>
-      )}
     </div>
+  );
+}
+
+// ── Section header ────────────────────────────────────────────────────────────
+
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-sm font-semibold text-gray-700 mb-3">{children}</h2>
   );
 }
 
@@ -161,16 +161,14 @@ function CompareStat({ label, preVal, postVal, warn }: {
   label: string; preVal: string; postVal: string; warn: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase">{label}</p>
-      <div className="flex items-center gap-3">
-        <span className="text-sm text-gray-500">Pre: <span className="text-gray-900 font-medium">{preVal}</span></span>
+    <div>
+      <p className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase mb-1">{label}</p>
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-gray-500">Pre: <span className="text-gray-800 font-medium">{preVal}</span></span>
         <span className="text-gray-300">·</span>
-        <span className="text-sm text-gray-500">Post: <span className="text-gray-900 font-medium">{postVal}</span></span>
+        <span className="text-sm text-gray-500">Post: <span className="text-gray-800 font-medium">{postVal}</span></span>
         {warn && (
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">
-            ⚠ &gt;25% diff
-          </span>
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">⚠ &gt;25%</span>
         )}
       </div>
     </div>
@@ -182,7 +180,7 @@ function CompareStat({ label, preVal, postVal, warn }: {
 const tooltipStyle = {
   backgroundColor: "#fff",
   border: "1px solid #E5E7EB",
-  borderRadius: "12px",
+  borderRadius: "10px",
   boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
   fontSize: 12,
   color: "#111827",
@@ -204,8 +202,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const [postEnd,   setPostEnd]   = useState(initPostDays[initPostDays.length - 1]?.date ?? "");
 
   const availableHubs = useMemo(
-    () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(),
-    [days]
+    () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
   );
   const hubDays     = useMemo(() => days.filter(d => (d.hub ?? hub) === selectedHub), [days, selectedHub, hub]);
   const allPreDays  = useMemo(() => hubDays.filter(d => d.period === "pre"),  [hubDays]);
@@ -226,62 +223,58 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const ridersWarn = preAgg.avg_daily_riders > 0
     && Math.abs(postAgg.avg_daily_riders - preAgg.avg_daily_riders) / preAgg.avg_daily_riders > 0.25;
 
+  const preTotal  = preAgg.avg_dp_created_to_picked_mins  + preAgg.avg_dp_picked_to_packed_mins  + preAgg.avg_dp_packed_to_dispatched_mins;
+  const postTotal = postAgg.avg_dp_created_to_picked_mins + postAgg.avg_dp_picked_to_packed_mins + postAgg.avg_dp_packed_to_dispatched_mins;
   const timelineData = [
-    { stage: "Created → Picked",    pre: parseFloat(preAgg.avg_dp_created_to_picked_mins.toFixed(1)),    post: parseFloat(postAgg.avg_dp_created_to_picked_mins.toFixed(1)) },
-    { stage: "Picked → Packed",     pre: parseFloat(preAgg.avg_dp_picked_to_packed_mins.toFixed(1)),     post: parseFloat(postAgg.avg_dp_picked_to_packed_mins.toFixed(1)) },
-    { stage: "Packed → Dispatched", pre: parseFloat(preAgg.avg_dp_packed_to_dispatched_mins.toFixed(1)), post: parseFloat(postAgg.avg_dp_packed_to_dispatched_mins.toFixed(1)) },
-    {
-      stage: "Total",
-      pre:  parseFloat((preAgg.avg_dp_created_to_picked_mins  + preAgg.avg_dp_picked_to_packed_mins  + preAgg.avg_dp_packed_to_dispatched_mins).toFixed(1)),
-      post: parseFloat((postAgg.avg_dp_created_to_picked_mins + postAgg.avg_dp_picked_to_packed_mins + postAgg.avg_dp_packed_to_dispatched_mins).toFixed(1)),
-    },
+    { stage: "Created→Picked",    pre: +preAgg.avg_dp_created_to_picked_mins.toFixed(1),    post: +postAgg.avg_dp_created_to_picked_mins.toFixed(1) },
+    { stage: "Picked→Packed",     pre: +preAgg.avg_dp_picked_to_packed_mins.toFixed(1),     post: +postAgg.avg_dp_picked_to_packed_mins.toFixed(1) },
+    { stage: "Packed→Dispatched", pre: +preAgg.avg_dp_packed_to_dispatched_mins.toFixed(1), post: +postAgg.avg_dp_packed_to_dispatched_mins.toFixed(1) },
+    { stage: "Total",             pre: +preTotal.toFixed(1),                                post: +postTotal.toFixed(1) },
   ];
 
   const generatedDate = generated_at ? generated_at.slice(0, 10) : "—";
-  const inputCls = "bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-gray-400 shadow-sm";
+  const inputCls = "bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400 shadow-sm";
 
   return (
-    <div className="min-h-screen bg-zinc-100 p-8">
+    <div className="min-h-screen bg-zinc-100 p-6">
 
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-8">
+      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900" style={{ fontFamily: "var(--font-space-grotesk)" }}>
             Autobatching v2
           </h1>
-          <p className="text-sm text-gray-500 mt-2">Data as of <span className="text-gray-700 font-medium">{generatedDate}</span></p>
+          <p className="text-sm text-gray-500 mt-1">Data as of <span className="text-gray-700 font-medium">{generatedDate}</span></p>
         </div>
 
-        {/* Controls */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase w-12">Hub</span>
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-10">Hub</span>
             <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
               {availableHubs.length > 0
                 ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
-                : <option value={hub}>{hub}</option>
-              }
+                : <option value={hub}>{hub}</option>}
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase w-12">Pre</span>
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-10">Pre</span>
             <input type="date" value={preStart} min={preMin} max={preEnd}   onChange={e => setPreStart(e.target.value)} className={inputCls} />
-            <span className="text-gray-300">→</span>
+            <span className="text-gray-300 text-sm">→</span>
             <input type="date" value={preEnd}   min={preStart} max={preMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase w-12">Post</span>
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-10">Post</span>
             <input type="date" value={postStart} min={postMin} max={postEnd}   onChange={e => setPostStart(e.target.value)} className={inputCls} />
-            <span className="text-gray-300">→</span>
+            <span className="text-gray-300 text-sm">→</span>
             <input type="date" value={postEnd}   min={postStart} max={postMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
           </div>
         </div>
       </div>
 
       {/* Comparability */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm mb-6">
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-4">Comparability</p>
-        <div className="flex flex-col sm:flex-row gap-6">
+      <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm mb-4">
+        <SectionHeader>Comparability</SectionHeader>
+        <div className="flex flex-col sm:flex-row gap-5">
           <CompareStat label="Days"             preVal={String(preAgg.num_days)}            postVal={String(postAgg.num_days)}            warn={false} />
           <CompareStat label="Avg Daily Orders" preVal={preAgg.avg_daily_orders.toFixed(0)} postVal={postAgg.avg_daily_orders.toFixed(0)} warn={ordersWarn} />
           <CompareStat label="Avg Daily DEs"    preVal={preAgg.avg_daily_riders.toFixed(0)} postVal={postAgg.avg_daily_riders.toFixed(0)} warn={ridersWarn} />
@@ -289,9 +282,9 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       </div>
 
       {/* Batch Metrics */}
-      <div className="mb-6">
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-4">Batch Metrics — Success Signal</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="mb-4">
+        <SectionHeader>Batch Metrics — Success Signal</SectionHeader>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <MetricCard label="Batched Orders %"        pre={preAgg.batched_orders_pct * 100}    post={postAgg.batched_orders_pct * 100}    unit="%" higherIsBetter decimals={1} />
           <MetricCard label="Avg Orders / Trip"       pre={preAgg.avg_orders_per_trip}          post={postAgg.avg_orders_per_trip}          higherIsBetter decimals={2} />
           <MetricCard label="Single-Order Trips %"    pre={preAgg.single_order_trips_pct * 100} post={postAgg.single_order_trips_pct * 100} unit="%" higherIsBetter={false} decimals={1} />
@@ -302,11 +295,9 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       </div>
 
       {/* SLA */}
-      <div className="mb-6">
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-4">
-          SLA — Check Signal · Licious at RDL · 3P at Delivered
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="mb-4">
+        <SectionHeader>SLA — Check Signal · Licious at RDL · 3P at Delivered</SectionHeader>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <MetricCard label="Overall SLA %"           pre={preAgg.overall_sla_pct * 100}   post={postAgg.overall_sla_pct * 100}   unit="%" higherIsBetter decimals={1} />
           <MetricCard label="DP SLA %"                pre={preAgg.dp_sla_pct * 100}        post={postAgg.dp_sla_pct * 100}        unit="%" higherIsBetter decimals={1} />
           <MetricCard label="Express SLA %"           pre={preAgg.express_sla_pct * 100}   post={postAgg.express_sla_pct * 100}   unit="%" higherIsBetter decimals={1} />
@@ -318,19 +309,17 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
 
       {/* Warehouse Order Timeline */}
       <div>
-        <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-4">
-          Warehouse Order Timeline · DP Orders · Avg Mins per Stage
-        </p>
-        <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-          <ResponsiveContainer width="100%" height={280}>
+        <SectionHeader>Warehouse Order Timeline · DP Orders · Avg Mins per Stage</SectionHeader>
+        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+          <ResponsiveContainer width="100%" height={260}>
             <BarChart data={timelineData} margin={{ top: 4, right: 16, left: -8, bottom: 0 }} barGap={4}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-              <XAxis dataKey="stage" tick={{ fontSize: 12, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="stage" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
               <YAxis tickFormatter={v => `${v}m`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)} mins`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
-              <Bar dataKey="pre"  name="Pre"  fill={PRE_COLOR}  radius={[4, 4, 0, 0]} barSize={32} />
-              <Bar dataKey="post" name="Post" fill={POST_COLOR} radius={[4, 4, 0, 0]} barSize={32} />
+              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 10, color: "#6B7280" }} />
+              <Bar dataKey="pre"  name="Pre"  fill={PRE_COLOR}  radius={[4, 4, 0, 0]} barSize={28} />
+              <Bar dataKey="post" name="Post" fill={POST_COLOR} radius={[4, 4, 0, 0]} barSize={28} />
             </BarChart>
           </ResponsiveContainer>
         </div>
