@@ -297,8 +297,8 @@ const tooltipStyle = {
 // ── Glossary ──────────────────────────────────────────────────────────────────
 
 const GLOSSARY = [
-  { term: "DP (Dynamic Promise)",          definition: "Express order with a ≤20 min promise window. Identified by wms_order_type = 'EXPRESS' AND expressminutes <= 20." },
-  { term: "Express",                        definition: "Express order with a >20 min promise window (wms_order_type = 'EXPRESS' AND expressminutes > 20)." },
+  { term: "DP (Dynamic Promise)",          definition: "Express order with a promise window under 30 min. Identified by wms_order_type = 'EXPRESS' AND expressminutes < 30." },
+  { term: "Express",                        definition: "Express order with a promise window of 30 min or more (wms_order_type = 'EXPRESS' AND expressminutes >= 30)." },
   { term: "Scheduled",                      definition: "Scheduled slot order (wms_order_type = 'SCHEDULED'). Created the day before the promise date in WMS." },
   { term: "Batched Orders %",               definition: "Orders that left the hub on a trip with >1 order, as a % of all Licious-dispatched orders. Formula: batched_orders / total_licious_dispatched." },
   { term: "Avg Orders / Trip",              definition: "Total Licious-dispatched orders ÷ total trips. Higher = more efficient batching." },
