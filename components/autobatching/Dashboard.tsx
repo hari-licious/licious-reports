@@ -297,8 +297,8 @@ const tooltipStyle = {
 // ── Glossary ──────────────────────────────────────────────────────────────────
 
 const GLOSSARY = [
-  { term: "DP (Dynamic Promise)",          definition: "Express order with a ≤20 min promise window. Identified by wms_order_type = 'EXPRESS' AND expressminutes < 30." },
-  { term: "Express",                        definition: "Express order with a >30 min promise window (wms_order_type = 'EXPRESS' AND expressminutes ≥ 30)." },
+  { term: "DP (Dynamic Promise)",          definition: "Express order with a ≤20 min promise window. Identified by wms_order_type = 'EXPRESS' AND expressminutes <= 20." },
+  { term: "Express",                        definition: "Express order with a >20 min promise window (wms_order_type = 'EXPRESS' AND expressminutes > 20)." },
   { term: "Scheduled",                      definition: "Scheduled slot order (wms_order_type = 'SCHEDULED'). Created the day before the promise date in WMS." },
   { term: "Batched Orders %",               definition: "Orders that left the hub on a trip with >1 order, as a % of all Licious-dispatched orders. Formula: batched_orders / total_licious_dispatched." },
   { term: "Avg Orders / Trip",              definition: "Total Licious-dispatched orders ÷ total trips. Higher = more efficient batching." },
@@ -326,17 +326,55 @@ const GLOSSARY = [
   { term: "Gap Day (Jun 17)",              definition: "2026-06-17 is tagged 'gap' and excluded from both pre and post aggregations to avoid partial-day contamination." },
 ];
 
+// ── Smart date defaults ───────────────────────────────────────────────────────
+// Post = all post days (Jun 18 → yesterday). Pre = same count, same day-of-week
+// alignment: preEnd = most recent pre day with same DOW as postEnd;
+// preStart = postCount days back from preEnd.
+function smartDateDefaults(preDays: RawDay[], postDays: RawDay[]) {
+  if (preDays.length === 0 || postDays.length === 0) return {
+    preStart:  preDays[0]?.date  ?? "",
+    preEnd:    preDays[preDays.length - 1]?.date  ?? "",
+    postStart: postDays[0]?.date ?? "",
+    postEnd:   postDays[postDays.length - 1]?.date ?? "",
+  };
+
+  const postStart = postDays[0].date;
+  const postEnd   = postDays[postDays.length - 1].date;
+  const postCount = postDays.length;
+  const postEndDow = new Date(postEnd + "T00:00:00").getDay(); // 0=Sun…6=Sat
+
+  // Walk backwards through pre days to find the most recent one matching postEnd DOW
+  let preEndIdx = preDays.length - 1;
+  while (preEndIdx >= 0 && new Date(preDays[preEndIdx].date + "T00:00:00").getDay() !== postEndDow) {
+    preEndIdx--;
+  }
+
+  if (preEndIdx < 0) {
+    // No DOW match found — fall back to full pre range
+    return { preStart: preDays[0].date, preEnd: preDays[preDays.length - 1].date, postStart, postEnd };
+  }
+
+  const preStartIdx = Math.max(0, preEndIdx - postCount + 1);
+  return {
+    preStart:  preDays[preStartIdx].date,
+    preEnd:    preDays[preEndIdx].date,
+    postStart,
+    postEnd,
+  };
+}
+
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export default function Dashboard({ hub, generated_at, days }: Props) {
   const initPreDays  = days.filter(d => d.period === "pre");
   const initPostDays = days.filter(d => d.period === "post");
+  const defaults     = smartDateDefaults(initPreDays, initPostDays);
 
   const [selectedHub,   setSelectedHub]   = useState<string>(days[0]?.hub ?? hub);
-  const [preStart,      setPreStart]      = useState(initPreDays[0]?.date ?? "");
-  const [preEnd,        setPreEnd]        = useState(initPreDays[initPreDays.length - 1]?.date ?? "");
-  const [postStart,     setPostStart]     = useState(initPostDays[0]?.date ?? "");
-  const [postEnd,       setPostEnd]       = useState(initPostDays[initPostDays.length - 1]?.date ?? "");
+  const [preStart,      setPreStart]      = useState(defaults.preStart);
+  const [preEnd,        setPreEnd]        = useState(defaults.preEnd);
+  const [postStart,     setPostStart]     = useState(defaults.postStart);
+  const [postEnd,       setPostEnd]       = useState(defaults.postEnd);
   const [timelineType,  setTimelineType]  = useState<"dp" | "express" | "scheduled">("dp");
   const [activeTab,     setActiveTab]     = useState<"metrics" | "glossary">("metrics");
 
