@@ -3,6 +3,7 @@ import path from "path";
 
 export interface RawDay {
   date: string;
+  hub: string;
   period: "pre" | "post";
 
   // Orders query
@@ -67,6 +68,14 @@ export interface RawDay {
   lastmile_cnt: number;
   total_to_rdl_sum: number;
   total_to_rdl_cnt: number;
+
+  // DP warehouse timeline (created→picked, picked→packed, packed→dispatched)
+  dp_tl_created_to_picked_sum: number;
+  dp_tl_created_to_picked_cnt: number;
+  dp_tl_picked_to_packed_sum: number;
+  dp_tl_picked_to_packed_cnt: number;
+  dp_tl_packed_to_dispatched_sum: number;
+  dp_tl_packed_to_dispatched_cnt: number;
 }
 
 export interface AutobatchingData {
