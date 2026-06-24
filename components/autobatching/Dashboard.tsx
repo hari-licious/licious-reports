@@ -84,13 +84,10 @@ function aggregate(days: RawDay[]): Aggregated {
   const dp_p2d_sum  = days.reduce((s, d) => s + (d.dp_tl_packed_to_dispatched_sum ?? 0), 0);
   const dp_p2d_cnt  = days.reduce((s, d) => s + (d.dp_tl_packed_to_dispatched_cnt ?? 0), 0);
 
-  const avg_daily_riders  = div(days.reduce((s, d) => s + (d.de_hc ?? 0), 0), n);
-  const opde_days         = days.filter(d => (d.de_hc ?? 0) > 0);
-  const avg_orders_per_de = opde_days.length > 0
-    ? div(opde_days.reduce((s, d) => s + div(d.total_licious_dispatched ?? 0, d.de_hc), 0), opde_days.length) : 0;
-  const tpde_days         = days.filter(d => (d.de_hc ?? 0) > 0);
-  const trips_per_de      = tpde_days.length > 0
-    ? div(tpde_days.reduce((s, d) => s + div(d.total_trips ?? 0, d.de_hc), 0), tpde_days.length) : 0;
+  const total_de_hc       = days.reduce((s, d) => s + (d.de_hc ?? 0), 0);
+  const avg_daily_riders  = div(total_de_hc, n);
+  const avg_orders_per_de = div(total_licious_disp, total_de_hc);
+  const trips_per_de      = div(total_trips, total_de_hc);
 
   return {
     num_days: n, total_orders,
