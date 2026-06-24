@@ -159,7 +159,7 @@ function MetricCard({
 
   return (
     <div className="bg-[#242424] rounded-2xl p-5 border border-white/5">
-      <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase mb-3">{label}</p>
+      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase mb-3">{label}</p>
       <div className="flex items-end gap-4 mb-3">
         <div>
           <p className="text-xs text-gray-500 mb-0.5">Pre</p>
@@ -190,7 +190,7 @@ function CompareStat({ label, preVal, postVal, warn }: {
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase">{label}</p>
+      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase">{label}</p>
       <div className="flex items-center gap-3">
         <span className="text-sm text-gray-400">Pre: <span className="text-white font-medium">{preVal}</span></span>
         <span className="text-gray-600">·</span>
@@ -271,9 +271,14 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
     && Math.abs(postAgg.avg_daily_riders - preAgg.avg_daily_riders) / preAgg.avg_daily_riders > 0.25;
 
   const timelineData = [
-    { stage: "Created → Picked",      pre: parseFloat(preAgg.avg_dp_created_to_picked_mins.toFixed(1)),    post: parseFloat(postAgg.avg_dp_created_to_picked_mins.toFixed(1)) },
-    { stage: "Picked → Packed",       pre: parseFloat(preAgg.avg_dp_picked_to_packed_mins.toFixed(1)),     post: parseFloat(postAgg.avg_dp_picked_to_packed_mins.toFixed(1)) },
-    { stage: "Packed → Dispatched",   pre: parseFloat(preAgg.avg_dp_packed_to_dispatched_mins.toFixed(1)), post: parseFloat(postAgg.avg_dp_packed_to_dispatched_mins.toFixed(1)) },
+    { stage: "Created → Picked",    pre: parseFloat(preAgg.avg_dp_created_to_picked_mins.toFixed(1)),    post: parseFloat(postAgg.avg_dp_created_to_picked_mins.toFixed(1)) },
+    { stage: "Picked → Packed",     pre: parseFloat(preAgg.avg_dp_picked_to_packed_mins.toFixed(1)),     post: parseFloat(postAgg.avg_dp_picked_to_packed_mins.toFixed(1)) },
+    { stage: "Packed → Dispatched", pre: parseFloat(preAgg.avg_dp_packed_to_dispatched_mins.toFixed(1)), post: parseFloat(postAgg.avg_dp_packed_to_dispatched_mins.toFixed(1)) },
+    {
+      stage: "Total",
+      pre:  parseFloat((preAgg.avg_dp_created_to_picked_mins  + preAgg.avg_dp_picked_to_packed_mins  + preAgg.avg_dp_packed_to_dispatched_mins).toFixed(1)),
+      post: parseFloat((postAgg.avg_dp_created_to_picked_mins + postAgg.avg_dp_picked_to_packed_mins + postAgg.avg_dp_packed_to_dispatched_mins).toFixed(1)),
+    },
   ];
 
   const generatedDate = generated_at ? generated_at.slice(0, 10) : "—";
@@ -286,9 +291,10 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-8">
         <div>
-          <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase mb-1">Operations</p>
-          <h1 className="text-2xl font-bold text-white">Autobatching v2</h1>
-          <p className="text-sm text-gray-500 mt-1">Data as of: {generatedDate}</p>
+          <h1 className="text-4xl font-bold tracking-tight text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+            Autobatching v2
+          </h1>
+          <p className="text-sm text-gray-500 mt-2">Data as of <span className="text-gray-400 font-medium">{generatedDate}</span></p>
         </div>
 
         {/* Controls */}
@@ -334,7 +340,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
 
       {/* Section 1: Comparability */}
       <div className="bg-[#242424] rounded-2xl p-5 border border-white/5 mb-6">
-        <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase mb-4">Comparability</p>
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase mb-4">Comparability</p>
         <div className="flex flex-col sm:flex-row gap-6">
           <CompareStat label="Days"             preVal={String(preAgg.num_days)}              postVal={String(postAgg.num_days)}              warn={false} />
           <CompareStat label="Avg Daily Orders" preVal={preAgg.avg_daily_orders.toFixed(0)}   postVal={postAgg.avg_daily_orders.toFixed(0)}   warn={ordersWarn} />
@@ -344,7 +350,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
 
       {/* Section 2: Batch Metrics */}
       <div className="mb-6">
-        <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase mb-4">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase mb-4">
           Batch Metrics — Success Signal
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -359,7 +365,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
 
       {/* Section 3: SLA */}
       <div className="mb-6">
-        <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase mb-4">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase mb-4">
           SLA — Check Signal · Licious at RDL · 3P at Delivered
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -374,7 +380,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
 
       {/* Section 4: Warehouse Order Timeline */}
       <div>
-        <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase mb-4">
+        <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-500 uppercase mb-4">
           Warehouse Order Timeline · DP Orders · Avg Mins per Stage
         </p>
         <div className="bg-[#242424] rounded-2xl p-6 border border-white/5">
