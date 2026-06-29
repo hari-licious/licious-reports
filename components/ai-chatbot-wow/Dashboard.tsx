@@ -1,0 +1,288 @@
+"use client";
+
+import {
+  LineChart, Line, XAxis, YAxis,
+  CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+} from "recharts";
+import { WowRow } from "@/lib/ai-chatbot-wow";
+
+interface Props {
+  generatedAt: string;
+  rows: WowRow[];
+}
+
+const CTRL  = "#94A3B8";
+const TEST  = "#16A34A";
+const WEEKS = ["W1 Jun03-08", "W2 Jun09-15", "W3 Jun16-22", "W4 Jun23-28*"];
+
+const tooltipStyle = {
+  backgroundColor: "#fff",
+  border: "1px solid #E5E7EB",
+  borderRadius: "12px",
+  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+  fontSize: 12,
+  color: "#111827",
+};
+
+function pct(v: number | null, decimals = 1): string {
+  if (v === null || v === undefined) return "—";
+  return `${(v * 100).toFixed(decimals)}%`;
+}
+
+function num(v: number): string {
+  return v.toLocaleString();
+}
+
+function KpiCard({ label, ctrlValue, testValue, ctrlSub, testSub, downIsGood }: {
+  label: string;
+  ctrlValue: string;
+  testValue: string;
+  ctrlSub?: string;
+  testSub?: string;
+  downIsGood?: boolean;
+}) {
+  return (
+    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">{label}</p>
+      <div className="flex gap-6">
+        <div>
+          <p className="text-xs text-gray-400 mb-1">Control</p>
+          <p className="text-2xl font-bold text-gray-900">{ctrlValue}</p>
+          {ctrlSub && <p className="text-xs text-gray-500 mt-1">{ctrlSub}</p>}
+        </div>
+        <div>
+          <p className="text-xs text-gray-400 mb-1">Test</p>
+          <p className="text-2xl font-bold text-gray-900">{testValue}</p>
+          {testSub && <p className="text-xs text-gray-500 mt-1">{testSub}</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SingleKpiCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">{label}</p>
+      <p className="text-3xl font-bold text-gray-900">{value}</p>
+      {sub && <p className="text-xs text-gray-500 mt-2">{sub}</p>}
+    </div>
+  );
+}
+
+function ChartCard({ title, caption, children }: { title: string; caption?: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-1">{title}</p>
+      {caption && <p className="text-xs text-gray-500 mb-4">{caption}</p>}
+      {children}
+    </div>
+  );
+}
+
+export default function Dashboard({ generatedAt, rows }: Props) {
+  const byWeekVariantBucket = (week: string, variant: string, bucket: string) =>
+    rows.find((r) => r.week === week && r.variant === variant && r.bucket === bucket);
+
+  // Build trend data per week
+  const trendData = WEEKS.map((w) => {
+    const cRest = byWeekVariantBucket(w, "control", "rest");
+    const cOi   = byWeekVariantBucket(w, "control", "otherIssues");
+    const tRest  = byWeekVariantBucket(w, "test", "rest");
+    const tMinl  = byWeekVariantBucket(w, "test", "minl");
+    const label  = w.replace(" ", "\n").split(" ")[0]; // "W1"
+    return {
+      week: label,
+      optinRate:   tRest?.optinRate    != null ? tRest.optinRate * 100    : null,
+      ctrlEsc:     cRest?.escalationRate != null ? cRest.escalationRate * 100 : null,
+      testEsc:     tRest?.escalationRate != null ? tRest.escalationRate * 100 : null,
+      ctrlGhO2c:   cOi?.ghO2c           != null ? cOi.ghO2c * 100           : null,
+      testGhO2c:   tMinl?.ghO2c         != null ? tMinl.ghO2c * 100         : null,
+      ctrlCsat:    cRest?.csat           != null ? cRest.csat * 100          : null,
+      testCsat:    tRest?.csat           != null ? tRest.csat * 100          : null,
+    };
+  });
+
+  // Latest week KPIs (W4)
+  const lastWeek = WEEKS[WEEKS.length - 1];
+  const w4cRest = byWeekVariantBucket(lastWeek, "control", "rest");
+  const w4cOi   = byWeekVariantBucket(lastWeek, "control", "otherIssues");
+  const w4tRest  = byWeekVariantBucket(lastWeek, "test", "rest");
+  const w4tMinl  = byWeekVariantBucket(lastWeek, "test", "minl");
+
+  // Summary table rows
+  const tableRows = WEEKS.map((w) => {
+    const cRest = byWeekVariantBucket(w, "control", "rest");
+    const cOi   = byWeekVariantBucket(w, "control", "otherIssues");
+    const tRest  = byWeekVariantBucket(w, "test", "rest");
+    const tMinl  = byWeekVariantBucket(w, "test", "minl");
+    return {
+      week: w.split(" ")[0],
+      ctrlConvos:   cRest?.totalConvos ?? 0,
+      testConvos:   tRest?.totalConvos ?? 0,
+      optinPct:     tRest?.optinRate ?? null,
+      ctrlEsc:      cRest?.escalationRate ?? null,
+      testEsc:      tRest?.escalationRate ?? null,
+      ctrlGhO2c:    cOi?.ghO2c ?? null,
+      testGhO2c:    tMinl?.ghO2c ?? null,
+      ctrlTotalO2c: cRest?.totalO2c ?? null,
+      testTotalO2c: tRest?.totalO2c ?? null,
+      ctrlCsat:     cRest?.csat ?? null,
+      testCsat:     tRest?.csat ?? null,
+    };
+  });
+
+  const isPending = generatedAt === "pending";
+
+  return (
+    <div className="min-h-screen bg-zinc-100 p-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1
+          className="text-4xl font-bold tracking-tight text-gray-900"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+        >
+          AI Chatbot — Week on Week
+        </h1>
+        <p className="text-sm text-gray-500 mt-2">
+          Guided Help (Control) vs AI Chatbot (Test) · Jun 3–28, 2026 · Ticket attributed to latest conversation before ticket timestamp
+        </p>
+        <span className={`inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full ${isPending ? "bg-amber-50 text-amber-600" : "bg-gray-100 text-gray-500"}`}>
+          {isPending ? "⏳ Data pending — run generate_wow_json.py after Trino completes" : `Last updated: ${generatedAt}`}
+        </span>
+      </div>
+
+      {/* KPI Cards — W4 snapshot */}
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Latest week (W4 Jun 23–28)</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <SingleKpiCard
+          label="Optin Rate"
+          value={pct(w4tRest?.optinRate ?? null)}
+          sub="Test / Rest bucket"
+        />
+        <KpiCard
+          label="Escalation %"
+          ctrlValue={pct(w4cRest?.escalationRate ?? null)}
+          testValue={pct(w4tRest?.escalationRate ?? null)}
+          ctrlSub="Rest bucket"
+          testSub="Rest bucket"
+          downIsGood
+        />
+        <KpiCard
+          label="GH O2C %"
+          ctrlValue={pct(w4cOi?.ghO2c ?? null)}
+          testValue={pct(w4tMinl?.ghO2c ?? null)}
+          ctrlSub="Other Issues"
+          testSub="MINL bucket"
+          downIsGood
+        />
+        <KpiCard
+          label="CSAT"
+          ctrlValue={pct(w4cRest?.csat ?? null)}
+          testValue={pct(w4tRest?.csat ?? null)}
+          ctrlSub="Rest bucket"
+          testSub="Rest bucket"
+        />
+      </div>
+
+      {/* WoW Trend Charts */}
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Week-on-week trends</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <ChartCard title="Optin Rate %" caption="Test / Rest bucket — % of GH conversations that opted into the AI chatbot">
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
+              <Line dataKey="optinRate" name="Optin Rate" stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        <ChartCard title="Escalation Rate %" caption="Control: pid26/27 clicked · Test: ESCALATION_INTENT · Rest bucket">
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
+              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Line dataKey="ctrlEsc" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
+              <Line dataKey="testEsc" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        <ChartCard title="GH O2C %" caption="Tickets / shipments · Control: Other Issues · Test: MINL bucket">
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
+              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Line dataKey="ctrlGhO2c" name="Control (Other Issues)" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
+              <Line dataKey="testGhO2c" name="Test (MINL)"            stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        <ChartCard title="CSAT" caption="Positive CSAT / CSAT responses · Rest bucket">
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
+              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Line dataKey="ctrlCsat" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
+              <Line dataKey="testCsat" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </div>
+
+      {/* Weekly Summary Table */}
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Full weekly breakdown</p>
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-gray-100">
+              <th className="text-left p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Week</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl Convos</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test Convos</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Optin %</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl Esc %</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test Esc %</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl GH O2C</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test GH O2C</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl Total O2C</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test Total O2C</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl CSAT</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test CSAT</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableRows.map((r, i) => (
+              <tr key={r.week} className={i % 2 === 0 ? "bg-white" : "bg-zinc-50"}>
+                <td className="p-4 font-semibold text-gray-900">{r.week}</td>
+                <td className="p-4 text-right text-gray-700">{num(r.ctrlConvos)}</td>
+                <td className="p-4 text-right text-gray-700">{num(r.testConvos)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.optinPct)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.ctrlEsc)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.testEsc)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.ctrlGhO2c)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.testGhO2c)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.ctrlTotalO2c)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.testTotalO2c)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.ctrlCsat)}</td>
+                <td className="p-4 text-right text-gray-700">{pct(r.testCsat)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

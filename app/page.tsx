@@ -24,6 +24,13 @@ export default function Home() {
             <p className="text-sm text-gray-500">Pre vs Post impact · Jun 2026</p>
           </div>
         </Link>
+        <Link href="/ai-chatbot-wow">
+          <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
+            <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">A/B Test</p>
+            <h2 className="text-lg font-bold text-gray-900 mb-1">AI Chatbot WoW</h2>
+            <p className="text-sm text-gray-500">Week-on-week metrics · Jun 3–28 2026</p>
+          </div>
+        </Link>
       </div>
     </div>
   );
