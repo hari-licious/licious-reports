@@ -11,9 +11,8 @@ interface Props {
   rows: WowRow[];
 }
 
-const CTRL  = "#94A3B8";
-const TEST  = "#16A34A";
-const WEEKS = ["W1 Jun03-08", "W2 Jun09-15", "W3 Jun16-22", "W4 Jun23-28*"];
+const CTRL = "#94A3B8";
+const TEST = "#16A34A";
 
 const tooltipStyle = {
   backgroundColor: "#fff",
@@ -81,6 +80,9 @@ function ChartCard({ title, caption, children }: { title: string; caption?: stri
 }
 
 export default function Dashboard({ generatedAt, rows }: Props) {
+  // Derive week order from data (JSON rows are already sorted by week)
+  const WEEKS = [...new Set(rows.map((r) => r.week))];
+
   const byWeekVariantBucket = (week: string, variant: string, bucket: string) =>
     rows.find((r) => r.week === week && r.variant === variant && r.bucket === bucket);
 
@@ -152,8 +154,8 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         </span>
       </div>
 
-      {/* KPI Cards — W4 snapshot */}
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Latest week (W4 Jun 23–28)</p>
+      {/* KPI Cards — latest week snapshot */}
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Latest week ({lastWeek})</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <SingleKpiCard
           label="Optin Rate"
