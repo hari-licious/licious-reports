@@ -127,8 +127,6 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       testEsc:      tRest?.escalationRate ?? null,
       ctrlGhO2c:    cOi?.ghO2c ?? null,
       testGhO2c:    tMinl?.ghO2c ?? null,
-      ctrlTotalO2c: cRest?.totalO2c ?? null,
-      testTotalO2c: tRest?.totalO2c ?? null,
       ctrlCsat:     cRest?.csat ?? null,
       testCsat:     tRest?.csat ?? null,
     };
@@ -259,8 +257,6 @@ export default function Dashboard({ generatedAt, rows }: Props) {
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test Esc %</th>
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl GH O2C</th>
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test GH O2C</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl Total O2C</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test Total O2C</th>
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl CSAT</th>
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test CSAT</th>
             </tr>
@@ -276,8 +272,6 @@ export default function Dashboard({ generatedAt, rows }: Props) {
                 <td className="p-4 text-right text-gray-700">{pct(r.testEsc)}</td>
                 <td className="p-4 text-right text-gray-700">{pct(r.ctrlGhO2c)}</td>
                 <td className="p-4 text-right text-gray-700">{pct(r.testGhO2c)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.ctrlTotalO2c)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.testTotalO2c)}</td>
                 <td className="p-4 text-right text-gray-700">{pct(r.ctrlCsat)}</td>
                 <td className="p-4 text-right text-gray-700">{pct(r.testCsat)}</td>
               </tr>

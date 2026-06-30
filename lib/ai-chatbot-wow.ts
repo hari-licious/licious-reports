@@ -9,9 +9,7 @@ export interface WowRow {
   totalConvos: number;
   aiOptin: number;
   ghShipments: number;
-  shipmentsPlaced: number;
   ghTickets: number;
-  totalTickets: number;
   escalations: number;
   csatConvos: number;
   positiveCsat: number;
@@ -20,7 +18,6 @@ export interface WowRow {
   controlSanity: number | null;
   escalationRate: number | null;
   ghO2c: number | null;
-  totalO2c: number | null;
   csatResponseRate: number | null;
   csatPositiveRate: number | null;
   csat: number | null;
