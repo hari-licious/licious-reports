@@ -112,25 +112,17 @@ export default function Dashboard({ generatedAt, rows }: Props) {
   const w4tRest  = byWeekVariantBucket(lastWeek, "test", "rest");
   const w4tMinl  = byWeekVariantBucket(lastWeek, "test", "minl");
 
-  // Summary table rows
-  const tableRows = WEEKS.map((w) => {
-    const cRest = byWeekVariantBucket(w, "control", "rest");
-    const cOi   = byWeekVariantBucket(w, "control", "otherIssues");
-    const tRest  = byWeekVariantBucket(w, "test", "rest");
-    const tMinl  = byWeekVariantBucket(w, "test", "minl");
-    return {
-      week: w.split(" ")[0],
-      ctrlConvos:   cRest?.totalConvos ?? 0,
-      testConvos:   tRest?.totalConvos ?? 0,
-      optinPct:     tRest?.optinRate ?? null,
-      ctrlEsc:      cRest?.escalationRate ?? null,
-      testEsc:      tRest?.escalationRate ?? null,
-      ctrlGhO2c:    cOi?.ghO2c ?? null,
-      testGhO2c:    tMinl?.ghO2c ?? null,
-      ctrlCsat:     cRest?.csat ?? null,
-      testCsat:     tRest?.csat ?? null,
-    };
-  });
+  const BUCKET_LABEL: Record<string, string> = {
+    rest:        "Rest of Options",
+    otherIssues: "Other Issues",
+    minl:        "My Issue Not Listed",
+  };
+  const BUCKET_ORDER = [
+    { variant: "control", bucket: "rest" },
+    { variant: "control", bucket: "otherIssues" },
+    { variant: "test",    bucket: "rest" },
+    { variant: "test",    bucket: "minl" },
+  ];
 
   const isPending = generatedAt === "pending";
 
@@ -250,32 +242,49 @@ export default function Dashboard({ generatedAt, rows }: Props) {
           <thead>
             <tr className="border-b border-gray-100">
               <th className="text-left p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Week</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl Convos</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test Convos</th>
+              <th className="text-left p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Variant</th>
+              <th className="text-left p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Bucket</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Convos</th>
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Optin %</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl Esc %</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test Esc %</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl GH O2C</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test GH O2C</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Ctrl CSAT</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Test CSAT</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Esc %</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">GH O2C</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">CSAT</th>
             </tr>
           </thead>
           <tbody>
-            {tableRows.map((r, i) => (
-              <tr key={r.week} className={i % 2 === 0 ? "bg-white" : "bg-zinc-50"}>
-                <td className="p-4 font-semibold text-gray-900">{r.week}</td>
-                <td className="p-4 text-right text-gray-700">{num(r.ctrlConvos)}</td>
-                <td className="p-4 text-right text-gray-700">{num(r.testConvos)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.optinPct)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.ctrlEsc)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.testEsc)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.ctrlGhO2c)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.testGhO2c)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.ctrlCsat)}</td>
-                <td className="p-4 text-right text-gray-700">{pct(r.testCsat)}</td>
-              </tr>
-            ))}
+            {WEEKS.map((w, wi) =>
+              BUCKET_ORDER.map(({ variant, bucket }, bi) => {
+                const row       = byWeekVariantBucket(w, variant, bucket);
+                const isFirst   = bi === 0;
+                const isLast    = bi === BUCKET_ORDER.length - 1;
+                const weekLabel = w.split(" ")[0];
+                const weekDates = w.split(" ").slice(1).join(" ");
+                return (
+                  <tr
+                    key={`${w}-${variant}-${bucket}`}
+                    className={`${isLast && wi < WEEKS.length - 1 ? "border-b-2 border-gray-200" : "border-b border-gray-50"} ${variant === "test" ? "bg-green-50/30" : "bg-white"}`}
+                  >
+                    {isFirst && (
+                      <td rowSpan={4} className="p-4 align-top border-r border-gray-100 font-bold text-gray-900 whitespace-nowrap">
+                        {weekLabel}
+                        <span className="block text-xs font-normal text-gray-400 mt-0.5">{weekDates}</span>
+                      </td>
+                    )}
+                    <td className="px-4 py-2.5">
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${variant === "control" ? "bg-gray-100 text-gray-600" : "bg-green-100 text-green-700"}`}>
+                        {variant === "control" ? "Control" : "Test"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5 text-gray-600 text-xs">{BUCKET_LABEL[bucket]}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700">{row ? num(row.totalConvos) : "—"}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700">{pct(row?.optinRate ?? null)}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700">{pct(row?.escalationRate ?? null)}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700">{pct(row?.ghO2c ?? null)}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700">{pct(row?.csat ?? null)}</td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
