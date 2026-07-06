@@ -228,7 +228,8 @@ export default function Dashboard({ generatedAt, rows }: Props) {
               <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
               <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Line dataKey="optinRate" name="Optin Rate" stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
+              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Line dataKey="optinRate" name="Test" stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -255,8 +256,8 @@ export default function Dashboard({ generatedAt, rows }: Props) {
               <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
               <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
-              <Line dataKey="ctrlGhO2c" name="Control (Other Issues)" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
-              <Line dataKey="testGhO2c" name="Test (MINL)"            stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
+              <Line dataKey="ctrlGhO2c" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
+              <Line dataKey="testGhO2c" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
