@@ -100,8 +100,8 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       testEsc:     tRest?.escalationRate != null ? tRest.escalationRate * 100 : null,
       ctrlGhO2c:   cOi?.ghO2c           != null ? cOi.ghO2c * 100           : null,
       testGhO2c:   tMinl?.ghO2c         != null ? tMinl.ghO2c * 100         : null,
-      ctrlCsat:    cRest?.csat           != null ? cRest.csat * 100          : null,
-      testCsat:    tRest?.csat           != null ? tRest.csat * 100          : null,
+      ctrlCsat:    cOi?.csat             != null ? cOi.csat * 100            : null,
+      testCsat:    tMinl?.csat           != null ? tMinl.csat * 100          : null,
     };
   });
 
@@ -124,24 +124,59 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     { variant: "test",    bucket: "minl" },
   ];
 
+  const WEEKS_DESC = [...WEEKS].reverse();
+
   const isPending = generatedAt === "pending";
+
+  function downloadCsv() {
+    const headers = [
+      "Week","Variant","Bucket","Total Convos","AI Optin","GH Shipments",
+      "GH Tickets","Escalations","CSAT Convos","Positive CSAT","Negative CSAT",
+      "Optin Rate","Control Sanity","Escalation Rate","GH O2C","CSAT Response Rate",
+      "CSAT Positive Rate","CSAT",
+    ];
+    const csvRows = rows.map((r) =>
+      [
+        r.week, r.variant, BUCKET_LABEL[r.bucket] ?? r.bucket,
+        r.totalConvos, r.aiOptin, r.ghShipments, r.ghTickets, r.escalations,
+        r.csatConvos, r.positiveCsat, r.negativeCsat,
+        r.optinRate ?? "", r.controlSanity ?? "", r.escalationRate ?? "",
+        r.ghO2c ?? "", r.csatResponseRate ?? "", r.csatPositiveRate ?? "", r.csat ?? "",
+      ].join(",")
+    );
+    const blob = new Blob([[headers.join(","), ...csvRows].join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ai-chatbot-wow-${generatedAt.split(" ")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div className="min-h-screen bg-zinc-100 p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1
-          className="text-4xl font-bold tracking-tight text-gray-900"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1
+            className="text-4xl font-bold tracking-tight text-gray-900"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            AI Chatbot — Week on Week
+          </h1>
+          <p className="text-sm text-gray-500 mt-2">
+            Guided Help (Control) vs AI Chatbot (Test) · Jun 3–28, 2026 · Ticket attributed to latest conversation before ticket timestamp
+          </p>
+          <span className={`inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full ${isPending ? "bg-amber-50 text-amber-600" : "bg-gray-100 text-gray-500"}`}>
+            {isPending ? "⏳ Data pending — run generate_wow_json.py after Trino completes" : `Last updated: ${generatedAt}`}
+          </span>
+        </div>
+        <button
+          onClick={downloadCsv}
+          className="mt-1 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 shadow-sm text-gray-700 hover:bg-gray-50 transition-colors"
         >
-          AI Chatbot — Week on Week
-        </h1>
-        <p className="text-sm text-gray-500 mt-2">
-          Guided Help (Control) vs AI Chatbot (Test) · Jun 3–28, 2026 · Ticket attributed to latest conversation before ticket timestamp
-        </p>
-        <span className={`inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full ${isPending ? "bg-amber-50 text-amber-600" : "bg-gray-100 text-gray-500"}`}>
-          {isPending ? "⏳ Data pending — run generate_wow_json.py after Trino completes" : `Last updated: ${generatedAt}`}
-        </span>
+          ↓ Download CSV
+        </button>
       </div>
 
       {/* KPI Cards — latest week snapshot */}
@@ -170,10 +205,10 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         />
         <KpiCard
           label="CSAT"
-          ctrlValue={pct(w4cRest?.csat ?? null)}
-          testValue={pct(w4tRest?.csat ?? null)}
-          ctrlSub="Rest bucket"
-          testSub="Rest bucket"
+          ctrlValue={pct(w4cOi?.csat ?? null)}
+          testValue={pct(w4tMinl?.csat ?? null)}
+          ctrlSub="Other Issues"
+          testSub="MINL bucket"
         />
       </div>
 
@@ -220,7 +255,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="CSAT" caption="Positive CSAT / CSAT responses · Rest bucket">
+        <ChartCard title="CSAT" caption="Positive CSAT / CSAT responses · Control: Other Issues · Test: MINL">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -252,7 +287,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
             </tr>
           </thead>
           <tbody>
-            {WEEKS.map((w, wi) =>
+            {WEEKS_DESC.map((w, wi) =>
               BUCKET_ORDER.map(({ variant, bucket }, bi) => {
                 const row       = byWeekVariantBucket(w, variant, bucket);
                 const isFirst   = bi === 0;
@@ -262,7 +297,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
                 return (
                   <tr
                     key={`${w}-${variant}-${bucket}`}
-                    className={`${isLast && wi < WEEKS.length - 1 ? "border-b-2 border-gray-200" : "border-b border-gray-50"} ${variant === "test" ? "bg-green-50/30" : "bg-white"}`}
+                    className={`${isLast && wi < WEEKS_DESC.length - 1 ? "border-b-2 border-gray-200" : "border-b border-gray-50"} ${variant === "test" ? "bg-green-50/30" : "bg-white"}`}
                   >
                     {isFirst && (
                       <td rowSpan={4} className="p-4 align-top border-r border-gray-100 font-bold text-gray-900 whitespace-nowrap">
