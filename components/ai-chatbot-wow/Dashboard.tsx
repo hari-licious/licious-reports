@@ -93,9 +93,12 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     const tRest  = byWeekVariantBucket(w, "test", "rest");
     const tMinl  = byWeekVariantBucket(w, "test", "minl");
     const label  = w.replace(" ", "\n").split(" ")[0]; // "W1"
+    const testOptinRate = (tRest != null && tMinl != null)
+      ? (tRest.aiOptin + tMinl.aiOptin) / (tRest.totalConvos + tMinl.totalConvos)
+      : null;
     return {
       week: label,
-      optinRate:   tRest?.optinRate    != null ? tRest.optinRate * 100    : null,
+      optinRate:   testOptinRate != null ? testOptinRate * 100 : null,
       ctrlEsc:     cRest?.escalationRate != null ? cRest.escalationRate * 100 : null,
       testEsc:     tRest?.escalationRate != null ? tRest.escalationRate * 100 : null,
       ctrlGhO2c:   cOi?.ghO2c           != null ? cOi.ghO2c * 100           : null,
@@ -105,12 +108,15 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     };
   });
 
-  // Latest week KPIs (W4)
+  // Latest week KPIs
   const lastWeek = WEEKS[WEEKS.length - 1];
   const w4cRest = byWeekVariantBucket(lastWeek, "control", "rest");
   const w4cOi   = byWeekVariantBucket(lastWeek, "control", "otherIssues");
   const w4tRest  = byWeekVariantBucket(lastWeek, "test", "rest");
   const w4tMinl  = byWeekVariantBucket(lastWeek, "test", "minl");
+  const w4TestOptinRate = (w4tRest != null && w4tMinl != null)
+    ? (w4tRest.aiOptin + w4tMinl.aiOptin) / (w4tRest.totalConvos + w4tMinl.totalConvos)
+    : null;
 
   const BUCKET_LABEL: Record<string, string> = {
     rest:        "Rest of Options",
@@ -184,8 +190,8 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <SingleKpiCard
           label="Optin Rate"
-          value={pct(w4tRest?.optinRate ?? null)}
-          sub="Test / Rest bucket"
+          value={pct(w4TestOptinRate)}
+          sub="AI chat opens / all test convos"
         />
         <KpiCard
           label="Escalation %"
@@ -215,7 +221,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       {/* WoW Trend Charts */}
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Week-on-week trends</p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <ChartCard title="Optin Rate %" caption="Test / Rest bucket — % of GH conversations that opted into the AI chatbot">
+        <ChartCard title="Optin Rate %" caption="All test convos (ROTO + MINL) — % that opened the AI chatbot">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -322,6 +328,32 @@ export default function Dashboard({ generatedAt, rows }: Props) {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Glossary */}
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 mt-8">Glossary</p>
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
+          {[
+            { term: "Control",        def: "Guided Help variant — users see the standard post-order support flow." },
+            { term: "Test",           def: "AI Chatbot variant — users are offered the AI chatbot after clicking their issue." },
+            { term: "GH",             def: "Guided Help — the post-order support flow. A 'conversation' = one GH session." },
+            { term: "ROTO",           def: "Rest of the Options — users who clicked any issue except the primary bucket (pid6 / pid112)." },
+            { term: "OI",             def: "Other Issues (pid6) — the control bucket. Clicking this leads to agent escalation." },
+            { term: "MINL",           def: "My Issue Is Not Listed (pid112) — the test bucket. Clicking this opens the AI chatbot." },
+            { term: "Optin Rate",     def: "% of all test conversations (ROTO + MINL) that opened the AI chatbot." },
+            { term: "Escalation %",   def: "% of conversations where the user was suggested to speak to a human agent." },
+            { term: "GH O2C",         def: "Tickets raised per shipment via Guided Help (can exceed 100%)." },
+            { term: "CSAT",           def: "% of CSAT responses that were positive. Control: OI bucket. Test: MINL bucket." },
+            { term: "Control Sanity", def: "% of control ROTO users who accidentally entered the AI chatbot — expected ~0." },
+            { term: "WoW",            def: "Week on Week — weekly windows running Tuesday to Monday." },
+          ].map(({ term, def }) => (
+            <div key={term}>
+              <dt className="text-xs font-semibold text-gray-700">{term}</dt>
+              <dd className="text-xs text-gray-500 mt-0.5">{def}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </div>
   );
