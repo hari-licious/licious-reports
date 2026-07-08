@@ -311,9 +311,9 @@ const GLOSSARY = [
   { term: "Avg Orders / DE",               definition: "Total Licious-dispatched orders ÷ total DE headcount across the selected period." },
   { term: "Orders / Login Hr (OPH)",       definition: "Total orders ÷ total DE login hours. Measures throughput per hour of DE availability." },
   { term: "Trips / DE",                    definition: "Total trips ÷ total DE headcount. Measures how many trips each DE runs on average." },
-  { term: "SLA",                            definition: "On-time delivery. Licious fleet: measured at RDL vs promiseddeliverytime. 3P fleet: measured at Delivered timestamp." },
-  { term: "RDL (Reached Delivery Location)", definition: "Shipment state when the DE arrives at the customer's location. Used as the SLA event for Licious fleet." },
-  { term: "Avg Breach (mins)",             definition: "Average minutes late across all breached orders (rdl_time > promised_delivery_time)." },
+  { term: "SLA",                            definition: "On-time delivery. Measured at actual delivery: deliveredat ≤ promiseendtime (order_events_fact). Only delivered orders count in denominator." },
+  { term: "RDL (Reached Delivery Location)", definition: "Shipment state when the DE arrives at the customer's location. Used in the order timeline (OFD→RDL stage) but NOT used as the SLA event — SLA is measured at delivered." },
+  { term: "Avg Breach (mins)",             definition: "Average minutes late across breached orders: (deliveredat − promiseendtime) / 60000, for delivered orders where deliveredat > promiseendtime." },
   { term: "Trip Breach Rate %",            definition: "% of batched trips (>1 order) where at least one order breached SLA." },
   { term: "First-Order Breach %",          definition: "Of all breached batched trips: % where the breach was the first delivery on the trip." },
   { term: "Last-Order Breach %",           definition: "Of all breached batched trips: % where the breach was the last delivery on the trip." },
@@ -577,7 +577,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
 
           {/* SLA */}
           <div className="mb-5">
-            <SectionHeader>SLA — Check Signal · Licious at RDL · 3P at Delivered</SectionHeader>
+            <SectionHeader>SLA — Check Signal · All at Delivered (deliveredat vs promiseendtime)</SectionHeader>
             <ComparisonTable rows={[
               { label: "Overall SLA %",           pre: preAgg.overall_sla_pct * 100,   post: postAgg.overall_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
               { label: "DP SLA %",                pre: preAgg.dp_sla_pct * 100,        post: postAgg.dp_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
