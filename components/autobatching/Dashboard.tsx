@@ -6,6 +6,9 @@ import {
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList,
 } from "recharts";
 import type { RawDay } from "@/lib/autobatching";
+import { Abbr } from "@/components/ui/Abbr";
+import { COLOR_CTRL, COLOR_POST, tooltipStyle, LEGEND_PROPS } from "@/lib/theme";
+import { DashboardLayout } from "@/components/ui/DashboardLayout";
 
 interface Props {
   hub: string;
@@ -184,7 +187,7 @@ function fmt(v: number, decimals = 1, unit = ""): string {
 // ── Comparison table ──────────────────────────────────────────────────────────
 
 interface MetricRow {
-  label: string;
+  label: React.ReactNode;
   pre: number;
   post: number;
   unit?: string;
@@ -221,8 +224,8 @@ function ComparisonTable({ rows }: { rows: MetricRow[] }) {
                   {row.label}
                   {row.warn && <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">⚠ &gt;25%</span>}
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-400 text-right tabular-nums">{fmt(row.pre, dec, u)}</td>
-                <td className="px-4 py-3 text-sm font-semibold text-gray-900 text-right tabular-nums">{fmt(row.post, dec, u)}</td>
+                <td className="px-4 py-3 text-sm font-medium text-gray-700 text-right tabular-nums">{fmt(row.pre, dec, u)}</td>
+                <td className="px-4 py-3 text-sm font-medium text-gray-700 text-right tabular-nums">{fmt(row.post, dec, u)}</td>
                 <td className="px-4 py-3 text-right">
                   {row.neutral ? (
                     <span className="text-sm text-gray-500 tabular-nums">{sign}{fmt(Math.abs(delta), dec, u)}</span>
@@ -268,10 +271,10 @@ function OrderMixTable({ pre, post }: { pre: Aggregated; post: Aggregated }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors">
               <td className="px-4 py-3 text-sm text-gray-700">{row.label}</td>
-              <td className="px-4 py-3 text-sm text-gray-400 text-right tabular-nums">
+              <td className="px-4 py-3 text-sm font-medium text-gray-700 text-right tabular-nums">
                 {row.preCount.toFixed(0)}&nbsp;<span className="text-gray-300">·</span>&nbsp;{(row.prePct * 100).toFixed(1)}%
               </td>
-              <td className="px-4 py-3 text-sm font-semibold text-gray-900 text-right tabular-nums">
+              <td className="px-4 py-3 text-sm font-medium text-gray-700 text-right tabular-nums">
                 {row.postCount.toFixed(0)}&nbsp;<span className="text-gray-300">·</span>&nbsp;{(row.postPct * 100).toFixed(1)}%
               </td>
             </tr>
@@ -285,19 +288,11 @@ function OrderMixTable({ pre, post }: { pre: Aggregated; post: Aggregated }) {
 // ── Section header ────────────────────────────────────────────────────────────
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-sm font-semibold text-gray-700 mb-3">{children}</h2>;
+  return <h2 className="text-sm font-semibold text-gray-900 mb-3">{children}</h2>;
 }
 
 // ── Chart config ──────────────────────────────────────────────────────────────
 
-const tooltipStyle = {
-  backgroundColor: "#fff",
-  border: "1px solid #E5E7EB",
-  borderRadius: "10px",
-  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-  fontSize: 12,
-  color: "#111827",
-};
 
 // ── Glossary ──────────────────────────────────────────────────────────────────
 
@@ -462,7 +457,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
     `px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === t ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"}`;
 
   return (
-    <div className="min-h-screen bg-zinc-100 p-6">
+    <DashboardLayout>
 
       {/* Header row: title + refresh */}
       <div className="flex items-start justify-between mb-4">
@@ -560,7 +555,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
               { label: "Avg Orders / Trip",       pre: preAgg.avg_orders_per_trip,          post: postAgg.avg_orders_per_trip,          higherIsBetter: true,  decimals: 2 },
               { label: "Single-Order Trips %",    pre: preAgg.single_order_trips_pct * 100, post: postAgg.single_order_trips_pct * 100, unit: "%", higherIsBetter: false, decimals: 1 },
               { label: "Avg Orders / DE",         pre: preAgg.avg_orders_per_de,            post: postAgg.avg_orders_per_de,            higherIsBetter: true,  decimals: 1 },
-              { label: "Orders / Login Hr (OPH)", pre: preAgg.orders_per_login_hour,        post: postAgg.orders_per_login_hour,        higherIsBetter: true,  decimals: 2 },
+              { label: <>Orders / Login Hr (<Abbr tip="Total orders ÷ total DE login hours. Measures throughput per hour of rider availability.">OPH</Abbr>)</>, pre: preAgg.orders_per_login_hour,        post: postAgg.orders_per_login_hour,        higherIsBetter: true,  decimals: 2 },
               { label: "Trips / DE",              pre: preAgg.trips_per_de,                 post: postAgg.trips_per_de,                 higherIsBetter: true,  decimals: 2 },
             ]} />
           </div>
@@ -592,12 +587,12 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <div className="mb-5">
             <SectionHeader>Trip-level SLA · Batched Trips · Trip Breached if Any Order Breached</SectionHeader>
             <ComparisonTable rows={[
-              { label: "Batched Trips (count)",                     pre: preAgg.trip_batched_count,           post: postAgg.trip_batched_count,           neutral: true, decimals: 0 },
+              { label: "Batched Trips (count)",                     pre: preAgg.trip_batched_count,           post: postAgg.trip_batched_count,           higherIsBetter: true, decimals: 0 },
               { label: "Breached Trips (count)",                    pre: preAgg.trip_breached_count,          post: postAgg.trip_breached_count,          higherIsBetter: false, decimals: 0 },
               { label: "Trip Breach Rate %",                        pre: preAgg.trip_breach_rate * 100,       post: postAgg.trip_breach_rate * 100,       unit: "%", higherIsBetter: false, decimals: 1 },
-              { label: "First-Order Breach % (of breached trips)",  pre: preAgg.first_order_breach_pct * 100, post: postAgg.first_order_breach_pct * 100, unit: "%", neutral: true, decimals: 1 },
-              { label: "Last-Order Breach % (of breached trips)",   pre: preAgg.last_order_breach_pct * 100,  post: postAgg.last_order_breach_pct * 100,  unit: "%", neutral: true, decimals: 1 },
-              { label: "Avg Breach Position (0=first, 1=last)",     pre: preAgg.avg_breach_position,          post: postAgg.avg_breach_position,          neutral: true, decimals: 2 },
+              { label: "First-Order Breach % (of breached trips)",  pre: preAgg.first_order_breach_pct * 100, post: postAgg.first_order_breach_pct * 100, unit: "%", higherIsBetter: false, decimals: 1 },
+              { label: "Last-Order Breach % (of breached trips)",   pre: preAgg.last_order_breach_pct * 100,  post: postAgg.last_order_breach_pct * 100,  unit: "%", higherIsBetter: false, decimals: 1 },
+              { label: "Avg Breach Position (0=first, 1=last)",     pre: preAgg.avg_breach_position,          post: postAgg.avg_breach_position,          higherIsBetter: true,  decimals: 2 },
             ]} />
           </div>
 
@@ -615,15 +610,15 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={timelineData} margin={{ top: 22, right: 16, left: -8, bottom: 0 }} barGap={4}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-                  <XAxis dataKey="stage" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+                  <XAxis dataKey="stage" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
                   <YAxis tickFormatter={v => `${v}m`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)} mins`]} />
-                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 10, color: "#6B7280" }} />
-                  <Bar dataKey="pre"  name="Pre"  fill="#94A3B8" radius={[4, 4, 0, 0]} barSize={28}>
-                    <LabelList dataKey="pre"  position="top" style={{ fontSize: 10, fill: "#94A3B8", fontWeight: 600 }} formatter={(v) => `${v}m`} />
+                  <Legend {...LEGEND_PROPS} />
+                  <Bar dataKey="pre"  name="Pre"  fill={COLOR_CTRL} radius={[4, 4, 0, 0]} barSize={28}>
+                    <LabelList dataKey="pre"  position="top" style={{ fontSize: 10, fill: COLOR_CTRL, fontWeight: 600 }} formatter={(v) => `${v}m`} />
                   </Bar>
-                  <Bar dataKey="post" name="Post" fill="#2563EB" radius={[4, 4, 0, 0]} barSize={28}>
-                    <LabelList dataKey="post" position="top" style={{ fontSize: 10, fill: "#2563EB", fontWeight: 600 }} formatter={(v) => `${v}m`} />
+                  <Bar dataKey="post" name="Post" fill={COLOR_POST} radius={[4, 4, 0, 0]} barSize={28}>
+                    <LabelList dataKey="post" position="top" style={{ fontSize: 10, fill: COLOR_POST, fontWeight: 600 }} formatter={(v) => `${v}m`} />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -632,6 +627,6 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
         </>
       )}
 
-    </div>
+    </DashboardLayout>
   );
 }

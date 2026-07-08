@@ -4,6 +4,8 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
+import { COLOR_CTRL, COLOR_TEST, tooltipStyle, LEGEND_PROPS } from "@/lib/theme";
+import { DashboardLayout } from "@/components/ui/DashboardLayout";
 
 interface Props {
   kpi: {
@@ -24,7 +26,7 @@ function KpiCard({ label, value, sub, delta, downIsGood }: {
 }) {
   const isGood = delta !== undefined ? (downIsGood ? delta < 0 : delta > 0) : null;
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
       <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">{label}</p>
       <p className="text-4xl font-bold text-gray-900 mb-2">{value}</p>
       {delta !== undefined && (
@@ -41,29 +43,20 @@ function KpiCard({ label, value, sub, delta, downIsGood }: {
 
 function ChartCard({ title, caption, children }: { title: string; caption?: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-1">{title}</p>
+    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+      <p className="text-sm font-semibold text-gray-900 mb-0.5">{title}</p>
       {caption && <p className="text-xs text-gray-500 mb-4">{caption}</p>}
       {children}
     </div>
   );
 }
 
-const CTRL = "#94A3B8";
-const TEST = "#16A34A";
-
-const tooltipStyle = {
-  backgroundColor: "#fff",
-  border: "1px solid #E5E7EB",
-  borderRadius: "12px",
-  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-  fontSize: 12,
-  color: "#111827",
-};
+const CTRL = COLOR_CTRL;
+const TEST = COLOR_TEST;
 
 export default function Dashboard({ kpi, trendData, retentionData, returnData }: Props) {
   return (
-    <div className="min-h-screen bg-zinc-100 p-8">
+    <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900" style={{ fontFamily: "var(--font-space-grotesk)" }}>
           AI Chatbot A/B Test
@@ -84,11 +77,11 @@ export default function Dashboard({ kpi, trendData, retentionData, returnData }:
         <ChartCard title="Escalation Rate" caption="% of users escalated to a human agent · Other Issues bucket">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => `${Math.round(v)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${Math.round(v)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Legend {...LEGEND_PROPS} />
               <Line dataKey="ctrlEsc" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
               <Line dataKey="testEsc" name="Test (AI Chatbot)" stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
@@ -98,11 +91,11 @@ export default function Dashboard({ kpi, trendData, retentionData, returnData }:
         <ChartCard title="Ticket Creation Rate (O2C)" caption="Tickets per support interaction · Other Issues bucket">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => `${Math.round(v)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${Math.round(v)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Legend {...LEGEND_PROPS} />
               <Line dataKey="ctrlO2c" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
               <Line dataKey="testO2c" name="Test (AI Chatbot)" stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
@@ -120,10 +113,10 @@ export default function Dashboard({ kpi, trendData, retentionData, returnData }:
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={retentionData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }} barGap={4}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-              <XAxis dataKey="window" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="window" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Legend {...LEGEND_PROPS} />
               <Bar dataKey="control" name="Control" fill={CTRL} radius={[4, 4, 0, 0]} barSize={28} />
               <Bar dataKey="test"    name="Test"    fill={TEST} radius={[4, 4, 0, 0]} barSize={28} />
             </BarChart>
@@ -134,16 +127,16 @@ export default function Dashboard({ kpi, trendData, retentionData, returnData }:
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={returnData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }} barGap={4}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-              <XAxis dataKey="window" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="window" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Legend {...LEGEND_PROPS} />
               <Bar dataKey="control" name="Control" fill={CTRL} radius={[4, 4, 0, 0]} barSize={28} />
               <Bar dataKey="test"    name="Test"    fill={TEST} radius={[4, 4, 0, 0]} barSize={28} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

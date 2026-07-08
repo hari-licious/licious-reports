@@ -4,6 +4,8 @@ import {
   LineChart, Line, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
+import { COLOR_CTRL, COLOR_TEST, tooltipStyle, LEGEND_PROPS } from "@/lib/theme";
+import { DashboardLayout } from "@/components/ui/DashboardLayout";
 import { WowRow } from "@/lib/ai-chatbot-wow";
 
 interface Props {
@@ -11,17 +13,8 @@ interface Props {
   rows: WowRow[];
 }
 
-const CTRL = "#94A3B8";
-const TEST = "#16A34A";
-
-const tooltipStyle = {
-  backgroundColor: "#fff",
-  border: "1px solid #E5E7EB",
-  borderRadius: "12px",
-  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-  fontSize: 12,
-  color: "#111827",
-};
+const CTRL = COLOR_CTRL;
+const TEST = COLOR_TEST;
 
 function pct(v: number | null, decimals = 1): string {
   if (v === null || v === undefined) return "—";
@@ -41,7 +34,7 @@ function KpiCard({ label, ctrlValue, testValue, ctrlSub, testSub, downIsGood }: 
   downIsGood?: boolean;
 }) {
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
       <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">{label}</p>
       <div className="flex gap-6">
         <div>
@@ -61,7 +54,7 @@ function KpiCard({ label, ctrlValue, testValue, ctrlSub, testSub, downIsGood }: 
 
 function SingleKpiCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
       <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">{label}</p>
       <p className="text-3xl font-bold text-gray-900">{value}</p>
       {sub && <p className="text-xs text-gray-500 mt-2">{sub}</p>}
@@ -71,8 +64,8 @@ function SingleKpiCard({ label, value, sub }: { label: string; value: string; su
 
 function ChartCard({ title, caption, children }: { title: string; caption?: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-1">{title}</p>
+    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+      <p className="text-sm font-semibold text-gray-900 mb-0.5">{title}</p>
       {caption && <p className="text-xs text-gray-500 mb-4">{caption}</p>}
       {children}
     </div>
@@ -86,6 +79,20 @@ export default function Dashboard({ generatedAt, rows }: Props) {
   const byWeekVariantBucket = (week: string, variant: string, bucket: string) =>
     rows.find((r) => r.week === week && r.variant === variant && r.bucket === bucket);
 
+  // Helpers for aggregating across buckets
+  const sumN = (arr: (WowRow | undefined)[], field: keyof Pick<WowRow, "ghShipments" | "ghTickets" | "csatConvos" | "positiveCsat">) =>
+    arr.filter((r): r is WowRow => r !== undefined).reduce((s, r) => s + r[field], 0);
+
+  const calcOverallO2c = (rs: (WowRow | undefined)[]) => {
+    const ships = sumN(rs, "ghShipments");
+    return ships > 0 ? sumN(rs, "ghTickets") / ships : null;
+  };
+
+  const calcOverallCsat = (rs: (WowRow | undefined)[]) => {
+    const convos = sumN(rs, "csatConvos");
+    return convos > 0 ? sumN(rs, "positiveCsat") / convos : null;
+  };
+
   // Build trend data per week
   const trendData = WEEKS.map((w) => {
     const cRest = byWeekVariantBucket(w, "control", "rest");
@@ -96,15 +103,19 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     const testOptinRate = (tRest != null && tMinl != null)
       ? (tRest.aiOptin + tMinl.aiOptin) / (tRest.totalConvos + tMinl.totalConvos)
       : null;
+    const ctrlOverallO2c  = calcOverallO2c([cRest, cOi]);
+    const testOverallO2c  = calcOverallO2c([tRest, tMinl]);
+    const ctrlOverallCsat = calcOverallCsat([cRest, cOi]);
+    const testOverallCsat = calcOverallCsat([tRest, tMinl]);
     return {
       week: label,
-      optinRate:   testOptinRate != null ? testOptinRate * 100 : null,
-      ctrlEsc:     cRest?.escalationRate != null ? cRest.escalationRate * 100 : null,
-      testEsc:     tRest?.escalationRate != null ? tRest.escalationRate * 100 : null,
-      ctrlGhO2c:   cOi?.ghO2c           != null ? cOi.ghO2c * 100           : null,
-      testGhO2c:   tMinl?.ghO2c         != null ? tMinl.ghO2c * 100         : null,
-      ctrlCsat:    cOi?.csat             != null ? cOi.csat * 100            : null,
-      testCsat:    tMinl?.csat           != null ? tMinl.csat * 100          : null,
+      optinRate:        testOptinRate != null ? testOptinRate * 100 : null,
+      ctrlEsc:          cRest?.escalationRate != null ? cRest.escalationRate * 100 : null,
+      testEsc:          tRest?.escalationRate != null ? tRest.escalationRate * 100 : null,
+      ctrlOverallO2c:   ctrlOverallO2c  != null ? ctrlOverallO2c  * 100 : null,
+      testOverallO2c:   testOverallO2c  != null ? testOverallO2c  * 100 : null,
+      ctrlOverallCsat:  ctrlOverallCsat != null ? ctrlOverallCsat * 100 : null,
+      testOverallCsat:  testOverallCsat != null ? testOverallCsat * 100 : null,
     };
   });
 
@@ -117,6 +128,11 @@ export default function Dashboard({ generatedAt, rows }: Props) {
   const w4TestOptinRate = (w4tRest != null && w4tMinl != null)
     ? (w4tRest.aiOptin + w4tMinl.aiOptin) / (w4tRest.totalConvos + w4tMinl.totalConvos)
     : null;
+
+  const w4CtrlOverallO2c  = calcOverallO2c([w4cRest, w4cOi]);
+  const w4TestOverallO2c  = calcOverallO2c([w4tRest, w4tMinl]);
+  const w4CtrlOverallCsat = calcOverallCsat([w4cRest, w4cOi]);
+  const w4TestOverallCsat = calcOverallCsat([w4tRest, w4tMinl]);
 
   const BUCKET_LABEL: Record<string, string> = {
     rest:        "Rest of Options",
@@ -160,7 +176,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-100 p-8">
+    <DashboardLayout>
       {/* Header */}
       <div className="mb-8 flex items-start justify-between">
         <div>
@@ -202,19 +218,19 @@ export default function Dashboard({ generatedAt, rows }: Props) {
           downIsGood
         />
         <KpiCard
-          label="GH O2C %"
-          ctrlValue={pct(w4cOi?.ghO2c ?? null)}
-          testValue={pct(w4tMinl?.ghO2c ?? null)}
-          ctrlSub="Other Issues"
-          testSub="MINL bucket"
+          label="Overall GH O2C"
+          ctrlValue={pct(w4CtrlOverallO2c)}
+          testValue={pct(w4TestOverallO2c)}
+          ctrlSub="All buckets"
+          testSub="All buckets"
           downIsGood
         />
         <KpiCard
-          label="CSAT"
-          ctrlValue={pct(w4cOi?.csat ?? null)}
-          testValue={pct(w4tMinl?.csat ?? null)}
-          ctrlSub="Other Issues"
-          testSub="MINL bucket"
+          label="Overall GH CSAT"
+          ctrlValue={pct(w4CtrlOverallCsat)}
+          testValue={pct(w4TestOverallCsat)}
+          ctrlSub="All buckets"
+          testSub="All buckets"
         />
       </div>
 
@@ -224,11 +240,11 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         <ChartCard title="Optin Rate %" caption="All test convos (ROTO + MINL) — % that opened the AI chatbot">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Legend {...LEGEND_PROPS} />
               <Line dataKey="optinRate" name="Test" stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
@@ -237,41 +253,41 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         <ChartCard title="Escalation Rate %" caption="Control: pid26/27 clicked · Test: ESCALATION_INTENT · Rest bucket">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
+              <Legend {...LEGEND_PROPS} />
               <Line dataKey="ctrlEsc" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
               <Line dataKey="testEsc" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="GH O2C %" caption="Tickets / shipments · Control: Other Issues · Test: MINL bucket">
+        <ChartCard title="Overall GH O2C %" caption="GH tickets / GH shipments · all buckets per variant">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
-              <Line dataKey="ctrlGhO2c" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
-              <Line dataKey="testGhO2c" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
+              <Legend {...LEGEND_PROPS} />
+              <Line dataKey="ctrlOverallO2c" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
+              <Line dataKey="testOverallO2c" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="CSAT" caption="Positive CSAT / CSAT responses · Control: Other Issues · Test: MINL">
+        <ChartCard title="Overall GH CSAT" caption="Positive CSAT / CSAT responses · all buckets per variant">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, paddingTop: 12, color: "#6B7280" }} />
-              <Line dataKey="ctrlCsat" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
-              <Line dataKey="testCsat" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
+              <Legend {...LEGEND_PROPS} />
+              <Line dataKey="ctrlOverallCsat" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
+              <Line dataKey="testOverallCsat" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -279,7 +295,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
 
       {/* Weekly Summary Table */}
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Full weekly breakdown</p>
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-x-auto">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100">
@@ -290,7 +306,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Optin %</th>
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Esc %</th>
               <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">GH O2C</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">CSAT</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">GH CSAT</th>
             </tr>
           </thead>
           <tbody>
@@ -333,7 +349,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
 
       {/* Glossary */}
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 mt-8">Glossary</p>
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
           {[
             { term: "Control",        def: "Guided Help variant — users see the standard post-order support flow." },
@@ -344,8 +360,8 @@ export default function Dashboard({ generatedAt, rows }: Props) {
             { term: "MINL",           def: "My Issue Is Not Listed (pid112) — the test bucket. Clicking this opens the AI chatbot." },
             { term: "Optin Rate",     def: "% of all test conversations (ROTO + MINL) that opened the AI chatbot." },
             { term: "Escalation %",   def: "% of conversations where the user was suggested to speak to a human agent." },
-            { term: "GH O2C",         def: "Tickets raised per shipment via Guided Help (can exceed 100%)." },
-            { term: "CSAT",           def: "% of CSAT responses that were positive. Control: OI bucket. Test: MINL bucket." },
+            { term: "GH O2C",         def: "GH tickets raised per GH shipment (can exceed 100%). Overall = aggregated across all buckets for the variant." },
+            { term: "GH CSAT",        def: "% of post-GH-session CSAT survey responses that were positive. Not ticket CSAT. Overall = aggregated across all buckets for the variant." },
             { term: "Control Sanity", def: "% of control ROTO users who accidentally entered the AI chatbot — expected ~0." },
             { term: "WoW",            def: "Week on Week — weekly windows running Tuesday to Monday." },
           ].map(({ term, def }) => (
@@ -356,6 +372,6 @@ export default function Dashboard({ generatedAt, rows }: Props) {
           ))}
         </dl>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

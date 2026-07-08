@@ -1,21 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F4F4F5;
-  --foreground: #111827;
+  /* Radius — single source of truth (shadcn/ui pattern) */
+  --radius: 0.75rem;        /* rounded-xl = 12px */
+  --radius-sm: 0.5rem;      /* rounded-lg  =  8px */
+
+  /* Surfaces */
+  --background:        #F4F4F5;  /* zinc-100 — page bg */
+  --foreground:        #111827;  /* gray-900 — default text */
+  --card:              #ffffff;
+  --card-foreground:   #111827;
+  --border:            #E5E7EB;  /* gray-200 */
+  --input:             #E5E7EB;
+  --ring:              #9CA3AF;
+
+  /* Muted surfaces */
+  --muted:             #F9FAFB;  /* gray-50 */
+  --muted-foreground:  #9CA3AF;  /* gray-400 */
+
+  /* Brand action */
+  --primary:           #111827;
+  --primary-foreground:#ffffff;
+
+  /* Semantic delta colors */
+  --positive:          #16A34A;  /* green-600 */
+  --positive-bg:       #F0FDF4;  /* green-50  */
+  --negative:          #EF4444;  /* red-500   */
+  --negative-bg:       #FEF2F2;  /* red-50    */
+  --warning:           #D97706;  /* amber-600 */
+  --warning-bg:        #FFFBEB;  /* amber-50  */
+
+  /* Chart palette (shadcn/ui chart-1..5 convention) */
+  --chart-1:           #2563EB;  /* blue-600  — post / primary result */
+  --chart-2:           #16A34A;  /* green-600 — test / positive signal */
+  --chart-3:           #94A3B8;  /* slate-400 — control / pre / neutral */
+  --chart-4:           #F59E0B;  /* amber-500 — accent / warning */
+  --chart-5:           #8B5CF6;  /* violet-500 — extra series */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-space-grotesk);
+  --font-sans:        var(--font-geist-sans);
+  --font-mono:        var(--font-geist-mono);
+  --font-display:     var(--font-space-grotesk);
 }
 
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background:  var(--background);
+  color:       var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
