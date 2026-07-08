@@ -47,6 +47,8 @@ interface Aggregated {
   p3_sla_pct: number;
   avg_breach_mins: number;
   // Trip SLA
+  trip_batched_count: number;
+  trip_breached_count: number;
   trip_breach_rate: number;
   first_order_breach_pct: number;
   last_order_breach_pct: number;
@@ -82,6 +84,7 @@ function aggregate(days: RawDay[]): Aggregated {
     dp_batched_pct: 0, express_batched_pct: 0, scheduled_batched_pct: 0,
     overall_sla_pct: 0, scheduled_sla_pct: 0, express_sla_pct: 0,
     dp_sla_pct: 0, p3_sla_pct: 0, avg_breach_mins: 0,
+    trip_batched_count: 0, trip_breached_count: 0,
     trip_breach_rate: 0, first_order_breach_pct: 0, last_order_breach_pct: 0, avg_breach_position: 0,
     avg_dp_created_to_picked_mins: 0, avg_dp_picked_to_packed_mins: 0, avg_dp_packed_to_dispatched_mins: 0,
     avg_dp_dispatch_to_ofd_mins: 0, avg_dp_ofd_to_rdl_mins: 0,
@@ -145,10 +148,12 @@ function aggregate(days: RawDay[]): Aggregated {
     p3_sla_pct:            div(s("p3_on_time"),          s("p3_delivered")),
     avg_breach_mins:       div(breach_mins_sum, breach_count),
 
-    trip_breach_rate:           div(trip_breached, trip_batched),
-    first_order_breach_pct:     div(first_breach, trip_breached),
-    last_order_breach_pct:      div(last_breach,  trip_breached),
-    avg_breach_position:        div(s("trip_sla_breach_pos_sum"), s("trip_sla_breach_pos_cnt")),
+    trip_batched_count:           trip_batched,
+    trip_breached_count:          trip_breached,
+    trip_breach_rate:             div(trip_breached, trip_batched),
+    first_order_breach_pct:       div(first_breach, trip_breached),
+    last_order_breach_pct:        div(last_breach,  trip_breached),
+    avg_breach_position:          div(s("trip_sla_breach_pos_sum"), s("trip_sla_breach_pos_cnt")),
 
     avg_dp_created_to_picked_mins:    div(s("dp_tl_created_to_picked_sum"),    s("dp_tl_created_to_picked_cnt")),
     avg_dp_picked_to_packed_mins:     div(s("dp_tl_picked_to_packed_sum"),     s("dp_tl_picked_to_packed_cnt")),
@@ -587,6 +592,8 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <div className="mb-5">
             <SectionHeader>Trip-level SLA · Batched Trips · Trip Breached if Any Order Breached</SectionHeader>
             <ComparisonTable rows={[
+              { label: "Batched Trips (count)",                     pre: preAgg.trip_batched_count,           post: postAgg.trip_batched_count,           neutral: true, decimals: 0 },
+              { label: "Breached Trips (count)",                    pre: preAgg.trip_breached_count,          post: postAgg.trip_breached_count,          higherIsBetter: false, decimals: 0 },
               { label: "Trip Breach Rate %",                        pre: preAgg.trip_breach_rate * 100,       post: postAgg.trip_breach_rate * 100,       unit: "%", higherIsBetter: false, decimals: 1 },
               { label: "First-Order Breach % (of breached trips)",  pre: preAgg.first_order_breach_pct * 100, post: postAgg.first_order_breach_pct * 100, unit: "%", neutral: true, decimals: 1 },
               { label: "Last-Order Breach % (of breached trips)",   pre: preAgg.last_order_breach_pct * 100,  post: postAgg.last_order_breach_pct * 100,  unit: "%", neutral: true, decimals: 1 },
