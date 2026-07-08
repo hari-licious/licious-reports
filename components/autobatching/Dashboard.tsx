@@ -491,6 +491,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <input type="date" value={preStart} min={preMin} max={preEnd}   onChange={e => setPreStart(e.target.value)} className={inputCls} />
           <span className="text-gray-300 text-sm">→</span>
           <input type="date" value={preEnd}   min={preStart} max={preMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
+          <span className="text-[11px] text-gray-400 font-medium">{selectedPre.length}d</span>
         </div>
         <span className="text-gray-200 text-sm">|</span>
         <div className="flex items-center gap-2">
@@ -498,6 +499,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <input type="date" value={postStart} min={postMin} max={postEnd}   onChange={e => setPostStart(e.target.value)} className={inputCls} />
           <span className="text-gray-300 text-sm">→</span>
           <input type="date" value={postEnd}   min={postStart} max={postMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
+          <span className="text-[11px] text-gray-400 font-medium">{selectedPost.length}d</span>
         </div>
       </div>
 
