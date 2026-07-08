@@ -321,9 +321,9 @@ const GLOSSARY = [
   { term: "Allotted→Accepted (Scheduled)", definition: "Time from RIDER_ALLOTTED to RIDER_ACCEPTED for scheduled orders. Rider OTP acceptance window." },
   { term: "Accepted→Dispatched (Scheduled)", definition: "Time from RIDER_ACCEPTED to DISPATCHED for scheduled orders. Pickup readiness lag." },
   { term: "DE (Delivery Executive)",       definition: "Last-mile delivery rider. Headcount sourced from rider_events login data, filtered to hours with active logins." },
-  { term: "Pre Period",                    definition: "Baseline period before autobatching v2 went live. Default: 2026-06-10 to 2026-06-16." },
-  { term: "Post Period",                   definition: "Period after autobatching v2 went live. Default: 2026-06-18 onwards. 2026-06-17 is a gap day and excluded." },
-  { term: "Gap Day (Jun 17)",              definition: "2026-06-17 is tagged 'gap' and excluded from both pre and post aggregations to avoid partial-day contamination." },
+  { term: "Pre Period",                    definition: "Baseline period before autobatching v2 went live. Ends Jun 17. Length matches number of post days — extends backward as post grows." },
+  { term: "Post Period",                   definition: "Two phases: Phase 1 Jun 18–21 (initial release), Phase 2 Jul 7+ (re-release). Both tagged 'post'. Jun 22–Jul 6 is a gap (rollback)." },
+  { term: "Gap (Jun 22 – Jul 6)",         definition: "Autobatching was rolled back ~Jun 22 due to ground ops issues and re-released Jul 6 night. These days are excluded from all aggregations." },
 ];
 
 // ── Smart date defaults ───────────────────────────────────────────────────────
