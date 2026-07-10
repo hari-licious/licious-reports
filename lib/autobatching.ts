@@ -95,6 +95,22 @@ export interface RawDay {
   express_tl_ofd_to_rdl_sum: number;
   express_tl_ofd_to_rdl_cnt: number;
 
+  // DP allocation sub-stages (packed→allotted, allotted→accepted, accepted→dispatch)
+  dp_tl_packed_to_allotted_sum: number;
+  dp_tl_packed_to_allotted_cnt: number;
+  dp_tl_allotted_to_accepted_sum: number;
+  dp_tl_allotted_to_accepted_cnt: number;
+  dp_tl_accepted_to_dispatch_sum: number;
+  dp_tl_accepted_to_dispatch_cnt: number;
+
+  // Express allocation sub-stages
+  express_tl_packed_to_allotted_sum: number;
+  express_tl_packed_to_allotted_cnt: number;
+  express_tl_allotted_to_accepted_sum: number;
+  express_tl_allotted_to_accepted_cnt: number;
+  express_tl_accepted_to_dispatch_sum: number;
+  express_tl_accepted_to_dispatch_cnt: number;
+
   // Scheduled last-mile timeline
   sched_tl_allotted_to_accepted_sum: number;
   sched_tl_allotted_to_accepted_cnt: number;
@@ -105,10 +121,68 @@ export interface RawDay {
   sched_tl_ofd_to_rdl_sum: number;
   sched_tl_ofd_to_rdl_cnt: number;
 
+  // Percentiles (p50/p90) per day — weighted avg by cnt used in dashboard aggregation
+  dp_tl_created_to_picked_p50: number;
+  dp_tl_created_to_picked_p90: number;
+  dp_tl_picked_to_packed_p50: number;
+  dp_tl_picked_to_packed_p90: number;
+  dp_tl_packed_to_dispatched_p50: number;
+  dp_tl_packed_to_dispatched_p90: number;
+  dp_tl_dispatch_to_ofd_p50: number;
+  dp_tl_dispatch_to_ofd_p90: number;
+  dp_tl_ofd_to_rdl_p50: number;
+  dp_tl_ofd_to_rdl_p90: number;
+  dp_tl_packed_to_allotted_p50: number;
+  dp_tl_packed_to_allotted_p90: number;
+  dp_tl_allotted_to_accepted_p50: number;
+  dp_tl_allotted_to_accepted_p90: number;
+  dp_tl_accepted_to_dispatch_p50: number;
+  dp_tl_accepted_to_dispatch_p90: number;
+
+  express_tl_created_to_picked_p50: number;
+  express_tl_created_to_picked_p90: number;
+  express_tl_picked_to_packed_p50: number;
+  express_tl_picked_to_packed_p90: number;
+  express_tl_packed_to_dispatched_p50: number;
+  express_tl_packed_to_dispatched_p90: number;
+  express_tl_dispatch_to_ofd_p50: number;
+  express_tl_dispatch_to_ofd_p90: number;
+  express_tl_ofd_to_rdl_p50: number;
+  express_tl_ofd_to_rdl_p90: number;
+  express_tl_packed_to_allotted_p50: number;
+  express_tl_packed_to_allotted_p90: number;
+  express_tl_allotted_to_accepted_p50: number;
+  express_tl_allotted_to_accepted_p90: number;
+  express_tl_accepted_to_dispatch_p50: number;
+  express_tl_accepted_to_dispatch_p90: number;
+
+  sched_tl_allotted_to_accepted_p50: number;
+  sched_tl_allotted_to_accepted_p90: number;
+  sched_tl_accepted_to_dispatched_p50: number;
+  sched_tl_accepted_to_dispatched_p90: number;
+  sched_tl_dispatch_to_ofd_p50: number;
+  sched_tl_dispatch_to_ofd_p90: number;
+  sched_tl_ofd_to_rdl_p50: number;
+  sched_tl_ofd_to_rdl_p90: number;
+
   // Batching by order type (from SLA query)
   dp_batched: number;
   express_batched: number;
   scheduled_batched: number;
+
+  // Express sub-buckets by promise window
+  ex_30_45_orders: number;
+  ex_30_45_with_rdl: number;
+  ex_30_45_on_time: number;
+  ex_45_60_orders: number;
+  ex_45_60_with_rdl: number;
+  ex_45_60_on_time: number;
+  ex_60_90_orders: number;
+  ex_60_90_with_rdl: number;
+  ex_60_90_on_time: number;
+  ex_90p_orders: number;
+  ex_90p_with_rdl: number;
+  ex_90p_on_time: number;
 
   // Trip-level SLA
   trip_sla_batched_trips: number;

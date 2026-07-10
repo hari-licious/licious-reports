@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 import {
   BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList,
 } from "recharts";
 import type { RawDay } from "@/lib/autobatching";
 import { Abbr } from "@/components/ui/Abbr";
-import { COLOR_CTRL, COLOR_POST, tooltipStyle, LEGEND_PROPS } from "@/lib/theme";
+import { COLOR_CTRL, COLOR_POST } from "@/lib/theme";
+import { useChartTheme } from "@/lib/useChartTheme";
 import { DashboardLayout } from "@/components/ui/DashboardLayout";
 
 interface Props {
@@ -56,23 +57,78 @@ interface Aggregated {
   first_order_breach_pct: number;
   last_order_breach_pct: number;
   avg_breach_position: number;
-  // DP timeline
+  // OD (3P fleet)
+  total_3p_orders: number;
+  avg_daily_3p_orders: number;
+  // Express sub-buckets
+  ex_30_45_orders_total: number;
+  ex_30_45_sla_pct: number;
+  ex_45_60_orders_total: number;
+  ex_45_60_sla_pct: number;
+  ex_60_90_orders_total: number;
+  ex_60_90_sla_pct: number;
+  ex_90p_orders_total: number;
+  ex_90p_sla_pct: number;
+  // DP timeline — avg
   avg_dp_created_to_picked_mins: number;
   avg_dp_picked_to_packed_mins: number;
-  avg_dp_packed_to_dispatched_mins: number;
+  avg_dp_packed_to_allotted_mins: number;
+  avg_dp_allotted_to_accepted_mins: number;
+  avg_dp_accepted_to_dispatch_mins: number;
   avg_dp_dispatch_to_ofd_mins: number;
   avg_dp_ofd_to_rdl_mins: number;
-  // Express timeline
+  // DP timeline — p50/p90 (weighted avg of daily percentiles)
+  p50_dp_created_to_picked_mins: number;
+  p50_dp_picked_to_packed_mins: number;
+  p50_dp_packed_to_allotted_mins: number;
+  p50_dp_allotted_to_accepted_mins: number;
+  p50_dp_accepted_to_dispatch_mins: number;
+  p50_dp_dispatch_to_ofd_mins: number;
+  p50_dp_ofd_to_rdl_mins: number;
+  p90_dp_created_to_picked_mins: number;
+  p90_dp_picked_to_packed_mins: number;
+  p90_dp_packed_to_allotted_mins: number;
+  p90_dp_allotted_to_accepted_mins: number;
+  p90_dp_accepted_to_dispatch_mins: number;
+  p90_dp_dispatch_to_ofd_mins: number;
+  p90_dp_ofd_to_rdl_mins: number;
+  // Express timeline — avg
   avg_express_created_to_picked_mins: number;
   avg_express_picked_to_packed_mins: number;
-  avg_express_packed_to_dispatched_mins: number;
+  avg_express_packed_to_allotted_mins: number;
+  avg_express_allotted_to_accepted_mins: number;
+  avg_express_accepted_to_dispatch_mins: number;
   avg_express_dispatch_to_ofd_mins: number;
   avg_express_ofd_to_rdl_mins: number;
-  // Scheduled timeline
+  // Express timeline — p50/p90
+  p50_express_created_to_picked_mins: number;
+  p50_express_picked_to_packed_mins: number;
+  p50_express_packed_to_allotted_mins: number;
+  p50_express_allotted_to_accepted_mins: number;
+  p50_express_accepted_to_dispatch_mins: number;
+  p50_express_dispatch_to_ofd_mins: number;
+  p50_express_ofd_to_rdl_mins: number;
+  p90_express_created_to_picked_mins: number;
+  p90_express_picked_to_packed_mins: number;
+  p90_express_packed_to_allotted_mins: number;
+  p90_express_allotted_to_accepted_mins: number;
+  p90_express_accepted_to_dispatch_mins: number;
+  p90_express_dispatch_to_ofd_mins: number;
+  p90_express_ofd_to_rdl_mins: number;
+  // Scheduled timeline — avg
   avg_sched_allotted_to_accepted_mins: number;
   avg_sched_accepted_to_dispatched_mins: number;
   avg_sched_dispatch_to_ofd_mins: number;
   avg_sched_ofd_to_rdl_mins: number;
+  // Scheduled timeline — p50/p90
+  p50_sched_allotted_to_accepted_mins: number;
+  p50_sched_accepted_to_dispatched_mins: number;
+  p50_sched_dispatch_to_ofd_mins: number;
+  p50_sched_ofd_to_rdl_mins: number;
+  p90_sched_allotted_to_accepted_mins: number;
+  p90_sched_accepted_to_dispatched_mins: number;
+  p90_sched_dispatch_to_ofd_mins: number;
+  p90_sched_ofd_to_rdl_mins: number;
 }
 
 function div(a: number, b: number) { return b > 0 ? a / b : 0; }
@@ -89,12 +145,35 @@ function aggregate(days: RawDay[]): Aggregated {
     dp_sla_pct: 0, p3_sla_pct: 0, avg_breach_mins: 0,
     trip_batched_count: 0, trip_breached_count: 0,
     trip_breach_rate: 0, first_order_breach_pct: 0, last_order_breach_pct: 0, avg_breach_position: 0,
-    avg_dp_created_to_picked_mins: 0, avg_dp_picked_to_packed_mins: 0, avg_dp_packed_to_dispatched_mins: 0,
+    total_3p_orders: 0, avg_daily_3p_orders: 0,
+    ex_30_45_orders_total: 0, ex_30_45_sla_pct: 0,
+    ex_45_60_orders_total: 0, ex_45_60_sla_pct: 0,
+    ex_60_90_orders_total: 0, ex_60_90_sla_pct: 0,
+    ex_90p_orders_total: 0,   ex_90p_sla_pct: 0,
+    avg_dp_created_to_picked_mins: 0, avg_dp_picked_to_packed_mins: 0,
+    avg_dp_packed_to_allotted_mins: 0, avg_dp_allotted_to_accepted_mins: 0, avg_dp_accepted_to_dispatch_mins: 0,
     avg_dp_dispatch_to_ofd_mins: 0, avg_dp_ofd_to_rdl_mins: 0,
+    p50_dp_created_to_picked_mins: 0, p50_dp_picked_to_packed_mins: 0,
+    p50_dp_packed_to_allotted_mins: 0, p50_dp_allotted_to_accepted_mins: 0, p50_dp_accepted_to_dispatch_mins: 0,
+    p50_dp_dispatch_to_ofd_mins: 0, p50_dp_ofd_to_rdl_mins: 0,
+    p90_dp_created_to_picked_mins: 0, p90_dp_picked_to_packed_mins: 0,
+    p90_dp_packed_to_allotted_mins: 0, p90_dp_allotted_to_accepted_mins: 0, p90_dp_accepted_to_dispatch_mins: 0,
+    p90_dp_dispatch_to_ofd_mins: 0, p90_dp_ofd_to_rdl_mins: 0,
     avg_express_created_to_picked_mins: 0, avg_express_picked_to_packed_mins: 0,
-    avg_express_packed_to_dispatched_mins: 0, avg_express_dispatch_to_ofd_mins: 0, avg_express_ofd_to_rdl_mins: 0,
+    avg_express_packed_to_allotted_mins: 0, avg_express_allotted_to_accepted_mins: 0, avg_express_accepted_to_dispatch_mins: 0,
+    avg_express_dispatch_to_ofd_mins: 0, avg_express_ofd_to_rdl_mins: 0,
+    p50_express_created_to_picked_mins: 0, p50_express_picked_to_packed_mins: 0,
+    p50_express_packed_to_allotted_mins: 0, p50_express_allotted_to_accepted_mins: 0, p50_express_accepted_to_dispatch_mins: 0,
+    p50_express_dispatch_to_ofd_mins: 0, p50_express_ofd_to_rdl_mins: 0,
+    p90_express_created_to_picked_mins: 0, p90_express_picked_to_packed_mins: 0,
+    p90_express_packed_to_allotted_mins: 0, p90_express_allotted_to_accepted_mins: 0, p90_express_accepted_to_dispatch_mins: 0,
+    p90_express_dispatch_to_ofd_mins: 0, p90_express_ofd_to_rdl_mins: 0,
     avg_sched_allotted_to_accepted_mins: 0, avg_sched_accepted_to_dispatched_mins: 0,
     avg_sched_dispatch_to_ofd_mins: 0, avg_sched_ofd_to_rdl_mins: 0,
+    p50_sched_allotted_to_accepted_mins: 0, p50_sched_accepted_to_dispatched_mins: 0,
+    p50_sched_dispatch_to_ofd_mins: 0, p50_sched_ofd_to_rdl_mins: 0,
+    p90_sched_allotted_to_accepted_mins: 0, p90_sched_accepted_to_dispatched_mins: 0,
+    p90_sched_dispatch_to_ofd_mins: 0, p90_sched_ofd_to_rdl_mins: 0,
   };
   if (days.length === 0) return zero;
 
@@ -119,6 +198,10 @@ function aggregate(days: RawDay[]): Aggregated {
   const trip_breached        = s("trip_sla_breached_trips");
   const first_breach         = s("trip_sla_first_order_breach");
   const last_breach          = s("trip_sla_last_order_breach");
+
+  // Weighted avg of daily percentiles: sum(p * cnt) / sum(cnt)
+  const wp = (pKey: keyof RawDay, wKey: keyof RawDay) =>
+    div(days.reduce((acc, d) => acc + ((d[pKey] as number) ?? 0) * ((d[wKey] as number) ?? 0), 0), s(wKey));
 
   return {
     num_days:              n,
@@ -158,22 +241,77 @@ function aggregate(days: RawDay[]): Aggregated {
     last_order_breach_pct:        div(last_breach,  trip_breached),
     avg_breach_position:          div(s("trip_sla_breach_pos_sum"), s("trip_sla_breach_pos_cnt")),
 
-    avg_dp_created_to_picked_mins:    div(s("dp_tl_created_to_picked_sum"),    s("dp_tl_created_to_picked_cnt")),
-    avg_dp_picked_to_packed_mins:     div(s("dp_tl_picked_to_packed_sum"),     s("dp_tl_picked_to_packed_cnt")),
-    avg_dp_packed_to_dispatched_mins: div(s("dp_tl_packed_to_dispatched_sum"), s("dp_tl_packed_to_dispatched_cnt")),
-    avg_dp_dispatch_to_ofd_mins:      div(s("dp_tl_dispatch_to_ofd_sum"),      s("dp_tl_dispatch_to_ofd_cnt")),
-    avg_dp_ofd_to_rdl_mins:           div(s("dp_tl_ofd_to_rdl_sum"),           s("dp_tl_ofd_to_rdl_cnt")),
+    total_3p_orders:       s("dispatched_3p"),
+    avg_daily_3p_orders:   div(s("dispatched_3p"), n),
 
-    avg_express_created_to_picked_mins:    div(s("express_tl_created_to_picked_sum"),    s("express_tl_created_to_picked_cnt")),
-    avg_express_picked_to_packed_mins:     div(s("express_tl_picked_to_packed_sum"),     s("express_tl_picked_to_packed_cnt")),
-    avg_express_packed_to_dispatched_mins: div(s("express_tl_packed_to_dispatched_sum"), s("express_tl_packed_to_dispatched_cnt")),
-    avg_express_dispatch_to_ofd_mins:      div(s("express_tl_dispatch_to_ofd_sum"),      s("express_tl_dispatch_to_ofd_cnt")),
-    avg_express_ofd_to_rdl_mins:           div(s("express_tl_ofd_to_rdl_sum"),           s("express_tl_ofd_to_rdl_cnt")),
+    ex_30_45_orders_total: s("ex_30_45_orders"),
+    ex_30_45_sla_pct:      div(s("ex_30_45_on_time"), s("ex_30_45_with_rdl")),
+    ex_45_60_orders_total: s("ex_45_60_orders"),
+    ex_45_60_sla_pct:      div(s("ex_45_60_on_time"), s("ex_45_60_with_rdl")),
+    ex_60_90_orders_total: s("ex_60_90_orders"),
+    ex_60_90_sla_pct:      div(s("ex_60_90_on_time"), s("ex_60_90_with_rdl")),
+    ex_90p_orders_total:   s("ex_90p_orders"),
+    ex_90p_sla_pct:        div(s("ex_90p_on_time"),   s("ex_90p_with_rdl")),
+
+    avg_dp_created_to_picked_mins:       div(s("dp_tl_created_to_picked_sum"),       s("dp_tl_created_to_picked_cnt")),
+    avg_dp_picked_to_packed_mins:        div(s("dp_tl_picked_to_packed_sum"),        s("dp_tl_picked_to_packed_cnt")),
+    avg_dp_packed_to_allotted_mins:      div(s("dp_tl_packed_to_allotted_sum"),      s("dp_tl_packed_to_allotted_cnt")),
+    avg_dp_allotted_to_accepted_mins:    div(s("dp_tl_allotted_to_accepted_sum"),    s("dp_tl_allotted_to_accepted_cnt")),
+    avg_dp_accepted_to_dispatch_mins:    div(s("dp_tl_accepted_to_dispatch_sum"),    s("dp_tl_accepted_to_dispatch_cnt")),
+    avg_dp_dispatch_to_ofd_mins:         div(s("dp_tl_dispatch_to_ofd_sum"),         s("dp_tl_dispatch_to_ofd_cnt")),
+    avg_dp_ofd_to_rdl_mins:              div(s("dp_tl_ofd_to_rdl_sum"),              s("dp_tl_ofd_to_rdl_cnt")),
+
+    p50_dp_created_to_picked_mins:       wp("dp_tl_created_to_picked_p50",       "dp_tl_created_to_picked_cnt"),
+    p50_dp_picked_to_packed_mins:        wp("dp_tl_picked_to_packed_p50",        "dp_tl_picked_to_packed_cnt"),
+    p50_dp_packed_to_allotted_mins:      wp("dp_tl_packed_to_allotted_p50",      "dp_tl_packed_to_allotted_cnt"),
+    p50_dp_allotted_to_accepted_mins:    wp("dp_tl_allotted_to_accepted_p50",    "dp_tl_allotted_to_accepted_cnt"),
+    p50_dp_accepted_to_dispatch_mins:    wp("dp_tl_accepted_to_dispatch_p50",    "dp_tl_accepted_to_dispatch_cnt"),
+    p50_dp_dispatch_to_ofd_mins:         wp("dp_tl_dispatch_to_ofd_p50",         "dp_tl_dispatch_to_ofd_cnt"),
+    p50_dp_ofd_to_rdl_mins:              wp("dp_tl_ofd_to_rdl_p50",              "dp_tl_ofd_to_rdl_cnt"),
+    p90_dp_created_to_picked_mins:       wp("dp_tl_created_to_picked_p90",       "dp_tl_created_to_picked_cnt"),
+    p90_dp_picked_to_packed_mins:        wp("dp_tl_picked_to_packed_p90",        "dp_tl_picked_to_packed_cnt"),
+    p90_dp_packed_to_allotted_mins:      wp("dp_tl_packed_to_allotted_p90",      "dp_tl_packed_to_allotted_cnt"),
+    p90_dp_allotted_to_accepted_mins:    wp("dp_tl_allotted_to_accepted_p90",    "dp_tl_allotted_to_accepted_cnt"),
+    p90_dp_accepted_to_dispatch_mins:    wp("dp_tl_accepted_to_dispatch_p90",    "dp_tl_accepted_to_dispatch_cnt"),
+    p90_dp_dispatch_to_ofd_mins:         wp("dp_tl_dispatch_to_ofd_p90",         "dp_tl_dispatch_to_ofd_cnt"),
+    p90_dp_ofd_to_rdl_mins:              wp("dp_tl_ofd_to_rdl_p90",              "dp_tl_ofd_to_rdl_cnt"),
+
+    avg_express_created_to_picked_mins:       div(s("express_tl_created_to_picked_sum"),       s("express_tl_created_to_picked_cnt")),
+    avg_express_picked_to_packed_mins:        div(s("express_tl_picked_to_packed_sum"),        s("express_tl_picked_to_packed_cnt")),
+    avg_express_packed_to_allotted_mins:      div(s("express_tl_packed_to_allotted_sum"),      s("express_tl_packed_to_allotted_cnt")),
+    avg_express_allotted_to_accepted_mins:    div(s("express_tl_allotted_to_accepted_sum"),    s("express_tl_allotted_to_accepted_cnt")),
+    avg_express_accepted_to_dispatch_mins:    div(s("express_tl_accepted_to_dispatch_sum"),    s("express_tl_accepted_to_dispatch_cnt")),
+    avg_express_dispatch_to_ofd_mins:         div(s("express_tl_dispatch_to_ofd_sum"),         s("express_tl_dispatch_to_ofd_cnt")),
+    avg_express_ofd_to_rdl_mins:              div(s("express_tl_ofd_to_rdl_sum"),              s("express_tl_ofd_to_rdl_cnt")),
+
+    p50_express_created_to_picked_mins:       wp("express_tl_created_to_picked_p50",       "express_tl_created_to_picked_cnt"),
+    p50_express_picked_to_packed_mins:        wp("express_tl_picked_to_packed_p50",        "express_tl_picked_to_packed_cnt"),
+    p50_express_packed_to_allotted_mins:      wp("express_tl_packed_to_allotted_p50",      "express_tl_packed_to_allotted_cnt"),
+    p50_express_allotted_to_accepted_mins:    wp("express_tl_allotted_to_accepted_p50",    "express_tl_allotted_to_accepted_cnt"),
+    p50_express_accepted_to_dispatch_mins:    wp("express_tl_accepted_to_dispatch_p50",    "express_tl_accepted_to_dispatch_cnt"),
+    p50_express_dispatch_to_ofd_mins:         wp("express_tl_dispatch_to_ofd_p50",         "express_tl_dispatch_to_ofd_cnt"),
+    p50_express_ofd_to_rdl_mins:              wp("express_tl_ofd_to_rdl_p50",              "express_tl_ofd_to_rdl_cnt"),
+    p90_express_created_to_picked_mins:       wp("express_tl_created_to_picked_p90",       "express_tl_created_to_picked_cnt"),
+    p90_express_picked_to_packed_mins:        wp("express_tl_picked_to_packed_p90",        "express_tl_picked_to_packed_cnt"),
+    p90_express_packed_to_allotted_mins:      wp("express_tl_packed_to_allotted_p90",      "express_tl_packed_to_allotted_cnt"),
+    p90_express_allotted_to_accepted_mins:    wp("express_tl_allotted_to_accepted_p90",    "express_tl_allotted_to_accepted_cnt"),
+    p90_express_accepted_to_dispatch_mins:    wp("express_tl_accepted_to_dispatch_p90",    "express_tl_accepted_to_dispatch_cnt"),
+    p90_express_dispatch_to_ofd_mins:         wp("express_tl_dispatch_to_ofd_p90",         "express_tl_dispatch_to_ofd_cnt"),
+    p90_express_ofd_to_rdl_mins:              wp("express_tl_ofd_to_rdl_p90",              "express_tl_ofd_to_rdl_cnt"),
 
     avg_sched_allotted_to_accepted_mins:   div(s("sched_tl_allotted_to_accepted_sum"),   s("sched_tl_allotted_to_accepted_cnt")),
     avg_sched_accepted_to_dispatched_mins: div(s("sched_tl_accepted_to_dispatched_sum"), s("sched_tl_accepted_to_dispatched_cnt")),
     avg_sched_dispatch_to_ofd_mins:        div(s("sched_tl_dispatch_to_ofd_sum"),        s("sched_tl_dispatch_to_ofd_cnt")),
     avg_sched_ofd_to_rdl_mins:             div(s("sched_tl_ofd_to_rdl_sum"),             s("sched_tl_ofd_to_rdl_cnt")),
+
+    p50_sched_allotted_to_accepted_mins:   wp("sched_tl_allotted_to_accepted_p50",   "sched_tl_allotted_to_accepted_cnt"),
+    p50_sched_accepted_to_dispatched_mins: wp("sched_tl_accepted_to_dispatched_p50", "sched_tl_accepted_to_dispatched_cnt"),
+    p50_sched_dispatch_to_ofd_mins:        wp("sched_tl_dispatch_to_ofd_p50",        "sched_tl_dispatch_to_ofd_cnt"),
+    p50_sched_ofd_to_rdl_mins:             wp("sched_tl_ofd_to_rdl_p50",             "sched_tl_ofd_to_rdl_cnt"),
+    p90_sched_allotted_to_accepted_mins:   wp("sched_tl_allotted_to_accepted_p90",   "sched_tl_allotted_to_accepted_cnt"),
+    p90_sched_accepted_to_dispatched_mins: wp("sched_tl_accepted_to_dispatched_p90", "sched_tl_accepted_to_dispatched_cnt"),
+    p90_sched_dispatch_to_ofd_mins:        wp("sched_tl_dispatch_to_ofd_p90",        "sched_tl_dispatch_to_ofd_cnt"),
+    p90_sched_ofd_to_rdl_mins:             wp("sched_tl_ofd_to_rdl_p90",             "sched_tl_ofd_to_rdl_cnt"),
   };
 }
 
@@ -199,14 +337,14 @@ interface MetricRow {
 
 function ComparisonTable({ rows }: { rows: MetricRow[] }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-100 bg-gray-50">
-            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-1/2">Metric</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Pre</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Post</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Change</th>
+          <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
+            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Metric</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Change</th>
           </tr>
         </thead>
         <tbody>
@@ -219,22 +357,22 @@ function ComparisonTable({ rows }: { rows: MetricRow[] }) {
             const dec      = row.decimals ?? 1;
 
             return (
-              <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors">
-                <td className="px-4 py-3 text-sm text-gray-700">
+              <tr key={i} className="border-b border-gray-50 dark:border-zinc-700/50 last:border-0 hover:bg-gray-50/60 dark:hover:bg-zinc-700/40 transition-colors">
+                <td className="px-4 py-3 text-sm text-gray-700 dark:text-zinc-300">
                   {row.label}
-                  {row.warn && <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">⚠ &gt;25%</span>}
+                  {row.warn && <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">⚠ &gt;25%</span>}
                 </td>
-                <td className="px-4 py-3 text-sm font-medium text-gray-700 text-right tabular-nums">{fmt(row.pre, dec, u)}</td>
-                <td className="px-4 py-3 text-sm font-medium text-gray-700 text-right tabular-nums">{fmt(row.post, dec, u)}</td>
+                <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right tabular-nums">{fmt(row.pre, dec, u)}</td>
+                <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right tabular-nums">{fmt(row.post, dec, u)}</td>
                 <td className="px-4 py-3 text-right">
                   {row.neutral ? (
-                    <span className="text-sm text-gray-500 tabular-nums">{sign}{fmt(Math.abs(delta), dec, u)}</span>
+                    <span className="text-sm text-gray-500 dark:text-zinc-400 tabular-nums">{sign}{fmt(Math.abs(delta), dec, u)}</span>
                   ) : (
                     <div className="inline-flex flex-col items-end">
-                      <span className={`text-sm font-semibold tabular-nums ${isGood ? "text-green-600" : "text-red-500"}`}>
+                      <span className={`text-sm font-semibold tabular-nums ${isGood ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
                         {delta >= 0 ? "↑" : "↓"} {sign}{fmt(Math.abs(delta), dec, u)}
                       </span>
-                      <span className={`text-[10px] ${isGood ? "text-green-400" : "text-red-400"}`}>
+                      <span className={`text-[10px] ${isGood ? "text-green-400 dark:text-green-500" : "text-red-400 dark:text-red-500"}`}>
                         {sign}{Math.abs(pctDelta).toFixed(1)}%
                       </span>
                     </div>
@@ -251,34 +389,155 @@ function ComparisonTable({ rows }: { rows: MetricRow[] }) {
 
 // ── Order mix table ───────────────────────────────────────────────────────────
 
-function OrderMixTable({ pre, post }: { pre: Aggregated; post: Aggregated }) {
-  const rows = [
-    { label: "DP Orders",        preCount: pre.dp_orders_total,         postCount: post.dp_orders_total,         prePct: pre.dp_orders_pct,         postPct: post.dp_orders_pct },
-    { label: "Express Orders",   preCount: pre.express_orders_total,    postCount: post.express_orders_total,    prePct: pre.express_orders_pct,    postPct: post.express_orders_pct },
-    { label: "Scheduled Orders", preCount: pre.scheduled_orders_total,  postCount: post.scheduled_orders_total,  prePct: pre.scheduled_orders_pct,  postPct: post.scheduled_orders_pct },
-  ];
+const EXPRESS_BUCKETS = [
+  { key: "ex_30_45", label: "30–45 min" },
+  { key: "ex_45_60", label: "45–60 min" },
+  { key: "ex_60_90", label: "60–90 min" },
+  { key: "ex_90p",   label: "90+ min" },
+] as const;
+
+function OrderMixTable({ pre, post, expressExpanded, onToggleExpress }: {
+  pre: Aggregated; post: Aggregated; expressExpanded: boolean; onToggleExpress: () => void;
+}) {
+  const dot = <span className="text-gray-300 dark:text-zinc-600">·</span>;
+  const cell = (count: number, pct: number) => (
+    <span className="tabular-nums">{count.toFixed(0)}&nbsp;{dot}&nbsp;{(pct * 100).toFixed(1)}%</span>
+  );
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-100 bg-gray-50">
-            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-1/2">Order Type</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Pre</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Post</th>
+          <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
+            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Order Type</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, i) => (
-            <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors">
-              <td className="px-4 py-3 text-sm text-gray-700">{row.label}</td>
-              <td className="px-4 py-3 text-sm font-medium text-gray-700 text-right tabular-nums">
-                {row.preCount.toFixed(0)}&nbsp;<span className="text-gray-300">·</span>&nbsp;{(row.prePct * 100).toFixed(1)}%
-              </td>
-              <td className="px-4 py-3 text-sm font-medium text-gray-700 text-right tabular-nums">
-                {row.postCount.toFixed(0)}&nbsp;<span className="text-gray-300">·</span>&nbsp;{(row.postPct * 100).toFixed(1)}%
-              </td>
-            </tr>
-          ))}
+          <tr className="border-b border-gray-50 dark:border-zinc-700/50 hover:bg-gray-50/60 dark:hover:bg-zinc-700/40 transition-colors">
+            <td className="px-4 py-3 text-sm text-gray-700 dark:text-zinc-300">DP Orders</td>
+            <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right">{cell(pre.dp_orders_total, pre.dp_orders_pct)}</td>
+            <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right">{cell(post.dp_orders_total, post.dp_orders_pct)}</td>
+          </tr>
+          <tr className="border-b border-gray-50 dark:border-zinc-700/50 hover:bg-gray-50/60 dark:hover:bg-zinc-700/40 transition-colors cursor-pointer" onClick={onToggleExpress}>
+            <td className="px-4 py-3 text-sm text-gray-700 dark:text-zinc-300 flex items-center gap-1.5">
+              <span className="text-[10px] text-gray-400 dark:text-zinc-500 select-none">{expressExpanded ? "▾" : "▸"}</span>
+              Express Orders
+            </td>
+            <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right">{cell(pre.express_orders_total, pre.express_orders_pct)}</td>
+            <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right">{cell(post.express_orders_total, post.express_orders_pct)}</td>
+          </tr>
+          {expressExpanded && EXPRESS_BUCKETS.map(({ key, label }) => {
+            const preCount  = pre[`${key}_orders_total` as keyof Aggregated] as number ?? 0;
+            const postCount = post[`${key}_orders_total` as keyof Aggregated] as number ?? 0;
+            const prePct    = pre.express_orders_total  > 0 ? preCount  / pre.express_orders_total  : 0;
+            const postPct   = post.express_orders_total > 0 ? postCount / post.express_orders_total : 0;
+            return (
+              <tr key={key} className="border-b border-gray-50 dark:border-zinc-700/50 bg-gray-50/40 dark:bg-zinc-800/60">
+                <td className="pl-9 pr-4 py-2 text-xs text-gray-500 dark:text-zinc-400">{label}</td>
+                <td className="px-4 py-2 text-xs text-gray-500 dark:text-zinc-400 text-right tabular-nums">{preCount.toFixed(0)}&nbsp;{dot}&nbsp;{(prePct*100).toFixed(1)}%</td>
+                <td className="px-4 py-2 text-xs text-gray-500 dark:text-zinc-400 text-right tabular-nums">{postCount.toFixed(0)}&nbsp;{dot}&nbsp;{(postPct*100).toFixed(1)}%</td>
+              </tr>
+            );
+          })}
+          <tr className="border-b border-gray-50 dark:border-zinc-700/50 last:border-0 hover:bg-gray-50/60 dark:hover:bg-zinc-700/40 transition-colors">
+            <td className="px-4 py-3 text-sm text-gray-700 dark:text-zinc-300">Scheduled Orders</td>
+            <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right">{cell(pre.scheduled_orders_total, pre.scheduled_orders_pct)}</td>
+            <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right">{cell(post.scheduled_orders_total, post.scheduled_orders_pct)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ── SLA table with express drill-down ─────────────────────────────────────────
+
+function SlaTable({ pre, post, expressExpanded, onToggleExpress }: {
+  pre: Aggregated; post: Aggregated; expressExpanded: boolean; onToggleExpress: () => void;
+}) {
+  const rows: MetricRow[] = [
+    { label: "Overall SLA %",           pre: pre.overall_sla_pct * 100,   post: post.overall_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
+    { label: "DP SLA %",                pre: pre.dp_sla_pct * 100,        post: post.dp_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
+    { label: "Express SLA %",           pre: pre.express_sla_pct * 100,   post: post.express_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
+    { label: "Scheduled SLA %",         pre: pre.scheduled_sla_pct * 100, post: post.scheduled_sla_pct * 100, unit: "%", higherIsBetter: true,  decimals: 1 },
+    { label: "3P SLA % (at Delivered)", pre: pre.p3_sla_pct * 100,        post: post.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
+    { label: "Avg Breach (mins)",       pre: pre.avg_breach_mins,          post: post.avg_breach_mins,         higherIsBetter: false, decimals: 1 },
+  ];
+  // Express row index (2) needs the expand toggle
+  const expressIdx = 2;
+
+  return (
+    <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
+            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Metric</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => {
+            const delta    = row.post - row.pre;
+            const pctDelta = row.pre !== 0 ? (delta / Math.abs(row.pre)) * 100 : 0;
+            const isGood   = row.neutral ? null : row.higherIsBetter ? delta > 0 : delta < 0;
+            const sign     = delta >= 0 ? "+" : "−";
+            const u        = row.unit ?? "";
+            const dec      = row.decimals ?? 1;
+            const isExpress = i === expressIdx;
+            return (
+              <Fragment key={i}>
+                <tr className={`border-b border-gray-50 dark:border-zinc-700/50 hover:bg-gray-50/60 dark:hover:bg-zinc-700/40 transition-colors ${isExpress ? "cursor-pointer" : ""}`}
+                    onClick={isExpress ? onToggleExpress : undefined}>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-zinc-300">
+                    {isExpress ? (
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-[10px] text-gray-400 dark:text-zinc-500 select-none">{expressExpanded ? "▾" : "▸"}</span>
+                        {row.label}
+                      </span>
+                    ) : row.label}
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right tabular-nums">{fmt(row.pre, dec, u)}</td>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right tabular-nums">{fmt(row.post, dec, u)}</td>
+                  <td className="px-4 py-3 text-right">
+                    {row.neutral ? (
+                      <span className="text-sm text-gray-500 dark:text-zinc-400 tabular-nums">{sign}{fmt(Math.abs(delta), dec, u)}</span>
+                    ) : (
+                      <div className="inline-flex flex-col items-end">
+                        <span className={`text-sm font-semibold tabular-nums ${isGood ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
+                          {delta >= 0 ? "↑" : "↓"} {sign}{fmt(Math.abs(delta), dec, u)}
+                        </span>
+                        <span className={`text-[10px] ${isGood ? "text-green-400 dark:text-green-500" : "text-red-400 dark:text-red-500"}`}>
+                          {sign}{Math.abs(pctDelta).toFixed(1)}%
+                        </span>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+                {isExpress && expressExpanded && EXPRESS_BUCKETS.map(({ key, label }) => {
+                  const preSla  = (pre[`${key}_sla_pct` as keyof Aggregated] as number ?? 0) * 100;
+                  const postSla = (post[`${key}_sla_pct` as keyof Aggregated] as number ?? 0) * 100;
+                  const d = postSla - preSla;
+                  const isPos = d > 0;
+                  const bSign = d >= 0 ? "+" : "−";
+                  return (
+                    <tr key={key} className="border-b border-gray-50 dark:border-zinc-700/50 bg-gray-50/40 dark:bg-zinc-800/60">
+                      <td className="pl-9 pr-4 py-2 text-xs text-gray-500 dark:text-zinc-400">{label} SLA %</td>
+                      <td className="px-4 py-2 text-xs text-gray-500 dark:text-zinc-400 text-right tabular-nums">{preSla.toFixed(1)}%</td>
+                      <td className="px-4 py-2 text-xs text-gray-500 dark:text-zinc-400 text-right tabular-nums">{postSla.toFixed(1)}%</td>
+                      <td className="px-4 py-2 text-right">
+                        <span className={`text-xs font-semibold tabular-nums ${isPos ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}>
+                          {d >= 0 ? "↑" : "↓"} {bSign}{Math.abs(d).toFixed(1)}%
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </Fragment>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -288,7 +547,7 @@ function OrderMixTable({ pre, post }: { pre: Aggregated; post: Aggregated }) {
 // ── Section header ────────────────────────────────────────────────────────────
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-sm font-semibold text-gray-900 mb-3">{children}</h2>;
+  return <h2 className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-3">{children}</h2>;
 }
 
 // ── Chart config ──────────────────────────────────────────────────────────────
@@ -315,11 +574,17 @@ const GLOSSARY = [
   { term: "Avg Breach Position",           definition: "0.0 = breach was first delivery, 1.0 = breach was last delivery. Mid-values indicate mid-trip breaches." },
   { term: "Created→Picked",               definition: "Time from WMS ORDER_CREATED to PICKED status. Covers picklist generation + picker travel + item picking." },
   { term: "Picked→Packed",                definition: "Time from PICKED to PACKED in WMS. Packing station processing time." },
-  { term: "Packed→Dispatched",            definition: "Time from PACKED in WMS to DISPATCHED in LMS. Covers staging wait, rider allotment, and OTP acceptance." },
+  { term: "Packed→Allotted",              definition: "Time from WMS PACKED to LMS RIDER_ALLOTTED. The batching wait window — how long the algo holds an order before forming a trip and allotting a rider. Key autobatching impact metric: longer post-release = more aggressive batching." },
+  { term: "Allotted→Accepted",           definition: "Time from RIDER_ALLOTTED to RIDER_ACCEPTED. The OTP acceptance window — how long the DE takes to accept the trip in-app." },
+  { term: "Accepted→Dispatched",         definition: "Time from RIDER_ACCEPTED to DISPATCHED. Physical pickup from the hub counter — DE collecting the packed boxes." },
   { term: "Dispatched→OFD",              definition: "Time from LMS DISPATCHED to OUT_FOR_DELIVERY. Hub exit to first customer en route." },
   { term: "OFD→RDL",                     definition: "Time from OUT_FOR_DELIVERY to REACHED_DELIVERY_LOCATION. Travel time to customer doorstep." },
   { term: "Allotted→Accepted (Scheduled)", definition: "Time from RIDER_ALLOTTED to RIDER_ACCEPTED for scheduled orders. Rider OTP acceptance window." },
   { term: "Accepted→Dispatched (Scheduled)", definition: "Time from RIDER_ACCEPTED to DISPATCHED for scheduled orders. Pickup readiness lag." },
+  { term: "OD (On-Demand)",                 definition: "Orders fulfilled by 3P fleet partners (Shadowfax, Pidge, ElasticRun, Shiprocket). Shown as 'OD' on dashboard. Count is avg orders/day to the 3P fleet." },
+  { term: "Express sub-buckets",            definition: "Express orders split by promise window (expressminutes): 30–45 min, 45–60 min, 60–90 min, 90+ min. Click the ▸ next to Express in Order Mix or SLA to expand." },
+  { term: "Median (P50)",                   definition: "50th percentile of stage duration across orders in the selected period. Weighted average of daily medians, weighted by order count. Less sensitive to outliers than avg." },
+  { term: "P90",                            definition: "90th percentile of stage duration. Shows tail latency — the worst 10% of orders. Weighted average of daily P90s." },
   { term: "DE (Delivery Executive)",       definition: "Last-mile delivery rider. Headcount sourced from rider_events login data, filtered to hours with active logins." },
   { term: "Pre Period",                    definition: "Baseline period before autobatching v2 went live. Ends Jun 17. Length matches number of post days — extends backward as post grows." },
   { term: "Post Period",                   definition: "Two phases: Phase 1 Jun 18–21 (initial release), Phase 2 Jul 7+ (re-release). Both tagged 'post'. Jun 22–Jul 6 is a gap (rollback)." },
@@ -366,17 +631,20 @@ function smartDateDefaults(preDays: RawDay[], postDays: RawDay[]) {
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export default function Dashboard({ hub, generated_at, days }: Props) {
+  const { gridStroke, tickFill, tooltipStyle, legendProps } = useChartTheme();
   const initPreDays  = days.filter(d => d.period === "pre");
   const initPostDays = days.filter(d => d.period === "post");
   const defaults     = smartDateDefaults(initPreDays, initPostDays);
 
-  const [selectedHub,   setSelectedHub]   = useState<string>(days[0]?.hub ?? hub);
-  const [preStart,      setPreStart]      = useState(defaults.preStart);
-  const [preEnd,        setPreEnd]        = useState(defaults.preEnd);
-  const [postStart,     setPostStart]     = useState(defaults.postStart);
-  const [postEnd,       setPostEnd]       = useState(defaults.postEnd);
-  const [timelineType,  setTimelineType]  = useState<"dp" | "express" | "scheduled">("dp");
-  const [activeTab,     setActiveTab]     = useState<"metrics" | "glossary">("metrics");
+  const [selectedHub,       setSelectedHub]       = useState<string>(days[0]?.hub ?? hub);
+  const [preStart,          setPreStart]          = useState(defaults.preStart);
+  const [preEnd,            setPreEnd]            = useState(defaults.preEnd);
+  const [postStart,         setPostStart]         = useState(defaults.postStart);
+  const [postEnd,           setPostEnd]           = useState(defaults.postEnd);
+  const [timelineType,      setTimelineType]      = useState<"dp" | "express" | "scheduled">("dp");
+  const [tlMetric,          setTlMetric]          = useState<"avg" | "p50" | "p90">("avg");
+  const [expressExpanded,   setExpressExpanded]   = useState(false);
+  const [activeTab,         setActiveTab]         = useState<"metrics" | "glossary">("metrics");
 
   const availableHubs = useMemo(
     () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
@@ -400,43 +668,42 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const ridersWarn = preAgg.avg_daily_riders > 0
     && Math.abs(postAgg.avg_daily_riders - preAgg.avg_daily_riders) / preAgg.avg_daily_riders > 0.25;
 
-  // Timeline data per type
+  // Timeline data per type + metric (avg/p50/p90)
   const timelineData = useMemo(() => {
+    const pfx = tlMetric === "avg" ? "avg" : tlMetric;  // "avg" | "p50" | "p90"
+    const g = (agg: Aggregated, base: string) =>
+      +(agg[`${pfx}_${base}` as keyof Aggregated] as number ?? 0).toFixed(1);
+
     if (timelineType === "dp") {
-      const preTotal  = preAgg.avg_dp_created_to_picked_mins + preAgg.avg_dp_picked_to_packed_mins + preAgg.avg_dp_packed_to_dispatched_mins + preAgg.avg_dp_dispatch_to_ofd_mins + preAgg.avg_dp_ofd_to_rdl_mins;
-      const postTotal = postAgg.avg_dp_created_to_picked_mins + postAgg.avg_dp_picked_to_packed_mins + postAgg.avg_dp_packed_to_dispatched_mins + postAgg.avg_dp_dispatch_to_ofd_mins + postAgg.avg_dp_ofd_to_rdl_mins;
       return [
-        { stage: "Created→Picked",    pre: +preAgg.avg_dp_created_to_picked_mins.toFixed(1),    post: +postAgg.avg_dp_created_to_picked_mins.toFixed(1) },
-        { stage: "Picked→Packed",     pre: +preAgg.avg_dp_picked_to_packed_mins.toFixed(1),     post: +postAgg.avg_dp_picked_to_packed_mins.toFixed(1) },
-        { stage: "Packed→Dispatched", pre: +preAgg.avg_dp_packed_to_dispatched_mins.toFixed(1), post: +postAgg.avg_dp_packed_to_dispatched_mins.toFixed(1) },
-        { stage: "Dispatched→OFD",    pre: +preAgg.avg_dp_dispatch_to_ofd_mins.toFixed(1),      post: +postAgg.avg_dp_dispatch_to_ofd_mins.toFixed(1) },
-        { stage: "OFD→RDL",           pre: +preAgg.avg_dp_ofd_to_rdl_mins.toFixed(1),           post: +postAgg.avg_dp_ofd_to_rdl_mins.toFixed(1) },
-        { stage: "Total",             pre: +preTotal.toFixed(1),                                 post: +postTotal.toFixed(1) },
+        { stage: "Created→Picked",      pre: g(preAgg,  "dp_created_to_picked_mins"),      post: g(postAgg, "dp_created_to_picked_mins") },
+        { stage: "Picked→Packed",       pre: g(preAgg,  "dp_picked_to_packed_mins"),       post: g(postAgg, "dp_picked_to_packed_mins") },
+        { stage: "Packed→Allotted",     pre: g(preAgg,  "dp_packed_to_allotted_mins"),     post: g(postAgg, "dp_packed_to_allotted_mins") },
+        { stage: "Allotted→Accepted",   pre: g(preAgg,  "dp_allotted_to_accepted_mins"),   post: g(postAgg, "dp_allotted_to_accepted_mins") },
+        { stage: "Accepted→Dispatched", pre: g(preAgg,  "dp_accepted_to_dispatch_mins"),   post: g(postAgg, "dp_accepted_to_dispatch_mins") },
+        { stage: "Dispatched→OFD",      pre: g(preAgg,  "dp_dispatch_to_ofd_mins"),        post: g(postAgg, "dp_dispatch_to_ofd_mins") },
+        { stage: "OFD→RDL",             pre: g(preAgg,  "dp_ofd_to_rdl_mins"),             post: g(postAgg, "dp_ofd_to_rdl_mins") },
       ];
     }
     if (timelineType === "express") {
-      const preTotal  = preAgg.avg_express_created_to_picked_mins + preAgg.avg_express_picked_to_packed_mins + preAgg.avg_express_packed_to_dispatched_mins + preAgg.avg_express_dispatch_to_ofd_mins + preAgg.avg_express_ofd_to_rdl_mins;
-      const postTotal = postAgg.avg_express_created_to_picked_mins + postAgg.avg_express_picked_to_packed_mins + postAgg.avg_express_packed_to_dispatched_mins + postAgg.avg_express_dispatch_to_ofd_mins + postAgg.avg_express_ofd_to_rdl_mins;
       return [
-        { stage: "Created→Picked",    pre: +preAgg.avg_express_created_to_picked_mins.toFixed(1),    post: +postAgg.avg_express_created_to_picked_mins.toFixed(1) },
-        { stage: "Picked→Packed",     pre: +preAgg.avg_express_picked_to_packed_mins.toFixed(1),     post: +postAgg.avg_express_picked_to_packed_mins.toFixed(1) },
-        { stage: "Packed→Dispatched", pre: +preAgg.avg_express_packed_to_dispatched_mins.toFixed(1), post: +postAgg.avg_express_packed_to_dispatched_mins.toFixed(1) },
-        { stage: "Dispatched→OFD",    pre: +preAgg.avg_express_dispatch_to_ofd_mins.toFixed(1),      post: +postAgg.avg_express_dispatch_to_ofd_mins.toFixed(1) },
-        { stage: "OFD→RDL",           pre: +preAgg.avg_express_ofd_to_rdl_mins.toFixed(1),           post: +postAgg.avg_express_ofd_to_rdl_mins.toFixed(1) },
-        { stage: "Total",             pre: +preTotal.toFixed(1),                                      post: +postTotal.toFixed(1) },
+        { stage: "Created→Picked",      pre: g(preAgg,  "express_created_to_picked_mins"),      post: g(postAgg, "express_created_to_picked_mins") },
+        { stage: "Picked→Packed",       pre: g(preAgg,  "express_picked_to_packed_mins"),       post: g(postAgg, "express_picked_to_packed_mins") },
+        { stage: "Packed→Allotted",     pre: g(preAgg,  "express_packed_to_allotted_mins"),     post: g(postAgg, "express_packed_to_allotted_mins") },
+        { stage: "Allotted→Accepted",   pre: g(preAgg,  "express_allotted_to_accepted_mins"),   post: g(postAgg, "express_allotted_to_accepted_mins") },
+        { stage: "Accepted→Dispatched", pre: g(preAgg,  "express_accepted_to_dispatch_mins"),   post: g(postAgg, "express_accepted_to_dispatch_mins") },
+        { stage: "Dispatched→OFD",      pre: g(preAgg,  "express_dispatch_to_ofd_mins"),        post: g(postAgg, "express_dispatch_to_ofd_mins") },
+        { stage: "OFD→RDL",             pre: g(preAgg,  "express_ofd_to_rdl_mins"),             post: g(postAgg, "express_ofd_to_rdl_mins") },
       ];
     }
     // scheduled
-    const preTotal  = preAgg.avg_sched_allotted_to_accepted_mins + preAgg.avg_sched_accepted_to_dispatched_mins + preAgg.avg_sched_dispatch_to_ofd_mins + preAgg.avg_sched_ofd_to_rdl_mins;
-    const postTotal = postAgg.avg_sched_allotted_to_accepted_mins + postAgg.avg_sched_accepted_to_dispatched_mins + postAgg.avg_sched_dispatch_to_ofd_mins + postAgg.avg_sched_ofd_to_rdl_mins;
     return [
-      { stage: "Allotted→Accepted",   pre: +preAgg.avg_sched_allotted_to_accepted_mins.toFixed(1),   post: +postAgg.avg_sched_allotted_to_accepted_mins.toFixed(1) },
-      { stage: "Accepted→Dispatched", pre: +preAgg.avg_sched_accepted_to_dispatched_mins.toFixed(1), post: +postAgg.avg_sched_accepted_to_dispatched_mins.toFixed(1) },
-      { stage: "Dispatched→OFD",      pre: +preAgg.avg_sched_dispatch_to_ofd_mins.toFixed(1),        post: +postAgg.avg_sched_dispatch_to_ofd_mins.toFixed(1) },
-      { stage: "OFD→RDL",             pre: +preAgg.avg_sched_ofd_to_rdl_mins.toFixed(1),             post: +postAgg.avg_sched_ofd_to_rdl_mins.toFixed(1) },
-      { stage: "Total",               pre: +preTotal.toFixed(1),                                      post: +postTotal.toFixed(1) },
+      { stage: "Allotted→Accepted",   pre: g(preAgg,  "sched_allotted_to_accepted_mins"),   post: g(postAgg, "sched_allotted_to_accepted_mins") },
+      { stage: "Accepted→Dispatched", pre: g(preAgg,  "sched_accepted_to_dispatched_mins"), post: g(postAgg, "sched_accepted_to_dispatched_mins") },
+      { stage: "Dispatched→OFD",      pre: g(preAgg,  "sched_dispatch_to_ofd_mins"),        post: g(postAgg, "sched_dispatch_to_ofd_mins") },
+      { stage: "OFD→RDL",             pre: g(preAgg,  "sched_ofd_to_rdl_mins"),             post: g(postAgg, "sched_ofd_to_rdl_mins") },
     ];
-  }, [timelineType, preAgg, postAgg]);
+  }, [timelineType, tlMetric, preAgg, postAgg]);
 
   // Refresh banner
   const refreshLabel = useMemo(() => {
@@ -450,11 +717,11 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
     return `${dd}/${mm} ${hh}:${min}`;
   }, [generated_at]);
 
-  const inputCls   = "bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-gray-800 focus:outline-none focus:border-gray-400 shadow-sm";
-  const typeBtnCls = (t: string) =>
-    `px-3 py-1 text-xs font-semibold rounded-full transition-colors ${timelineType === t ? "bg-blue-600 text-white" : "bg-white border border-gray-200 text-gray-500 hover:border-gray-400"}`;
+  const inputCls    = "bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5 text-sm text-gray-800 dark:text-zinc-200 focus:outline-none focus:border-gray-400 dark:focus:border-zinc-500 shadow-sm";
+  const typeBtnCls  = (active: boolean) =>
+    `px-3 py-1 text-xs font-semibold rounded-full transition-colors ${active ? "bg-blue-600 text-white" : "bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:border-gray-400 dark:hover:border-zinc-500"}`;
   const tabCls = (t: string) =>
-    `px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === t ? "border-gray-900 text-gray-900" : "border-transparent text-gray-400 hover:text-gray-600"}`;
+    `px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === t ? "border-gray-900 dark:border-zinc-100 text-gray-900 dark:text-zinc-100" : "border-transparent text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300"}`;
 
   return (
     <DashboardLayout>
@@ -462,15 +729,15 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       {/* Header row: title + refresh */}
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-100" style={{ fontFamily: "var(--font-space-grotesk)" }}>
             Autobatching v2
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Pre vs Post impact · {hub}</p>
+          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Pre vs Post impact · {hub}</p>
         </div>
         {refreshLabel && (
-          <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
+          <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-xl px-3 py-2">
             <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse inline-block" />
-            <span className="text-xs text-blue-700 font-medium">Data refreshed at {refreshLabel}</span>
+            <span className="text-xs text-blue-700 dark:text-blue-300 font-medium">Data refreshed at {refreshLabel}</span>
           </div>
         )}
       </div>
@@ -478,51 +745,51 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       {/* Filters — single row, left-aligned */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Hub</span>
+          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
           <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
             {availableHubs.length > 0
               ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
               : <option value={hub}>{hub}</option>}
           </select>
         </div>
-        <span className="text-gray-200 text-sm">|</span>
+        <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Pre</span>
+          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</span>
           <input type="date" value={preStart} min={preMin} max={preEnd}   onChange={e => setPreStart(e.target.value)} className={inputCls} />
-          <span className="text-gray-300 text-sm">→</span>
+          <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
           <input type="date" value={preEnd}   min={preStart} max={preMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
-          <span className="text-[11px] text-gray-400 font-medium">{selectedPre.length}d</span>
+          <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPre.length}d</span>
         </div>
-        <span className="text-gray-200 text-sm">|</span>
+        <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Post</span>
+          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</span>
           <input type="date" value={postStart} min={postMin} max={postEnd}   onChange={e => setPostStart(e.target.value)} className={inputCls} />
-          <span className="text-gray-300 text-sm">→</span>
+          <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
           <input type="date" value={postEnd}   min={postStart} max={postMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
-          <span className="text-[11px] text-gray-400 font-medium">{selectedPost.length}d</span>
+          <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPost.length}d</span>
         </div>
       </div>
 
       {/* Tab bar */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div className="flex border-b border-gray-200 dark:border-zinc-700 mb-6">
         <button className={tabCls("metrics")}  onClick={() => setActiveTab("metrics")}>Metrics</button>
         <button className={tabCls("glossary")} onClick={() => setActiveTab("glossary")}>Glossary</button>
       </div>
 
       {activeTab === "glossary" ? (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase w-1/3">Term</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Definition</th>
+              <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/3">Term</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Definition</th>
               </tr>
             </thead>
             <tbody>
               {GLOSSARY.map((g, i) => (
-                <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors">
-                  <td className="px-4 py-3 text-sm font-semibold text-gray-800 align-top">{g.term}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500 align-top">{g.definition}</td>
+                <tr key={i} className="border-b border-gray-50 dark:border-zinc-700/50 last:border-0 hover:bg-gray-50/60 dark:hover:bg-zinc-700/40 transition-colors">
+                  <td className="px-4 py-3 text-sm font-semibold text-gray-800 dark:text-zinc-200 align-top">{g.term}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-zinc-400 align-top">{g.definition}</td>
                 </tr>
               ))}
             </tbody>
@@ -534,17 +801,18 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <div className="mb-5">
             <SectionHeader>Comparability</SectionHeader>
             <ComparisonTable rows={[
-              { label: "Days",             pre: preAgg.num_days,            post: postAgg.num_days,            neutral: true, decimals: 0 },
-              { label: "Total Orders",     pre: preAgg.total_orders_sum,    post: postAgg.total_orders_sum,    neutral: true, decimals: 0 },
-              { label: "Avg Daily Orders", pre: preAgg.avg_daily_orders,    post: postAgg.avg_daily_orders,    neutral: true, decimals: 1, warn: ordersWarn },
-              { label: "Avg Daily DEs",   pre: preAgg.avg_daily_riders,    post: postAgg.avg_daily_riders,    neutral: true, decimals: 1, warn: ridersWarn },
+              { label: "Days",                pre: preAgg.num_days,              post: postAgg.num_days,              neutral: true, decimals: 0 },
+              { label: "Total Orders",        pre: preAgg.total_orders_sum,      post: postAgg.total_orders_sum,      neutral: true, decimals: 0 },
+              { label: "Avg Daily Orders",    pre: preAgg.avg_daily_orders,      post: postAgg.avg_daily_orders,      neutral: true, decimals: 1, warn: ordersWarn },
+              { label: "Avg Daily DEs",       pre: preAgg.avg_daily_riders,      post: postAgg.avg_daily_riders,      neutral: true, decimals: 1, warn: ridersWarn },
+              { label: <><Abbr tip="On-Demand: orders fulfilled by 3P fleet (Shadowfax, Pidge, etc.)">OD</Abbr> Orders (avg/day)</>, pre: preAgg.avg_daily_3p_orders, post: postAgg.avg_daily_3p_orders, neutral: true, decimals: 1 },
             ]} />
           </div>
 
           {/* Order Mix */}
           <div className="mb-5">
             <SectionHeader>Order Mix · Count &amp; Share of Dispatched Licious Orders</SectionHeader>
-            <OrderMixTable pre={preAgg} post={postAgg} />
+            <OrderMixTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} />
           </div>
 
           {/* Batch Metrics */}
@@ -573,14 +841,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           {/* SLA */}
           <div className="mb-5">
             <SectionHeader>SLA — Check Signal · All at Delivered (deliveredat vs promiseendtime)</SectionHeader>
-            <ComparisonTable rows={[
-              { label: "Overall SLA %",           pre: preAgg.overall_sla_pct * 100,   post: postAgg.overall_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
-              { label: "DP SLA %",                pre: preAgg.dp_sla_pct * 100,        post: postAgg.dp_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
-              { label: "Express SLA %",           pre: preAgg.express_sla_pct * 100,   post: postAgg.express_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
-              { label: "Scheduled SLA %",         pre: preAgg.scheduled_sla_pct * 100, post: postAgg.scheduled_sla_pct * 100, unit: "%", higherIsBetter: true,  decimals: 1 },
-              { label: "3P SLA % (at Delivered)", pre: preAgg.p3_sla_pct * 100,       post: postAgg.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
-              { label: "Avg Breach (mins)",       pre: preAgg.avg_breach_mins,          post: postAgg.avg_breach_mins,         higherIsBetter: false, decimals: 1 },
-            ]} />
+            <SlaTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} />
           </div>
 
           {/* Trip-level SLA */}
@@ -599,21 +860,29 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           {/* Order Timeline */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <SectionHeader>Order Timeline · Avg Mins per Stage</SectionHeader>
-              <div className="flex gap-1.5">
-                <button className={typeBtnCls("dp")}        onClick={() => setTimelineType("dp")}>DP</button>
-                <button className={typeBtnCls("express")}   onClick={() => setTimelineType("express")}>Express</button>
-                <button className={typeBtnCls("scheduled")} onClick={() => setTimelineType("scheduled")}>Scheduled</button>
+              <SectionHeader>Order Timeline · Mins per Stage</SectionHeader>
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1">
+                  <button className={typeBtnCls(tlMetric === "avg")} onClick={() => setTlMetric("avg")}>Avg</button>
+                  <button className={typeBtnCls(tlMetric === "p50")} onClick={() => setTlMetric("p50")}>Median</button>
+                  <button className={typeBtnCls(tlMetric === "p90")} onClick={() => setTlMetric("p90")}>P90</button>
+                </div>
+                <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
+                <div className="flex gap-1.5">
+                  <button className={typeBtnCls(timelineType === "dp")}        onClick={() => setTimelineType("dp")}>DP</button>
+                  <button className={typeBtnCls(timelineType === "express")}   onClick={() => setTimelineType("express")}>Express</button>
+                  <button className={typeBtnCls(timelineType === "scheduled")} onClick={() => setTimelineType("scheduled")}>Scheduled</button>
+                </div>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+            <div className="bg-white dark:bg-zinc-800 rounded-xl p-5 border border-gray-200 dark:border-zinc-700 shadow-sm">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={timelineData} margin={{ top: 22, right: 16, left: -8, bottom: 0 }} barGap={4}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-                  <XAxis dataKey="stage" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
-                  <YAxis tickFormatter={v => `${v}m`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+                  <XAxis dataKey="stage" tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
+                  <YAxis tickFormatter={v => `${v}m`} tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)} mins`]} />
-                  <Legend {...LEGEND_PROPS} />
+                  <Legend {...legendProps} />
                   <Bar dataKey="pre"  name="Pre"  fill={COLOR_CTRL} radius={[4, 4, 0, 0]} barSize={28}>
                     <LabelList dataKey="pre"  position="top" style={{ fontSize: 10, fill: COLOR_CTRL, fontWeight: 600 }} formatter={(v) => `${v}m`} />
                   </Bar>
