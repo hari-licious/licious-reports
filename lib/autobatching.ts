@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import rawData from "@/data/autobatching/raw_daily.json";
 
 export interface RawDay {
   date: string;
@@ -202,19 +201,5 @@ export interface AutobatchingData {
 }
 
 export function getAutobatchingData(): AutobatchingData {
-  const filePath = path.join(process.cwd(), "data", "autobatching", "raw_daily.json");
-
-  try {
-    const raw = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(raw) as AutobatchingData;
-  } catch {
-    // File not yet generated — return empty shell
-    return {
-      hub: "PSN",
-      pre_range: "2026-06-10 to 2026-06-16",
-      post_range: "2026-06-18 to 2026-06-23",
-      generated_at: "",
-      days: [],
-    };
-  }
+  return rawData as AutobatchingData;
 }
