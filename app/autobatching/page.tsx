@@ -1,6 +1,8 @@
 import { getAutobatchingData } from "@/lib/autobatching";
 import Dashboard from "@/components/autobatching/Dashboard";
 
+export const revalidate = 0;
+
 export default function AutobatchingPage() {
   const data = getAutobatchingData();
   return (
