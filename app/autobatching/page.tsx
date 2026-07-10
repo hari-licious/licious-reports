@@ -1,7 +1,7 @@
 import { getAutobatchingData } from "@/lib/autobatching";
 import Dashboard from "@/components/autobatching/Dashboard";
 
-export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 export default function AutobatchingPage() {
   const data = getAutobatchingData();
