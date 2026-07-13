@@ -120,6 +120,20 @@ export interface RawDay {
   sched_tl_ofd_to_rdl_sum: number;
   sched_tl_ofd_to_rdl_cnt: number;
 
+  // RDL→DEL timeline
+  dp_tl_rdl_to_del_sum: number;
+  dp_tl_rdl_to_del_cnt: number;
+  dp_tl_rdl_to_del_p50: number;
+  dp_tl_rdl_to_del_p90: number;
+  express_tl_rdl_to_del_sum: number;
+  express_tl_rdl_to_del_cnt: number;
+  express_tl_rdl_to_del_p50: number;
+  express_tl_rdl_to_del_p90: number;
+  sched_tl_rdl_to_del_sum: number;
+  sched_tl_rdl_to_del_cnt: number;
+  sched_tl_rdl_to_del_p50: number;
+  sched_tl_rdl_to_del_p90: number;
+
   // Percentiles (p50/p90) per day — weighted avg by cnt used in dashboard aggregation
   dp_tl_created_to_picked_p50: number;
   dp_tl_created_to_picked_p90: number;

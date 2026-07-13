@@ -69,6 +69,25 @@ interface Aggregated {
   ex_60_90_sla_pct: number;
   ex_90p_orders_total: number;
   ex_90p_sla_pct: number;
+  // Batching by type — absolute counts
+  dp_batched_count: number;
+  express_batched_count: number;
+  scheduled_batched_count: number;
+  // SLA — absolute counts (for order count display)
+  overall_on_time_count: number;
+  overall_with_rdl_count: number;
+  dp_on_time_count: number;
+  dp_with_rdl_count: number;
+  express_on_time_count: number;
+  express_with_rdl_count: number;
+  scheduled_on_time_count: number;
+  scheduled_with_rdl_count: number;
+  p3_on_time_count: number;
+  p3_delivered_count: number;
+  // Batch metrics — absolute counts
+  total_orders_batched_count: number;
+  total_licious_dispatched_count: number;
+  total_trips_count: number;
   // DP timeline — avg
   avg_dp_created_to_picked_mins: number;
   avg_dp_picked_to_packed_mins: number;
@@ -77,6 +96,7 @@ interface Aggregated {
   avg_dp_accepted_to_dispatch_mins: number;
   avg_dp_dispatch_to_ofd_mins: number;
   avg_dp_ofd_to_rdl_mins: number;
+  avg_dp_rdl_to_del_mins: number;
   // DP timeline — p50/p90 (weighted avg of daily percentiles)
   p50_dp_created_to_picked_mins: number;
   p50_dp_picked_to_packed_mins: number;
@@ -85,6 +105,7 @@ interface Aggregated {
   p50_dp_accepted_to_dispatch_mins: number;
   p50_dp_dispatch_to_ofd_mins: number;
   p50_dp_ofd_to_rdl_mins: number;
+  p50_dp_rdl_to_del_mins: number;
   p90_dp_created_to_picked_mins: number;
   p90_dp_picked_to_packed_mins: number;
   p90_dp_packed_to_allotted_mins: number;
@@ -92,6 +113,9 @@ interface Aggregated {
   p90_dp_accepted_to_dispatch_mins: number;
   p90_dp_dispatch_to_ofd_mins: number;
   p90_dp_ofd_to_rdl_mins: number;
+  p90_dp_rdl_to_del_mins: number;
+  // DP timeline — cnt for null detection
+  dp_rdl_to_del_total_cnt: number;
   // Express timeline — avg
   avg_express_created_to_picked_mins: number;
   avg_express_picked_to_packed_mins: number;
@@ -100,6 +124,7 @@ interface Aggregated {
   avg_express_accepted_to_dispatch_mins: number;
   avg_express_dispatch_to_ofd_mins: number;
   avg_express_ofd_to_rdl_mins: number;
+  avg_express_rdl_to_del_mins: number;
   // Express timeline — p50/p90
   p50_express_created_to_picked_mins: number;
   p50_express_picked_to_packed_mins: number;
@@ -108,6 +133,7 @@ interface Aggregated {
   p50_express_accepted_to_dispatch_mins: number;
   p50_express_dispatch_to_ofd_mins: number;
   p50_express_ofd_to_rdl_mins: number;
+  p50_express_rdl_to_del_mins: number;
   p90_express_created_to_picked_mins: number;
   p90_express_picked_to_packed_mins: number;
   p90_express_packed_to_allotted_mins: number;
@@ -115,20 +141,26 @@ interface Aggregated {
   p90_express_accepted_to_dispatch_mins: number;
   p90_express_dispatch_to_ofd_mins: number;
   p90_express_ofd_to_rdl_mins: number;
+  p90_express_rdl_to_del_mins: number;
+  express_rdl_to_del_total_cnt: number;
   // Scheduled timeline — avg
   avg_sched_allotted_to_accepted_mins: number;
   avg_sched_accepted_to_dispatched_mins: number;
   avg_sched_dispatch_to_ofd_mins: number;
   avg_sched_ofd_to_rdl_mins: number;
+  avg_sched_rdl_to_del_mins: number;
   // Scheduled timeline — p50/p90
   p50_sched_allotted_to_accepted_mins: number;
   p50_sched_accepted_to_dispatched_mins: number;
   p50_sched_dispatch_to_ofd_mins: number;
   p50_sched_ofd_to_rdl_mins: number;
+  p50_sched_rdl_to_del_mins: number;
   p90_sched_allotted_to_accepted_mins: number;
   p90_sched_accepted_to_dispatched_mins: number;
   p90_sched_dispatch_to_ofd_mins: number;
   p90_sched_ofd_to_rdl_mins: number;
+  p90_sched_rdl_to_del_mins: number;
+  sched_rdl_to_del_total_cnt: number;
 }
 
 function div(a: number, b: number) { return b > 0 ? a / b : 0; }
@@ -141,8 +173,15 @@ function aggregate(days: RawDay[]): Aggregated {
     batched_orders_pct: 0, avg_orders_per_trip: 0, single_order_trips_pct: 0,
     avg_orders_per_de: 0, orders_per_login_hour: 0, trips_per_de: 0,
     dp_batched_pct: 0, express_batched_pct: 0, scheduled_batched_pct: 0,
+    dp_batched_count: 0, express_batched_count: 0, scheduled_batched_count: 0,
     overall_sla_pct: 0, scheduled_sla_pct: 0, express_sla_pct: 0,
     dp_sla_pct: 0, p3_sla_pct: 0, avg_breach_mins: 0,
+    overall_on_time_count: 0, overall_with_rdl_count: 0,
+    dp_on_time_count: 0, dp_with_rdl_count: 0,
+    express_on_time_count: 0, express_with_rdl_count: 0,
+    scheduled_on_time_count: 0, scheduled_with_rdl_count: 0,
+    p3_on_time_count: 0, p3_delivered_count: 0,
+    total_orders_batched_count: 0, total_licious_dispatched_count: 0, total_trips_count: 0,
     trip_batched_count: 0, trip_breached_count: 0,
     trip_breach_rate: 0, first_order_breach_pct: 0, last_order_breach_pct: 0, avg_breach_position: 0,
     total_3p_orders: 0, avg_daily_3p_orders: 0,
@@ -152,28 +191,31 @@ function aggregate(days: RawDay[]): Aggregated {
     ex_90p_orders_total: 0,   ex_90p_sla_pct: 0,
     avg_dp_created_to_picked_mins: 0, avg_dp_picked_to_packed_mins: 0,
     avg_dp_packed_to_allotted_mins: 0, avg_dp_allotted_to_accepted_mins: 0, avg_dp_accepted_to_dispatch_mins: 0,
-    avg_dp_dispatch_to_ofd_mins: 0, avg_dp_ofd_to_rdl_mins: 0,
+    avg_dp_dispatch_to_ofd_mins: 0, avg_dp_ofd_to_rdl_mins: 0, avg_dp_rdl_to_del_mins: 0,
     p50_dp_created_to_picked_mins: 0, p50_dp_picked_to_packed_mins: 0,
     p50_dp_packed_to_allotted_mins: 0, p50_dp_allotted_to_accepted_mins: 0, p50_dp_accepted_to_dispatch_mins: 0,
-    p50_dp_dispatch_to_ofd_mins: 0, p50_dp_ofd_to_rdl_mins: 0,
+    p50_dp_dispatch_to_ofd_mins: 0, p50_dp_ofd_to_rdl_mins: 0, p50_dp_rdl_to_del_mins: 0,
     p90_dp_created_to_picked_mins: 0, p90_dp_picked_to_packed_mins: 0,
     p90_dp_packed_to_allotted_mins: 0, p90_dp_allotted_to_accepted_mins: 0, p90_dp_accepted_to_dispatch_mins: 0,
-    p90_dp_dispatch_to_ofd_mins: 0, p90_dp_ofd_to_rdl_mins: 0,
+    p90_dp_dispatch_to_ofd_mins: 0, p90_dp_ofd_to_rdl_mins: 0, p90_dp_rdl_to_del_mins: 0,
+    dp_rdl_to_del_total_cnt: 0,
     avg_express_created_to_picked_mins: 0, avg_express_picked_to_packed_mins: 0,
     avg_express_packed_to_allotted_mins: 0, avg_express_allotted_to_accepted_mins: 0, avg_express_accepted_to_dispatch_mins: 0,
-    avg_express_dispatch_to_ofd_mins: 0, avg_express_ofd_to_rdl_mins: 0,
+    avg_express_dispatch_to_ofd_mins: 0, avg_express_ofd_to_rdl_mins: 0, avg_express_rdl_to_del_mins: 0,
     p50_express_created_to_picked_mins: 0, p50_express_picked_to_packed_mins: 0,
     p50_express_packed_to_allotted_mins: 0, p50_express_allotted_to_accepted_mins: 0, p50_express_accepted_to_dispatch_mins: 0,
-    p50_express_dispatch_to_ofd_mins: 0, p50_express_ofd_to_rdl_mins: 0,
+    p50_express_dispatch_to_ofd_mins: 0, p50_express_ofd_to_rdl_mins: 0, p50_express_rdl_to_del_mins: 0,
     p90_express_created_to_picked_mins: 0, p90_express_picked_to_packed_mins: 0,
     p90_express_packed_to_allotted_mins: 0, p90_express_allotted_to_accepted_mins: 0, p90_express_accepted_to_dispatch_mins: 0,
-    p90_express_dispatch_to_ofd_mins: 0, p90_express_ofd_to_rdl_mins: 0,
+    p90_express_dispatch_to_ofd_mins: 0, p90_express_ofd_to_rdl_mins: 0, p90_express_rdl_to_del_mins: 0,
+    express_rdl_to_del_total_cnt: 0,
     avg_sched_allotted_to_accepted_mins: 0, avg_sched_accepted_to_dispatched_mins: 0,
-    avg_sched_dispatch_to_ofd_mins: 0, avg_sched_ofd_to_rdl_mins: 0,
+    avg_sched_dispatch_to_ofd_mins: 0, avg_sched_ofd_to_rdl_mins: 0, avg_sched_rdl_to_del_mins: 0,
     p50_sched_allotted_to_accepted_mins: 0, p50_sched_accepted_to_dispatched_mins: 0,
-    p50_sched_dispatch_to_ofd_mins: 0, p50_sched_ofd_to_rdl_mins: 0,
+    p50_sched_dispatch_to_ofd_mins: 0, p50_sched_ofd_to_rdl_mins: 0, p50_sched_rdl_to_del_mins: 0,
     p90_sched_allotted_to_accepted_mins: 0, p90_sched_accepted_to_dispatched_mins: 0,
-    p90_sched_dispatch_to_ofd_mins: 0, p90_sched_ofd_to_rdl_mins: 0,
+    p90_sched_dispatch_to_ofd_mins: 0, p90_sched_ofd_to_rdl_mins: 0, p90_sched_rdl_to_del_mins: 0,
+    sched_rdl_to_del_total_cnt: 0,
   };
   if (days.length === 0) return zero;
 
@@ -226,6 +268,9 @@ function aggregate(days: RawDay[]): Aggregated {
     dp_batched_pct:        div(s("dp_batched"),        dp_orders),
     express_batched_pct:   div(s("express_batched"),   express_orders),
     scheduled_batched_pct: div(s("scheduled_batched"), scheduled_orders),
+    dp_batched_count:      s("dp_batched"),
+    express_batched_count: s("express_batched"),
+    scheduled_batched_count: s("scheduled_batched"),
 
     overall_sla_pct:       div(s("on_time_orders"),      orders_with_rdl),
     scheduled_sla_pct:     div(s("scheduled_on_time"),   s("scheduled_with_rdl")),
@@ -233,6 +278,19 @@ function aggregate(days: RawDay[]): Aggregated {
     dp_sla_pct:            div(s("dp_on_time"),          s("dp_with_rdl")),
     p3_sla_pct:            div(s("p3_on_time"),          s("p3_delivered")),
     avg_breach_mins:       div(breach_mins_sum, breach_count),
+    overall_on_time_count:     s("on_time_orders"),
+    overall_with_rdl_count:    orders_with_rdl,
+    dp_on_time_count:          s("dp_on_time"),
+    dp_with_rdl_count:         s("dp_with_rdl"),
+    express_on_time_count:     s("express_on_time"),
+    express_with_rdl_count:    s("express_with_rdl"),
+    scheduled_on_time_count:   s("scheduled_on_time"),
+    scheduled_with_rdl_count:  s("scheduled_with_rdl"),
+    p3_on_time_count:          s("p3_on_time"),
+    p3_delivered_count:        s("p3_delivered"),
+    total_orders_batched_count:     total_orders_batched,
+    total_licious_dispatched_count: total_licious_disp,
+    total_trips_count:              total_trips,
 
     trip_batched_count:           trip_batched,
     trip_breached_count:          trip_breached,
@@ -260,6 +318,7 @@ function aggregate(days: RawDay[]): Aggregated {
     avg_dp_accepted_to_dispatch_mins:    div(s("dp_tl_accepted_to_dispatch_sum"),    s("dp_tl_accepted_to_dispatch_cnt")),
     avg_dp_dispatch_to_ofd_mins:         div(s("dp_tl_dispatch_to_ofd_sum"),         s("dp_tl_dispatch_to_ofd_cnt")),
     avg_dp_ofd_to_rdl_mins:              div(s("dp_tl_ofd_to_rdl_sum"),              s("dp_tl_ofd_to_rdl_cnt")),
+    avg_dp_rdl_to_del_mins:              div(s("dp_tl_rdl_to_del_sum"),              s("dp_tl_rdl_to_del_cnt")),
 
     p50_dp_created_to_picked_mins:       wp("dp_tl_created_to_picked_p50",       "dp_tl_created_to_picked_cnt"),
     p50_dp_picked_to_packed_mins:        wp("dp_tl_picked_to_packed_p50",        "dp_tl_picked_to_packed_cnt"),
@@ -268,6 +327,7 @@ function aggregate(days: RawDay[]): Aggregated {
     p50_dp_accepted_to_dispatch_mins:    wp("dp_tl_accepted_to_dispatch_p50",    "dp_tl_accepted_to_dispatch_cnt"),
     p50_dp_dispatch_to_ofd_mins:         wp("dp_tl_dispatch_to_ofd_p50",         "dp_tl_dispatch_to_ofd_cnt"),
     p50_dp_ofd_to_rdl_mins:              wp("dp_tl_ofd_to_rdl_p50",              "dp_tl_ofd_to_rdl_cnt"),
+    p50_dp_rdl_to_del_mins:              wp("dp_tl_rdl_to_del_p50",              "dp_tl_rdl_to_del_cnt"),
     p90_dp_created_to_picked_mins:       wp("dp_tl_created_to_picked_p90",       "dp_tl_created_to_picked_cnt"),
     p90_dp_picked_to_packed_mins:        wp("dp_tl_picked_to_packed_p90",        "dp_tl_picked_to_packed_cnt"),
     p90_dp_packed_to_allotted_mins:      wp("dp_tl_packed_to_allotted_p90",      "dp_tl_packed_to_allotted_cnt"),
@@ -275,6 +335,8 @@ function aggregate(days: RawDay[]): Aggregated {
     p90_dp_accepted_to_dispatch_mins:    wp("dp_tl_accepted_to_dispatch_p90",    "dp_tl_accepted_to_dispatch_cnt"),
     p90_dp_dispatch_to_ofd_mins:         wp("dp_tl_dispatch_to_ofd_p90",         "dp_tl_dispatch_to_ofd_cnt"),
     p90_dp_ofd_to_rdl_mins:              wp("dp_tl_ofd_to_rdl_p90",              "dp_tl_ofd_to_rdl_cnt"),
+    p90_dp_rdl_to_del_mins:              wp("dp_tl_rdl_to_del_p90",              "dp_tl_rdl_to_del_cnt"),
+    dp_rdl_to_del_total_cnt:             s("dp_tl_rdl_to_del_cnt"),
 
     avg_express_created_to_picked_mins:       div(s("express_tl_created_to_picked_sum"),       s("express_tl_created_to_picked_cnt")),
     avg_express_picked_to_packed_mins:        div(s("express_tl_picked_to_packed_sum"),        s("express_tl_picked_to_packed_cnt")),
@@ -283,6 +345,7 @@ function aggregate(days: RawDay[]): Aggregated {
     avg_express_accepted_to_dispatch_mins:    div(s("express_tl_accepted_to_dispatch_sum"),    s("express_tl_accepted_to_dispatch_cnt")),
     avg_express_dispatch_to_ofd_mins:         div(s("express_tl_dispatch_to_ofd_sum"),         s("express_tl_dispatch_to_ofd_cnt")),
     avg_express_ofd_to_rdl_mins:              div(s("express_tl_ofd_to_rdl_sum"),              s("express_tl_ofd_to_rdl_cnt")),
+    avg_express_rdl_to_del_mins:              div(s("express_tl_rdl_to_del_sum"),              s("express_tl_rdl_to_del_cnt")),
 
     p50_express_created_to_picked_mins:       wp("express_tl_created_to_picked_p50",       "express_tl_created_to_picked_cnt"),
     p50_express_picked_to_packed_mins:        wp("express_tl_picked_to_packed_p50",        "express_tl_picked_to_packed_cnt"),
@@ -291,6 +354,7 @@ function aggregate(days: RawDay[]): Aggregated {
     p50_express_accepted_to_dispatch_mins:    wp("express_tl_accepted_to_dispatch_p50",    "express_tl_accepted_to_dispatch_cnt"),
     p50_express_dispatch_to_ofd_mins:         wp("express_tl_dispatch_to_ofd_p50",         "express_tl_dispatch_to_ofd_cnt"),
     p50_express_ofd_to_rdl_mins:              wp("express_tl_ofd_to_rdl_p50",              "express_tl_ofd_to_rdl_cnt"),
+    p50_express_rdl_to_del_mins:              wp("express_tl_rdl_to_del_p50",              "express_tl_rdl_to_del_cnt"),
     p90_express_created_to_picked_mins:       wp("express_tl_created_to_picked_p90",       "express_tl_created_to_picked_cnt"),
     p90_express_picked_to_packed_mins:        wp("express_tl_picked_to_packed_p90",        "express_tl_picked_to_packed_cnt"),
     p90_express_packed_to_allotted_mins:      wp("express_tl_packed_to_allotted_p90",      "express_tl_packed_to_allotted_cnt"),
@@ -298,20 +362,26 @@ function aggregate(days: RawDay[]): Aggregated {
     p90_express_accepted_to_dispatch_mins:    wp("express_tl_accepted_to_dispatch_p90",    "express_tl_accepted_to_dispatch_cnt"),
     p90_express_dispatch_to_ofd_mins:         wp("express_tl_dispatch_to_ofd_p90",         "express_tl_dispatch_to_ofd_cnt"),
     p90_express_ofd_to_rdl_mins:              wp("express_tl_ofd_to_rdl_p90",              "express_tl_ofd_to_rdl_cnt"),
+    p90_express_rdl_to_del_mins:              wp("express_tl_rdl_to_del_p90",              "express_tl_rdl_to_del_cnt"),
+    express_rdl_to_del_total_cnt:             s("express_tl_rdl_to_del_cnt"),
 
     avg_sched_allotted_to_accepted_mins:   div(s("sched_tl_allotted_to_accepted_sum"),   s("sched_tl_allotted_to_accepted_cnt")),
     avg_sched_accepted_to_dispatched_mins: div(s("sched_tl_accepted_to_dispatched_sum"), s("sched_tl_accepted_to_dispatched_cnt")),
     avg_sched_dispatch_to_ofd_mins:        div(s("sched_tl_dispatch_to_ofd_sum"),        s("sched_tl_dispatch_to_ofd_cnt")),
     avg_sched_ofd_to_rdl_mins:             div(s("sched_tl_ofd_to_rdl_sum"),             s("sched_tl_ofd_to_rdl_cnt")),
+    avg_sched_rdl_to_del_mins:             div(s("sched_tl_rdl_to_del_sum"),             s("sched_tl_rdl_to_del_cnt")),
 
     p50_sched_allotted_to_accepted_mins:   wp("sched_tl_allotted_to_accepted_p50",   "sched_tl_allotted_to_accepted_cnt"),
     p50_sched_accepted_to_dispatched_mins: wp("sched_tl_accepted_to_dispatched_p50", "sched_tl_accepted_to_dispatched_cnt"),
     p50_sched_dispatch_to_ofd_mins:        wp("sched_tl_dispatch_to_ofd_p50",        "sched_tl_dispatch_to_ofd_cnt"),
     p50_sched_ofd_to_rdl_mins:             wp("sched_tl_ofd_to_rdl_p50",             "sched_tl_ofd_to_rdl_cnt"),
+    p50_sched_rdl_to_del_mins:             wp("sched_tl_rdl_to_del_p50",             "sched_tl_rdl_to_del_cnt"),
     p90_sched_allotted_to_accepted_mins:   wp("sched_tl_allotted_to_accepted_p90",   "sched_tl_allotted_to_accepted_cnt"),
     p90_sched_accepted_to_dispatched_mins: wp("sched_tl_accepted_to_dispatched_p90", "sched_tl_accepted_to_dispatched_cnt"),
     p90_sched_dispatch_to_ofd_mins:        wp("sched_tl_dispatch_to_ofd_p90",        "sched_tl_dispatch_to_ofd_cnt"),
     p90_sched_ofd_to_rdl_mins:             wp("sched_tl_ofd_to_rdl_p90",             "sched_tl_ofd_to_rdl_cnt"),
+    p90_sched_rdl_to_del_mins:             wp("sched_tl_rdl_to_del_p90",             "sched_tl_rdl_to_del_cnt"),
+    sched_rdl_to_del_total_cnt:            s("sched_tl_rdl_to_del_cnt"),
   };
 }
 
@@ -333,6 +403,8 @@ interface MetricRow {
   neutral?: boolean;
   decimals?: number;
   warn?: boolean;
+  countPre?: number;
+  countPost?: number;
 }
 
 function ComparisonTable({ rows }: { rows: MetricRow[] }) {
@@ -362,8 +434,18 @@ function ComparisonTable({ rows }: { rows: MetricRow[] }) {
                   {row.label}
                   {row.warn && <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">⚠ &gt;25%</span>}
                 </td>
-                <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right tabular-nums">{fmt(row.pre, dec, u)}</td>
-                <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right tabular-nums">{fmt(row.post, dec, u)}</td>
+                <td className="px-4 py-3 text-right">
+                  <div className="tabular-nums">
+                    <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{fmt(row.pre, dec, u)}</span>
+                    {row.countPre != null && <div className="text-[10px] text-gray-400 dark:text-zinc-500">{row.countPre.toLocaleString()} orders</div>}
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <div className="tabular-nums">
+                    <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{fmt(row.post, dec, u)}</span>
+                    {row.countPost != null && <div className="text-[10px] text-gray-400 dark:text-zinc-500">{row.countPost.toLocaleString()} orders</div>}
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-right">
                   {row.neutral ? (
                     <span className="text-sm text-gray-500 dark:text-zinc-400 tabular-nums">{sign}{fmt(Math.abs(delta), dec, u)}</span>
@@ -457,11 +539,11 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress }: {
   pre: Aggregated; post: Aggregated; expressExpanded: boolean; onToggleExpress: () => void;
 }) {
   const rows: MetricRow[] = [
-    { label: "Overall SLA %",           pre: pre.overall_sla_pct * 100,   post: post.overall_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
-    { label: "DP SLA %",                pre: pre.dp_sla_pct * 100,        post: post.dp_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
-    { label: "Express SLA %",           pre: pre.express_sla_pct * 100,   post: post.express_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1 },
-    { label: "Scheduled SLA %",         pre: pre.scheduled_sla_pct * 100, post: post.scheduled_sla_pct * 100, unit: "%", higherIsBetter: true,  decimals: 1 },
-    { label: "3P SLA % (at Delivered)", pre: pre.p3_sla_pct * 100,        post: post.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1 },
+    { label: "Overall SLA %",           pre: pre.overall_sla_pct * 100,   post: post.overall_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.overall_on_time_count,    countPost: post.overall_on_time_count },
+    { label: "DP SLA %",                pre: pre.dp_sla_pct * 100,        post: post.dp_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.dp_on_time_count,         countPost: post.dp_on_time_count },
+    { label: "Express SLA %",           pre: pre.express_sla_pct * 100,   post: post.express_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.express_on_time_count,    countPost: post.express_on_time_count },
+    { label: "Scheduled SLA %",         pre: pre.scheduled_sla_pct * 100, post: post.scheduled_sla_pct * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.scheduled_on_time_count,  countPost: post.scheduled_on_time_count },
+    { label: "3P SLA % (at Delivered)", pre: pre.p3_sla_pct * 100,        post: post.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.p3_on_time_count,         countPost: post.p3_on_time_count },
     { label: "Avg Breach (mins)",       pre: pre.avg_breach_mins,          post: post.avg_breach_mins,         higherIsBetter: false, decimals: 1 },
   ];
   // Express row index (2) needs the expand toggle
@@ -499,8 +581,18 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress }: {
                       </span>
                     ) : row.label}
                   </td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right tabular-nums">{fmt(row.pre, dec, u)}</td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-700 dark:text-zinc-300 text-right tabular-nums">{fmt(row.post, dec, u)}</td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="tabular-nums">
+                      <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{fmt(row.pre, dec, u)}</span>
+                      {row.countPre != null && <div className="text-[10px] text-gray-400 dark:text-zinc-500">{row.countPre.toLocaleString()} orders</div>}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="tabular-nums">
+                      <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{fmt(row.post, dec, u)}</span>
+                      {row.countPost != null && <div className="text-[10px] text-gray-400 dark:text-zinc-500">{row.countPost.toLocaleString()} orders</div>}
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-right">
                     {row.neutral ? (
                       <span className="text-sm text-gray-500 dark:text-zinc-400 tabular-nums">{sign}{fmt(Math.abs(delta), dec, u)}</span>
@@ -579,6 +671,7 @@ const GLOSSARY = [
   { term: "Accepted→Dispatched",         definition: "Time from RIDER_ACCEPTED to DISPATCHED. Physical pickup from the hub counter — DE collecting the packed boxes." },
   { term: "Dispatched→OFD",              definition: "Time from LMS DISPATCHED to OUT_FOR_DELIVERY. Hub exit to first customer en route." },
   { term: "OFD→RDL",                     definition: "Time from OUT_FOR_DELIVERY to REACHED_DELIVERY_LOCATION. Travel time to customer doorstep." },
+  { term: "RDL→DEL",                     definition: "Time from REACHED_DELIVERY_LOCATION to DELIVERED. Time the DE spends at the customer's door to hand over the order and confirm delivery." },
   { term: "Allotted→Accepted (Scheduled)", definition: "Time from RIDER_ALLOTTED to RIDER_ACCEPTED for scheduled orders. Rider OTP acceptance window." },
   { term: "Accepted→Dispatched (Scheduled)", definition: "Time from RIDER_ACCEPTED to DISPATCHED for scheduled orders. Pickup readiness lag." },
   { term: "OD (On-Demand)",                 definition: "Orders fulfilled by 3P fleet partners (Shadowfax, Pidge, ElasticRun, Shiprocket). Shown as 'OD' on dashboard. Count is avg orders/day to the 3P fleet." },
@@ -673,6 +766,9 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
     const pfx = tlMetric === "avg" ? "avg" : tlMetric;  // "avg" | "p50" | "p90"
     const g = (agg: Aggregated, base: string) =>
       +(agg[`${pfx}_${base}` as keyof Aggregated] as number ?? 0).toFixed(1);
+    // Return null when a stage has no data for that period (cnt = 0)
+    const gOrNull = (agg: Aggregated, base: string, cntKey: keyof Aggregated) =>
+      (agg[cntKey] as number) > 0 ? g(agg, base) : null;
 
     if (timelineType === "dp") {
       return [
@@ -683,6 +779,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
         { stage: "Accepted→Dispatched", pre: g(preAgg,  "dp_accepted_to_dispatch_mins"),   post: g(postAgg, "dp_accepted_to_dispatch_mins") },
         { stage: "Dispatched→OFD",      pre: g(preAgg,  "dp_dispatch_to_ofd_mins"),        post: g(postAgg, "dp_dispatch_to_ofd_mins") },
         { stage: "OFD→RDL",             pre: g(preAgg,  "dp_ofd_to_rdl_mins"),             post: g(postAgg, "dp_ofd_to_rdl_mins") },
+        { stage: "RDL→DEL",             pre: gOrNull(preAgg,  "dp_rdl_to_del_mins", "dp_rdl_to_del_total_cnt"),  post: gOrNull(postAgg, "dp_rdl_to_del_mins", "dp_rdl_to_del_total_cnt") },
       ];
     }
     if (timelineType === "express") {
@@ -694,6 +791,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
         { stage: "Accepted→Dispatched", pre: g(preAgg,  "express_accepted_to_dispatch_mins"),   post: g(postAgg, "express_accepted_to_dispatch_mins") },
         { stage: "Dispatched→OFD",      pre: g(preAgg,  "express_dispatch_to_ofd_mins"),        post: g(postAgg, "express_dispatch_to_ofd_mins") },
         { stage: "OFD→RDL",             pre: g(preAgg,  "express_ofd_to_rdl_mins"),             post: g(postAgg, "express_ofd_to_rdl_mins") },
+        { stage: "RDL→DEL",             pre: gOrNull(preAgg,  "express_rdl_to_del_mins", "express_rdl_to_del_total_cnt"), post: gOrNull(postAgg, "express_rdl_to_del_mins", "express_rdl_to_del_total_cnt") },
       ];
     }
     // scheduled
@@ -702,6 +800,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       { stage: "Accepted→Dispatched", pre: g(preAgg,  "sched_accepted_to_dispatched_mins"), post: g(postAgg, "sched_accepted_to_dispatched_mins") },
       { stage: "Dispatched→OFD",      pre: g(preAgg,  "sched_dispatch_to_ofd_mins"),        post: g(postAgg, "sched_dispatch_to_ofd_mins") },
       { stage: "OFD→RDL",             pre: g(preAgg,  "sched_ofd_to_rdl_mins"),             post: g(postAgg, "sched_ofd_to_rdl_mins") },
+      { stage: "RDL→DEL",             pre: gOrNull(preAgg,  "sched_rdl_to_del_mins", "sched_rdl_to_del_total_cnt"), post: gOrNull(postAgg, "sched_rdl_to_del_mins", "sched_rdl_to_del_total_cnt") },
     ];
   }, [timelineType, tlMetric, preAgg, postAgg]);
 
@@ -819,9 +918,9 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <div className="mb-5">
             <SectionHeader>Batch Metrics — Success Signal</SectionHeader>
             <ComparisonTable rows={[
-              { label: "Batched Orders %",        pre: preAgg.batched_orders_pct * 100,    post: postAgg.batched_orders_pct * 100,    unit: "%", higherIsBetter: true,  decimals: 1 },
-              { label: "Avg Orders / Trip",       pre: preAgg.avg_orders_per_trip,          post: postAgg.avg_orders_per_trip,          higherIsBetter: true,  decimals: 2 },
-              { label: "Single-Order Trips %",    pre: preAgg.single_order_trips_pct * 100, post: postAgg.single_order_trips_pct * 100, unit: "%", higherIsBetter: false, decimals: 1 },
+              { label: "Batched Orders %",        pre: preAgg.batched_orders_pct * 100,    post: postAgg.batched_orders_pct * 100,    unit: "%", higherIsBetter: true,  decimals: 1, countPre: preAgg.total_orders_batched_count, countPost: postAgg.total_orders_batched_count },
+              { label: "Avg Orders / Trip",       pre: preAgg.avg_orders_per_trip,          post: postAgg.avg_orders_per_trip,          higherIsBetter: true,  decimals: 2, countPre: preAgg.total_licious_dispatched_count, countPost: postAgg.total_licious_dispatched_count },
+              { label: "Single-Order Trips %",    pre: preAgg.single_order_trips_pct * 100, post: postAgg.single_order_trips_pct * 100, unit: "%", higherIsBetter: false, decimals: 1, countPre: preAgg.total_trips_count, countPost: postAgg.total_trips_count },
               { label: "Avg Orders / DE",         pre: preAgg.avg_orders_per_de,            post: postAgg.avg_orders_per_de,            higherIsBetter: true,  decimals: 1 },
               { label: <>Orders / Login Hr (<Abbr tip="Total orders ÷ total DE login hours. Measures throughput per hour of rider availability.">OPH</Abbr>)</>, pre: preAgg.orders_per_login_hour,        post: postAgg.orders_per_login_hour,        higherIsBetter: true,  decimals: 2 },
               { label: "Trips / DE",              pre: preAgg.trips_per_de,                 post: postAgg.trips_per_de,                 higherIsBetter: true,  decimals: 2 },
@@ -832,9 +931,9 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <div className="mb-5">
             <SectionHeader>Batching by Order Type · % of Orders Batched</SectionHeader>
             <ComparisonTable rows={[
-              { label: "DP Batched %",        pre: preAgg.dp_batched_pct * 100,        post: postAgg.dp_batched_pct * 100,        unit: "%", higherIsBetter: true, decimals: 1 },
-              { label: "Express Batched %",   pre: preAgg.express_batched_pct * 100,   post: postAgg.express_batched_pct * 100,   unit: "%", higherIsBetter: true, decimals: 1 },
-              { label: "Scheduled Batched %", pre: preAgg.scheduled_batched_pct * 100, post: postAgg.scheduled_batched_pct * 100, unit: "%", higherIsBetter: true, decimals: 1 },
+              { label: "DP Batched %",        pre: preAgg.dp_batched_pct * 100,        post: postAgg.dp_batched_pct * 100,        unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.dp_batched_count,        countPost: postAgg.dp_batched_count },
+              { label: "Express Batched %",   pre: preAgg.express_batched_pct * 100,   post: postAgg.express_batched_pct * 100,   unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.express_batched_count,   countPost: postAgg.express_batched_count },
+              { label: "Scheduled Batched %", pre: preAgg.scheduled_batched_pct * 100, post: postAgg.scheduled_batched_pct * 100, unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.scheduled_batched_count, countPost: postAgg.scheduled_batched_count },
             ]} />
           </div>
 
@@ -883,11 +982,11 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
                   <YAxis tickFormatter={v => `${v}m`} tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)} mins`]} />
                   <Legend {...legendProps} />
-                  <Bar dataKey="pre"  name="Pre"  fill={COLOR_CTRL} radius={[4, 4, 0, 0]} barSize={28}>
-                    <LabelList dataKey="pre"  position="top" style={{ fontSize: 10, fill: COLOR_CTRL, fontWeight: 600 }} formatter={(v) => `${v}m`} />
+                  <Bar dataKey="pre"  name="Pre"  fill={COLOR_CTRL} radius={[4, 4, 0, 0]} barSize={28} minPointSize={2}>
+                    <LabelList dataKey="pre"  position="top" style={{ fontSize: 10, fill: COLOR_CTRL, fontWeight: 600 }} formatter={(v: unknown) => v == null ? "" : `${v}m`} />
                   </Bar>
-                  <Bar dataKey="post" name="Post" fill={COLOR_POST} radius={[4, 4, 0, 0]} barSize={28}>
-                    <LabelList dataKey="post" position="top" style={{ fontSize: 10, fill: COLOR_POST, fontWeight: 600 }} formatter={(v) => `${v}m`} />
+                  <Bar dataKey="post" name="Post" fill={COLOR_POST} radius={[4, 4, 0, 0]} barSize={28} minPointSize={2}>
+                    <LabelList dataKey="post" position="top" style={{ fontSize: 10, fill: COLOR_POST, fontWeight: 600 }} formatter={(v: unknown) => v == null ? "" : `${v}m`} />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
