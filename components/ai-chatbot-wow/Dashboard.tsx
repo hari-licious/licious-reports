@@ -4,7 +4,8 @@ import {
   LineChart, Line, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
-import { COLOR_CTRL, COLOR_TEST, tooltipStyle, LEGEND_PROPS } from "@/lib/theme";
+import { COLOR_CTRL, COLOR_TEST } from "@/lib/theme";
+import { useChartTheme } from "@/lib/useChartTheme";
 import { DashboardLayout } from "@/components/ui/DashboardLayout";
 import { WowRow } from "@/lib/ai-chatbot-wow";
 
@@ -33,19 +34,20 @@ function KpiCard({ label, ctrlValue, testValue, ctrlSub, testSub, downIsGood }: 
   testSub?: string;
   downIsGood?: boolean;
 }) {
+  void downIsGood;
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">{label}</p>
+    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm">
+      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 dark:text-zinc-500 uppercase mb-3">{label}</p>
       <div className="flex gap-6">
         <div>
-          <p className="text-xs text-gray-400 mb-1">Control</p>
-          <p className="text-2xl font-bold text-gray-900">{ctrlValue}</p>
-          {ctrlSub && <p className="text-xs text-gray-500 mt-1">{ctrlSub}</p>}
+          <p className="text-xs text-gray-400 dark:text-zinc-500 mb-1">Control</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-zinc-100">{ctrlValue}</p>
+          {ctrlSub && <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">{ctrlSub}</p>}
         </div>
         <div>
-          <p className="text-xs text-gray-400 mb-1">Test</p>
-          <p className="text-2xl font-bold text-gray-900">{testValue}</p>
-          {testSub && <p className="text-xs text-gray-500 mt-1">{testSub}</p>}
+          <p className="text-xs text-gray-400 dark:text-zinc-500 mb-1">Test</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-zinc-100">{testValue}</p>
+          {testSub && <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">{testSub}</p>}
         </div>
       </div>
     </div>
@@ -54,32 +56,32 @@ function KpiCard({ label, ctrlValue, testValue, ctrlSub, testSub, downIsGood }: 
 
 function SingleKpiCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 uppercase mb-3">{label}</p>
-      <p className="text-3xl font-bold text-gray-900">{value}</p>
-      {sub && <p className="text-xs text-gray-500 mt-2">{sub}</p>}
+    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm">
+      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 dark:text-zinc-500 uppercase mb-3">{label}</p>
+      <p className="text-3xl font-bold text-gray-900 dark:text-zinc-100">{value}</p>
+      {sub && <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">{sub}</p>}
     </div>
   );
 }
 
 function ChartCard({ title, caption, children }: { title: string; caption?: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-      <p className="text-sm font-semibold text-gray-900 mb-0.5">{title}</p>
-      {caption && <p className="text-xs text-gray-500 mb-4">{caption}</p>}
+    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm">
+      <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-0.5">{title}</p>
+      {caption && <p className="text-xs text-gray-500 dark:text-zinc-400 mb-4">{caption}</p>}
       {children}
     </div>
   );
 }
 
 export default function Dashboard({ generatedAt, rows }: Props) {
-  // Derive week order from data (JSON rows are already sorted by week)
+  const { gridStroke, tickFill, tooltipStyle, legendProps } = useChartTheme();
+
   const WEEKS = [...new Set(rows.map((r) => r.week))];
 
   const byWeekVariantBucket = (week: string, variant: string, bucket: string) =>
     rows.find((r) => r.week === week && r.variant === variant && r.bucket === bucket);
 
-  // Helpers for aggregating across buckets
   const sumN = (arr: (WowRow | undefined)[], field: keyof Pick<WowRow, "ghShipments" | "ghTickets" | "csatConvos" | "positiveCsat">) =>
     arr.filter((r): r is WowRow => r !== undefined).reduce((s, r) => s + r[field], 0);
 
@@ -93,13 +95,12 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     return convos > 0 ? sumN(rs, "positiveCsat") / convos : null;
   };
 
-  // Build trend data per week
   const trendData = WEEKS.map((w) => {
     const cRest = byWeekVariantBucket(w, "control", "rest");
     const cOi   = byWeekVariantBucket(w, "control", "otherIssues");
     const tRest  = byWeekVariantBucket(w, "test", "rest");
     const tMinl  = byWeekVariantBucket(w, "test", "minl");
-    const label  = w.replace(" ", "\n").split(" ")[0]; // "W1"
+    const label  = w.replace(" ", "\n").split(" ")[0];
     const testOptinRate = (tRest != null && tMinl != null)
       ? (tRest.aiOptin + tMinl.aiOptin) / (tRest.totalConvos + tMinl.totalConvos)
       : null;
@@ -119,7 +120,6 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     };
   });
 
-  // Latest week KPIs
   const lastWeek = WEEKS[WEEKS.length - 1];
   const w4cRest = byWeekVariantBucket(lastWeek, "control", "rest");
   const w4cOi   = byWeekVariantBucket(lastWeek, "control", "otherIssues");
@@ -181,28 +181,28 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1
-            className="text-4xl font-bold tracking-tight text-gray-900"
+            className="text-4xl font-bold tracking-tight text-gray-900 dark:text-zinc-100"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
             AI Chatbot — Week on Week
           </h1>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2">
             Guided Help (Control) vs AI Chatbot (Test) · Jun 3–28, 2026 · Ticket attributed to latest conversation before ticket timestamp
           </p>
-          <span className={`inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full ${isPending ? "bg-amber-50 text-amber-600" : "bg-gray-100 text-gray-500"}`}>
+          <span className={`inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full ${isPending ? "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400" : "bg-gray-100 dark:bg-zinc-700 text-gray-500 dark:text-zinc-400"}`}>
             {isPending ? "⏳ Data pending — run generate_wow_json.py after Trino completes" : `Last updated: ${generatedAt}`}
           </span>
         </div>
         <button
           onClick={downloadCsv}
-          className="mt-1 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white border border-gray-200 shadow-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          className="mt-1 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors"
         >
           ↓ Download CSV
         </button>
       </div>
 
       {/* KPI Cards — latest week snapshot */}
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Latest week ({lastWeek})</p>
+      <p className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Latest week ({lastWeek})</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <SingleKpiCard
           label="Optin Rate"
@@ -235,16 +235,16 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       </div>
 
       {/* WoW Trend Charts */}
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Week-on-week trends</p>
+      <p className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Week-on-week trends</p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         <ChartCard title="Optin Rate %" caption="All test convos (ROTO + MINL) — % that opened the AI chatbot">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
-              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend {...LEGEND_PROPS} />
+              <Legend {...legendProps} />
               <Line dataKey="optinRate" name="Test" stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
@@ -253,11 +253,11 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         <ChartCard title="Escalation Rate %" caption="Control: pid26/27 clicked · Test: ESCALATION_INTENT · Rest bucket">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
-              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend {...LEGEND_PROPS} />
+              <Legend {...legendProps} />
               <Line dataKey="ctrlEsc" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
               <Line dataKey="testEsc" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
@@ -267,11 +267,11 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         <ChartCard title="Overall GH O2C %" caption="GH tickets / GH shipments · all buckets per variant">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
-              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend {...LEGEND_PROPS} />
+              <Legend {...legendProps} />
               <Line dataKey="ctrlOverallO2c" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
               <Line dataKey="testOverallO2c" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
@@ -281,11 +281,11 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         <ChartCard title="Overall GH CSAT" caption="Positive CSAT / CSAT responses · all buckets per variant">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
-              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickMargin={10} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
+              <YAxis tickFormatter={(v) => `${v.toFixed(0)}%`} tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} tickMargin={10} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)}%`]} />
-              <Legend {...LEGEND_PROPS} />
+              <Legend {...legendProps} />
               <Line dataKey="ctrlOverallCsat" name="Control" stroke={CTRL} strokeWidth={2} dot={{ r: 4, fill: CTRL }} connectNulls />
               <Line dataKey="testOverallCsat" name="Test"    stroke={TEST} strokeWidth={2} dot={{ r: 4, fill: TEST }} connectNulls />
             </LineChart>
@@ -294,19 +294,19 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       </div>
 
       {/* Weekly Summary Table */}
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Full weekly breakdown</p>
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+      <p className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Full weekly breakdown</p>
+      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-left p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Week</th>
-              <th className="text-left p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Variant</th>
-              <th className="text-left p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Bucket</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Convos</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Optin %</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Esc %</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">GH O2C</th>
-              <th className="text-right p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">GH CSAT</th>
+            <tr className="border-b border-gray-100 dark:border-zinc-700">
+              <th className="text-left p-4 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Week</th>
+              <th className="text-left p-4 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Variant</th>
+              <th className="text-left p-4 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Bucket</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Convos</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Optin %</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Esc %</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">GH O2C</th>
+              <th className="text-right p-4 text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">GH CSAT</th>
             </tr>
           </thead>
           <tbody>
@@ -320,25 +320,32 @@ export default function Dashboard({ generatedAt, rows }: Props) {
                 return (
                   <tr
                     key={`${w}-${variant}-${bucket}`}
-                    className={`${isLast && wi < WEEKS_DESC.length - 1 ? "border-b-2 border-gray-200" : "border-b border-gray-50"} ${variant === "test" ? "bg-green-50/30" : "bg-white"}`}
+                    className={`
+                      ${isLast && wi < WEEKS_DESC.length - 1
+                        ? "border-b-2 border-gray-200 dark:border-zinc-700"
+                        : "border-b border-gray-50 dark:border-zinc-700/30"}
+                      ${variant === "test"
+                        ? "bg-green-50/30 dark:bg-green-950/10"
+                        : "bg-white dark:bg-zinc-800"}
+                    `}
                   >
                     {isFirst && (
-                      <td rowSpan={4} className="p-4 align-top border-r border-gray-100 font-bold text-gray-900 whitespace-nowrap">
+                      <td rowSpan={4} className="p-4 align-top border-r border-gray-100 dark:border-zinc-700 font-bold text-gray-900 dark:text-zinc-100 whitespace-nowrap">
                         {weekLabel}
-                        <span className="block text-xs font-normal text-gray-400 mt-0.5">{weekDates}</span>
+                        <span className="block text-xs font-normal text-gray-400 dark:text-zinc-500 mt-0.5">{weekDates}</span>
                       </td>
                     )}
                     <td className="px-4 py-2.5">
-                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${variant === "control" ? "bg-gray-100 text-gray-600" : "bg-green-100 text-green-700"}`}>
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${variant === "control" ? "bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-zinc-300" : "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400"}`}>
                         {variant === "control" ? "Control" : "Test"}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 text-gray-600 text-xs">{BUCKET_LABEL[bucket]}</td>
-                    <td className="px-4 py-2.5 text-right text-gray-700">{row ? num(row.totalConvos) : "—"}</td>
-                    <td className="px-4 py-2.5 text-right text-gray-700">{pct(row?.optinRate ?? null)}</td>
-                    <td className="px-4 py-2.5 text-right text-gray-700">{pct(row?.escalationRate ?? null)}</td>
-                    <td className="px-4 py-2.5 text-right text-gray-700">{pct(row?.ghO2c ?? null)}</td>
-                    <td className="px-4 py-2.5 text-right text-gray-700">{pct(row?.csat ?? null)}</td>
+                    <td className="px-4 py-2.5 text-gray-600 dark:text-zinc-400 text-xs">{BUCKET_LABEL[bucket]}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700 dark:text-zinc-300">{row ? num(row.totalConvos) : "—"}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700 dark:text-zinc-300">{pct(row?.optinRate ?? null)}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700 dark:text-zinc-300">{pct(row?.escalationRate ?? null)}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700 dark:text-zinc-300">{pct(row?.ghO2c ?? null)}</td>
+                    <td className="px-4 py-2.5 text-right text-gray-700 dark:text-zinc-300">{pct(row?.csat ?? null)}</td>
                   </tr>
                 );
               })
@@ -348,8 +355,8 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       </div>
 
       {/* Glossary */}
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3 mt-8">Glossary</p>
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <p className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3 mt-8">Glossary</p>
+      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6">
         <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
           {[
             { term: "Control",        def: "Guided Help variant — users see the standard post-order support flow." },
@@ -366,8 +373,8 @@ export default function Dashboard({ generatedAt, rows }: Props) {
             { term: "WoW",            def: "Week on Week — weekly windows running Tuesday to Monday." },
           ].map(({ term, def }) => (
             <div key={term}>
-              <dt className="text-xs font-semibold text-gray-700">{term}</dt>
-              <dd className="text-xs text-gray-500 mt-0.5">{def}</dd>
+              <dt className="text-xs font-semibold text-gray-700 dark:text-zinc-300">{term}</dt>
+              <dd className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">{def}</dd>
             </div>
           ))}
         </dl>

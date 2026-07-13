@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Radius — single source of truth (shadcn/ui pattern) */
   --radius: 0.75rem;        /* rounded-xl = 12px */
@@ -50,4 +53,40 @@ body {
   background:  var(--background);
   color:       var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────────────────── */
+
+.dark {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --background:        #18181B;  /* zinc-900 */
+  --foreground:        #F4F4F5;  /* zinc-100 */
+  --card:              #27272A;  /* zinc-800 */
+  --card-foreground:   #F4F4F5;
+  --border:            #3F3F46;  /* zinc-700 */
+  --input:             #3F3F46;
+  --ring:              #71717A;
+
+  /* Muted surfaces */
+  --muted:             #3F3F46;  /* zinc-700 */
+  --muted-foreground:  #A1A1AA;  /* zinc-400 */
+
+  /* Brand action */
+  --primary:           #F4F4F5;
+  --primary-foreground:#18181B;
+
+  /* Semantic delta colors */
+  --positive-bg:       #052E16;  /* green-950 */
+  --negative-bg:       #450A0A;  /* red-950   */
+  --warning-bg:        #292524;  /* stone-800 */
+}
+
+/* Global dark overrides for dashboard surface patterns */
+.dark select,
+.dark input[type="date"] {
+  background-color: #27272A;
+  color: #F4F4F5;
+  border-color: #3F3F46;
 }
