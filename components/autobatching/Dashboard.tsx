@@ -50,6 +50,12 @@ interface Aggregated {
   dp_sla_pct: number;
   p3_sla_pct: number;
   avg_breach_mins: number;
+  batched_sla_pct: number;
+  batched_on_time_count: number;
+  batched_with_rdl_count: number;
+  avg_batched_breach_mins: number;
+  avg_breach_p50_mins: number;
+  avg_batched_breach_p50_mins: number;
   // Trip SLA
   trip_batched_count: number;
   trip_breached_count: number;
@@ -176,6 +182,8 @@ function aggregate(days: RawDay[]): Aggregated {
     dp_batched_count: 0, express_batched_count: 0, scheduled_batched_count: 0,
     overall_sla_pct: 0, scheduled_sla_pct: 0, express_sla_pct: 0,
     dp_sla_pct: 0, p3_sla_pct: 0, avg_breach_mins: 0,
+    batched_sla_pct: 0, batched_on_time_count: 0, batched_with_rdl_count: 0,
+    avg_batched_breach_mins: 0, avg_breach_p50_mins: 0, avg_batched_breach_p50_mins: 0,
     overall_on_time_count: 0, overall_with_rdl_count: 0,
     dp_on_time_count: 0, dp_with_rdl_count: 0,
     express_on_time_count: 0, express_with_rdl_count: 0,
@@ -278,6 +286,12 @@ function aggregate(days: RawDay[]): Aggregated {
     dp_sla_pct:            div(s("dp_on_time"),          s("dp_with_rdl")),
     p3_sla_pct:            div(s("p3_on_time"),          s("p3_delivered")),
     avg_breach_mins:       div(breach_mins_sum, breach_count),
+    batched_sla_pct:             div(s("batched_on_time"),          s("batched_with_rdl")),
+    batched_on_time_count:       s("batched_on_time"),
+    batched_with_rdl_count:      s("batched_with_rdl"),
+    avg_batched_breach_mins:     div(s("batched_breach_mins_sum"),  s("batched_breach_count")),
+    avg_breach_p50_mins:         div(s("breach_p50_mins"),          n),
+    avg_batched_breach_p50_mins: div(s("batched_breach_p50_mins"),  n),
     overall_on_time_count:     s("on_time_orders"),
     overall_with_rdl_count:    orders_with_rdl,
     dp_on_time_count:          s("dp_on_time"),
@@ -545,6 +559,9 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress }: {
     { label: "Scheduled SLA %",         pre: pre.scheduled_sla_pct * 100, post: post.scheduled_sla_pct * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.scheduled_on_time_count,  countPost: post.scheduled_on_time_count },
     { label: "3P SLA % (at Delivered)", pre: pre.p3_sla_pct * 100,        post: post.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.p3_on_time_count,         countPost: post.p3_on_time_count },
     { label: "Avg Breach (mins)",       pre: pre.avg_breach_mins,          post: post.avg_breach_mins,         higherIsBetter: false, decimals: 1 },
+    { label: "Batched SLA %",           pre: pre.batched_sla_pct * 100,    post: post.batched_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.batched_on_time_count,  countPost: post.batched_on_time_count },
+    { label: "EOB — All (median breach)",     pre: pre.avg_breach_p50_mins,         post: post.avg_breach_p50_mins,         higherIsBetter: false, decimals: 1 },
+    { label: "EOB — Batched (median breach)", pre: pre.avg_batched_breach_p50_mins, post: post.avg_batched_breach_p50_mins, higherIsBetter: false, decimals: 1 },
   ];
   // Express row index (2) needs the expand toggle
   const expressIdx = 2;
@@ -660,6 +677,8 @@ const GLOSSARY = [
   { term: "SLA",                            definition: "On-time delivery. Measured at actual delivery: deliveredat ≤ promiseendtime (order_events_fact). Only delivered orders count in denominator." },
   { term: "RDL (Reached Delivery Location)", definition: "Shipment state when the DE arrives at the customer's location. Used in the order timeline (OFD→RDL stage) but NOT used as the SLA event — SLA is measured at delivered." },
   { term: "Avg Breach (mins)",             definition: "Average minutes late across breached orders: (deliveredat − promiseendtime) / 60000, for delivered orders where deliveredat > promiseendtime." },
+  { term: "Batched SLA %",                definition: "On-time rate for orders delivered with 2+ orders on the same trip. Formula: batched_on_time / batched_with_rdl." },
+  { term: "EOB (Extent of Breach)",       definition: "Median breach time (mins) among orders that missed their SLA window. Lower is better. Shown for all orders (EOB — All) and batched-only orders (EOB — Batched). Computed as mean of daily medians across the selected period." },
   { term: "Trip Breach Rate %",            definition: "% of batched trips (>1 order) where at least one order breached SLA." },
   { term: "First-Order Breach %",          definition: "Of all breached batched trips: % where the breach was the first delivery on the trip." },
   { term: "Last-Order Breach %",           definition: "Of all breached batched trips: % where the breach was the last delivery on the trip." },
