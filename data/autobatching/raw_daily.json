@@ -2,7 +2,7 @@
   "hub": "PSN",
   "pre_range": "2026-06-05 to 2026-06-17",
   "post_range": "2026-06-18 to 2026-06-22 + 2026-07-07 to 2026-07-15",
-  "generated_at": "2026-07-16T02:51:04.089169",
+  "generated_at": "2026-07-16T02:51:28.540174",
   "days": [
     {
       "date": "2026-06-05",
@@ -3539,7 +3539,7 @@
       "trip_sla_breached_trips": 28,
       "trip_sla_first_order_breach": 15,
       "trip_sla_last_order_breach": 8,
-      "trip_sla_breach_pos_sum": 9.541666666666666,
+      "trip_sla_breach_pos_sum": 9.541666666666668,
       "trip_sla_breach_pos_cnt": 28,
       "hub": "PSN",
       "period": "gap"
