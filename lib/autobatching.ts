@@ -204,6 +204,14 @@ export interface RawDay {
   trip_sla_last_order_breach: number;
   trip_sla_breach_pos_sum: number;
   trip_sla_breach_pos_cnt: number;
+
+  // Batched order SLA + EOB
+  batched_with_rdl: number;
+  batched_on_time: number;
+  batched_breach_mins_sum: number;
+  batched_breach_count: number;
+  breach_p50_mins: number;
+  batched_breach_p50_mins: number;
 }
 
 export interface AutobatchingData {
