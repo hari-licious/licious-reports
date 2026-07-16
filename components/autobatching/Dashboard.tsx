@@ -575,9 +575,9 @@ function OrderMixTable({ pre, post, expressExpanded, onToggleExpress }: {
 
 // ── SLA table with express drill-down ─────────────────────────────────────────
 
-function SlaTable({ pre, post, expressExpanded, onToggleExpress, slaMode, onToggleSlaMode }: {
+function SlaTable({ pre, post, expressExpanded, onToggleExpress, slaMode }: {
   pre: Aggregated; post: Aggregated; expressExpanded: boolean; onToggleExpress: () => void;
-  slaMode: "del" | "rdl"; onToggleSlaMode: () => void;
+  slaMode: "del" | "rdl";
 }) {
   const rdl = slaMode === "rdl";
   const rows: MetricRow[] = [
@@ -599,19 +599,7 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress, slaMode, onTogg
       <table className="w-full">
         <thead>
           <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
-            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">
-              <span className="flex items-center gap-3">
-                Metric
-                <button
-                  onClick={onToggleSlaMode}
-                  className="flex items-center gap-1 rounded-full border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-2 py-0.5 text-[10px] font-semibold tracking-widest text-gray-500 dark:text-zinc-400 hover:border-gray-400 dark:hover:border-zinc-500 transition-colors normal-case"
-                >
-                  <span className={slaMode === "del" ? "text-gray-900 dark:text-zinc-100" : ""}>DEL</span>
-                  <span className="text-gray-300 dark:text-zinc-600">/</span>
-                  <span className={slaMode === "rdl" ? "text-gray-900 dark:text-zinc-100" : ""}>RDL</span>
-                </button>
-              </span>
-            </th>
+            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Metric</th>
             <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</th>
             <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</th>
             <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Change</th>
@@ -695,8 +683,8 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress, slaMode, onTogg
 
 // ── Section header ────────────────────────────────────────────────────────────
 
-function SectionHeader({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-3">{children}</h2>;
+function SectionHeader({ children, noMargin }: { children: React.ReactNode; noMargin?: boolean }) {
+  return <h2 className={`text-sm font-semibold text-gray-900 dark:text-zinc-100 ${noMargin ? "" : "mb-3"}`}>{children}</h2>;
 }
 
 // ── Status strip ──────────────────────────────────────────────────────────────
@@ -1103,8 +1091,24 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
 
           {/* SLA */}
           <div className="mb-5">
-            <SectionHeader>SLA — Check Signal · All at Delivered (deliveredat vs promiseendtime)</SectionHeader>
-            <SlaTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} slaMode={slaMode} onToggleSlaMode={() => setSlaMode(m => m === "del" ? "rdl" : "del")} />
+            <div className="flex items-center justify-between mb-2">
+              <SectionHeader noMargin>SLA</SectionHeader>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">SLA anchor</span>
+                <div className="flex rounded-lg border border-gray-200 dark:border-zinc-600 overflow-hidden text-[11px] font-semibold">
+                  {(["del", "rdl"] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      onClick={() => setSlaMode(mode)}
+                      className={`px-3 py-1 transition-colors ${slaMode === mode ? "bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900" : "bg-white dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300"}`}
+                    >
+                      {mode === "del" ? "At DEL" : "At RDL"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <SlaTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} slaMode={slaMode} />
           </div>
 
           {/* Trip-level SLA */}
