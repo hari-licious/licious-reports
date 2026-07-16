@@ -859,41 +859,14 @@ const GLOSSARY = [
   { term: "TEMPORAL flag",              definition: "DP order where algo ran AFTER PACKED event — algo had stale data when making the batching decision." },
 ];
 
-// ── Smart date defaults ───────────────────────────────────────────────────────
-// Post = all post days (Jun 18 → yesterday). Pre = same count, same day-of-week
-// alignment: preEnd = most recent pre day with same DOW as postEnd;
-// preStart = postCount days back from preEnd.
+// ── Date defaults ─────────────────────────────────────────────────────────────
+// Range 2 = latest available day; Range 1 = the day before that.
 function smartDateDefaults(preDays: RawDay[], postDays: RawDay[]) {
-  if (preDays.length === 0 || postDays.length === 0) return {
-    preStart:  preDays[0]?.date  ?? "",
-    preEnd:    preDays[preDays.length - 1]?.date  ?? "",
-    postStart: postDays[0]?.date ?? "",
-    postEnd:   postDays[postDays.length - 1]?.date ?? "",
-  };
-
-  const postStart = postDays[0].date;
-  const postEnd   = postDays[postDays.length - 1].date;
-  const postCount = postDays.length;
-  const postEndDow = new Date(postEnd + "T00:00:00").getDay(); // 0=Sun…6=Sat
-
-  // Walk backwards through pre days to find the most recent one matching postEnd DOW
-  let preEndIdx = preDays.length - 1;
-  while (preEndIdx >= 0 && new Date(preDays[preEndIdx].date + "T00:00:00").getDay() !== postEndDow) {
-    preEndIdx--;
-  }
-
-  if (preEndIdx < 0) {
-    // No DOW match found — fall back to full pre range
-    return { preStart: preDays[0].date, preEnd: preDays[preDays.length - 1].date, postStart, postEnd };
-  }
-
-  const preStartIdx = Math.max(0, preEndIdx - postCount + 1);
-  return {
-    preStart:  preDays[preStartIdx].date,
-    preEnd:    preDays[preEndIdx].date,
-    postStart,
-    postEnd,
-  };
+  const all = [...preDays, ...postDays].sort((a, b) => a.date.localeCompare(b.date));
+  if (all.length === 0) return { preStart: "", preEnd: "", postStart: "", postEnd: "" };
+  const latest = all[all.length - 1].date;
+  const prev   = all.length >= 2 ? all[all.length - 2].date : latest;
+  return { preStart: prev, preEnd: prev, postStart: latest, postEnd: latest };
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
@@ -1038,11 +1011,12 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
     if (!generated_at) return null;
     const d = new Date(generated_at);
     if (isNaN(d.getTime())) return null;
-    const dd   = d.getDate().toString().padStart(2, "0");
-    const mm   = (d.getMonth() + 1).toString().padStart(2, "0");
-    const hh   = d.getHours().toString().padStart(2, "0");
-    const min  = d.getMinutes().toString().padStart(2, "0");
-    return `${dd}/${mm} ${hh}:${min}`;
+    const dd  = d.getDate().toString().padStart(2, "0");
+    const mm  = (d.getMonth() + 1).toString().padStart(2, "0");
+    const yy  = d.getFullYear().toString().slice(2);
+    const hh  = d.getHours().toString().padStart(2, "0");
+    const min = d.getMinutes().toString().padStart(2, "0");
+    return `${dd}/${mm}/${yy} ${hh}:${min}`;
   }, [generated_at]);
 
   function handleDownload() {
