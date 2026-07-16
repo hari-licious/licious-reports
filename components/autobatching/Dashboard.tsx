@@ -901,62 +901,74 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   const preAgg  = useMemo(() => aggregate(selectedPre),  [selectedPre]);
   const postAgg = useMemo(() => aggregate(selectedPost), [selectedPost]);
 
-  // Delay reasons filtered to post date range (attribution data only exists for post period)
-  const filteredDelayDays = useMemo(() => {
-    if (!delayReasons) return [];
-    return delayReasons.days.filter(d => d.date >= postStart && d.date <= postEnd);
-  }, [delayReasons, postStart, postEnd]);
+  const FLAG_LABELS: Record<string, string> = {
+    TEMPORAL: "Algo ran after packed",
+    OMS_LAG: "OMS→WMS lag >2m",
+    SLOW_PICKLIST: "Slow picklist gen >5m",
+    NO_RIDER: "Zero riders at scan",
+    ALGO_DROP: "Algo UNASSIGNED",
+    AUTO_FAIL: "Auto alloc failed",
+    DIRECT_MANUAL: "Manual assign",
+    SLOW_ACCEPT: "Slow rider accept >5m",
+    CASCADE: "Cascade (prior stop)",
+    RESEQUENCED: "Delivery resequenced",
+    PREDICTED: "Algo predicted breach",
+    MULTI_RUN: "Multiple algo runs",
+    LATE_DEP: "Late departure >3m",
+    SLOW_TRAVEL: "Slow travel vs plan",
+    "3P": "3P fleet used",
+    ESCALATED: "Escalated ticket",
+  };
+
+  // Delay reasons — filter for both selected ranges, tag which range each day belongs to
+  const delayPreDays  = useMemo(() => !delayReasons ? [] : delayReasons.days.filter(d => d.date >= preStart  && d.date <= preEnd),  [delayReasons, preStart,  preEnd]);
+  const delayPostDays = useMemo(() => !delayReasons ? [] : delayReasons.days.filter(d => d.date >= postStart && d.date <= postEnd), [delayReasons, postStart, postEnd]);
 
   const delayKillerChartData = useMemo(() => {
-    return filteredDelayDays.map(d => {
-      const label = d.date.slice(5).replace("-", "/"); // "MM/DD"
-      return {
-        date: label,
-        "Last-mile": d.killer["travel_to_customer"] ?? 0,
-        "Handoff": d.killer["service_rdl_to_del"] ?? 0,
-        "Cascade": d.killer["cascade_prev_stops"] ?? 0,
-        "Rider Allot": d.killer["allocation"] ?? 0,
-        "Rider Accept": d.killer["rider_acceptance"] ?? 0,
-        "Pre-dispatch": d.killer["pre_dispatch"] ?? 0,
-        "OFD Delay": d.killer["ofd_event_delay"] ?? 0,
-        "Algo/Batch": d.killer["algo_batching"] ?? 0,
-        "Other": (d.killer["picklist_gen"] ?? 0) + (d.killer["packing"] ?? 0) + (d.killer["picking"] ?? 0) + (d.killer["MARGINAL"] ?? 0),
-        total: d.total_breached,
-      };
+    const toRow = (d: DelayDay, suffix: string) => ({
+      date: d.date.slice(5).replace("-", "/") + suffix,
+      "Last-mile":   d.killer["travel_to_customer"] ?? 0,
+      "Handoff":     d.killer["service_rdl_to_del"] ?? 0,
+      "Cascade":     d.killer["cascade_prev_stops"] ?? 0,
+      "Rider Allot": d.killer["allocation"] ?? 0,
+      "Rider Accept":d.killer["rider_acceptance"] ?? 0,
+      "Pre-dispatch":d.killer["pre_dispatch"] ?? 0,
+      "OFD Delay":   d.killer["ofd_event_delay"] ?? 0,
+      "Algo/Batch":  d.killer["algo_batching"] ?? 0,
+      "Other":       (d.killer["picklist_gen"] ?? 0) + (d.killer["packing"] ?? 0) + (d.killer["picking"] ?? 0) + (d.killer["MARGINAL"] ?? 0),
+      total:         d.total_breached,
     });
-  }, [filteredDelayDays]);
+    const preRows  = delayPreDays.map(d  => toRow(d, " ①"));
+    const postRows = delayPostDays.map(d => toRow(d, " ②"));
+    // Show chronologically; if both ranges have same dates (same day selected) deduplicate
+    const allRows = [...preRows, ...postRows].sort((a, b) => a.date.localeCompare(b.date));
+    return allRows;
+  }, [delayPreDays, delayPostDays]);
 
   const delayFlagSummary = useMemo(() => {
-    const FLAG_LABELS: Record<string, string> = {
-      TEMPORAL: "Algo ran after packed",
-      OMS_LAG: "OMS→WMS lag >2m",
-      SLOW_PICKLIST: "Slow picklist gen >5m",
-      NO_RIDER: "Zero riders at scan",
-      ALGO_DROP: "Algo UNASSIGNED",
-      AUTO_FAIL: "Auto alloc failed",
-      DIRECT_MANUAL: "Manual assign",
-      SLOW_ACCEPT: "Slow rider accept >5m",
-      CASCADE: "Cascade (prior stop)",
-      RESEQUENCED: "Delivery resequenced",
-      PREDICTED: "Algo predicted breach",
-      MULTI_RUN: "Multiple algo runs",
-      LATE_DEP: "Late departure >3m",
-      SLOW_TRAVEL: "Slow travel vs plan",
-      "3P": "3P fleet used",
-      ESCALATED: "Escalated ticket",
-    };
-    const totals: Record<string, number> = {};
-    let totalBreached = 0;
-    for (const d of filteredDelayDays) {
-      totalBreached += d.total_breached;
-      for (const [tag, cnt] of Object.entries(d.tags)) {
-        totals[tag] = (totals[tag] ?? 0) + cnt;
+    const agg = (days: DelayDay[]) => {
+      const totals: Record<string, number> = {};
+      let totalBreached = 0;
+      for (const d of days) {
+        totalBreached += d.total_breached;
+        for (const [tag, cnt] of Object.entries(d.tags)) totals[tag] = (totals[tag] ?? 0) + cnt;
       }
-    }
-    return Object.entries(totals)
-      .map(([tag, count]) => ({ tag, label: FLAG_LABELS[tag] ?? tag, count, pct: totalBreached > 0 ? count / totalBreached : 0 }))
-      .sort((a, b) => b.count - a.count);
-  }, [filteredDelayDays]);
+      return { totals, totalBreached };
+    };
+    const r1 = agg(delayPreDays);
+    const r2 = agg(delayPostDays);
+    const allTags = [...new Set([...Object.keys(r1.totals), ...Object.keys(r2.totals)])];
+    return allTags
+      .map(tag => ({
+        tag,
+        label: FLAG_LABELS[tag] ?? tag,
+        r1Count: r1.totals[tag] ?? 0,
+        r2Count: r2.totals[tag] ?? 0,
+        r1Pct: r1.totalBreached > 0 ? (r1.totals[tag] ?? 0) / r1.totalBreached : 0,
+        r2Pct: r2.totalBreached > 0 ? (r2.totals[tag] ?? 0) / r2.totalBreached : 0,
+      }))
+      .sort((a, b) => (b.r1Count + b.r2Count) - (a.r1Count + a.r2Count));
+  }, [delayPreDays, delayPostDays]);
 
   const ordersWarn = preAgg.avg_daily_orders > 0
     && Math.abs(postAgg.avg_daily_orders - preAgg.avg_daily_orders) / preAgg.avg_daily_orders > 0.25;
@@ -1207,24 +1219,24 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
           {/* Delay Reasons */}
           {delayKillerChartData.length > 0 && (
             <div className="mb-5">
-              <SectionHeader>Delay Reasons — Breached Orders (Post Period)</SectionHeader>
+              <SectionHeader>Delay Reasons — Breached Orders · ① Range 1 &nbsp; ② Range 2</SectionHeader>
               <div className="bg-white dark:bg-zinc-800 rounded-xl p-5 border border-gray-200 dark:border-zinc-700 shadow-sm mb-3">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={delayKillerChartData} margin={{ top: 10, right: 16, left: -8, bottom: 0 }} barSize={18}>
                     <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
-                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: tickFill }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
                     <Tooltip contentStyle={tooltipStyle} />
                     <Legend {...legendProps} />
-                    <Bar dataKey="Last-mile"   stackId="a" fill="#f97316" />
-                    <Bar dataKey="Handoff"     stackId="a" fill="#ef4444" />
-                    <Bar dataKey="Cascade"     stackId="a" fill="#8b5cf6" />
-                    <Bar dataKey="Rider Allot" stackId="a" fill="#3b82f6" />
+                    <Bar dataKey="Last-mile"    stackId="a" fill="#f97316" />
+                    <Bar dataKey="Handoff"      stackId="a" fill="#ef4444" />
+                    <Bar dataKey="Cascade"      stackId="a" fill="#8b5cf6" />
+                    <Bar dataKey="Rider Allot"  stackId="a" fill="#3b82f6" />
                     <Bar dataKey="Rider Accept" stackId="a" fill="#06b6d4" />
                     <Bar dataKey="Pre-dispatch" stackId="a" fill="#14b8a6" />
-                    <Bar dataKey="OFD Delay"   stackId="a" fill="#f59e0b" />
-                    <Bar dataKey="Algo/Batch"  stackId="a" fill="#84cc16" />
-                    <Bar dataKey="Other"       stackId="a" fill="#d1d5db" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="OFD Delay"    stackId="a" fill="#f59e0b" />
+                    <Bar dataKey="Algo/Batch"   stackId="a" fill="#84cc16" />
+                    <Bar dataKey="Other"        stackId="a" fill="#d1d5db" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -1234,16 +1246,20 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
                     <thead>
                       <tr className="border-b border-gray-100 dark:border-zinc-700">
                         <th className="text-left px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400">Flag</th>
-                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400">Orders</th>
-                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400">% of Breached</th>
+                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400" style={{ color: COLOR_CTRL }}>① Orders</th>
+                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400" style={{ color: COLOR_CTRL }}>① %</th>
+                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400" style={{ color: COLOR_POST }}>② Orders</th>
+                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400" style={{ color: COLOR_POST }}>② %</th>
                       </tr>
                     </thead>
                     <tbody>
                       {delayFlagSummary.map((row, i) => (
                         <tr key={row.tag} className={i % 2 === 0 ? "bg-gray-50 dark:bg-zinc-800/50" : ""}>
                           <td className="px-4 py-1.5 text-gray-700 dark:text-zinc-300 font-medium">{row.label}</td>
-                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-900 dark:text-zinc-100">{row.count}</td>
-                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-500 dark:text-zinc-400">{(row.pct * 100).toFixed(0)}%</td>
+                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-900 dark:text-zinc-100">{row.r1Count || "—"}</td>
+                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-500 dark:text-zinc-400">{row.r1Count ? `${(row.r1Pct * 100).toFixed(0)}%` : "—"}</td>
+                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-900 dark:text-zinc-100">{row.r2Count || "—"}</td>
+                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-500 dark:text-zinc-400">{row.r2Count ? `${(row.r2Pct * 100).toFixed(0)}%` : "—"}</td>
                         </tr>
                       ))}
                     </tbody>
