@@ -1026,7 +1026,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
               { label: "Total Orders",        pre: preAgg.total_orders_sum,      post: postAgg.total_orders_sum,      neutral: true, decimals: 0 },
               { label: "Avg Daily Orders",    pre: preAgg.avg_daily_orders,      post: postAgg.avg_daily_orders,      neutral: true, decimals: 1, warn: ordersWarn },
               { label: "Avg Daily DEs",       pre: preAgg.avg_daily_riders,      post: postAgg.avg_daily_riders,      neutral: true, decimals: 1, warn: ridersWarn },
-              { label: <><Abbr tip="On-Demand: orders fulfilled by 3P fleet (Shadowfax, Pidge, etc.)">OD</Abbr> Orders (avg/day)</>, pre: preAgg.avg_daily_3p_orders, post: postAgg.avg_daily_3p_orders, neutral: true, decimals: 1 },
+              { label: <><Abbr tip="On-Demand: orders fulfilled by 3P fleet (Shadowfax, Pidge, etc.)" align="left">OD</Abbr> Orders (avg/day)</>, pre: preAgg.avg_daily_3p_orders, post: postAgg.avg_daily_3p_orders, neutral: true, decimals: 1 },
             ]} />
           </div>
 
