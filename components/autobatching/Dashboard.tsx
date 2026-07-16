@@ -659,6 +659,102 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
   return <h2 className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-3">{children}</h2>;
 }
 
+// ── Status strip ──────────────────────────────────────────────────────────────
+
+const STRIP_PERIOD_COLOR: Record<string, string> = {
+  post: "bg-green-400 dark:bg-green-500",
+  pre:  "bg-zinc-300 dark:bg-zinc-600",
+  gap:  "bg-amber-300 dark:bg-amber-500",
+};
+
+const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function StatusStrip({ allDays, preStart, preEnd, postStart, postEnd }: {
+  allDays: RawDay[];
+  preStart: string; preEnd: string;
+  postStart: string; postEnd: string;
+}) {
+  const dates = [...new Set(allDays.map(d => d.date))].sort();
+  const dateMap: Record<string, string> = {};
+  for (const d of allDays) dateMap[d.date] = d.period;
+
+  const monthStarts: Record<number, string> = {};
+  dates.forEach((date) => {
+    const dt = new Date(date + "T00:00:00");
+    const key = dt.getFullYear() * 12 + dt.getMonth();
+    if (!(key in monthStarts)) {
+      monthStarts[key] = date;
+    }
+  });
+  const monthStartSet = new Set(Object.values(monthStarts));
+
+  return (
+    <div className="mb-5">
+      {/* Legend */}
+      <div className="flex items-center gap-4 mb-1.5">
+        {(["post", "pre", "gap"] as const).map((p) => (
+          <div key={p} className="flex items-center gap-1.5">
+            <span className={`inline-block w-4 h-3 rounded-sm ${STRIP_PERIOD_COLOR[p]}`} />
+            <span className="text-[10px] text-gray-400 dark:text-zinc-500">
+              {p === "post" ? "AB Live" : p === "pre" ? "No AB" : "Rolled back"}
+            </span>
+          </div>
+        ))}
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-4 h-3 border-t-2 border-blue-500" />
+          <span className="text-[10px] text-gray-400 dark:text-zinc-500">Pre range</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-4 h-3 border-t-2 border-orange-500" />
+          <span className="text-[10px] text-gray-400 dark:text-zinc-500">Post range</span>
+        </div>
+      </div>
+      {/* Strip */}
+      <div className="relative overflow-x-auto">
+        <div className="flex items-end" style={{ height: 28 }}>
+          {dates.map((date) => {
+            const period = dateMap[date] ?? "pre";
+            const inPre  = date >= preStart && date <= preEnd;
+            const inPost = date >= postStart && date <= postEnd;
+            const isMonthStart = monthStartSet.has(date);
+            const dt = new Date(date + "T00:00:00");
+            return (
+              <div
+                key={date}
+                className="relative flex-shrink-0 flex flex-col justify-end"
+                style={{ width: 8 }}
+              >
+                {/* Month label */}
+                {isMonthStart && (
+                  <span
+                    className="absolute bottom-full left-0 text-[8px] text-gray-400 dark:text-zinc-500 whitespace-nowrap leading-tight pb-0.5"
+                  >
+                    {MONTH_ABBR[dt.getMonth()]}
+                  </span>
+                )}
+                {/* Cell */}
+                <div
+                  className={`w-full ${STRIP_PERIOD_COLOR[period]}`}
+                  style={{
+                    height: 12,
+                    borderTop: inPre
+                      ? "3px solid #3b82f6"
+                      : inPost
+                        ? "3px solid #f97316"
+                        : undefined,
+                    boxSizing: "border-box",
+                  }}
+                  title={`${date} · ${period}`}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Chart config ──────────────────────────────────────────────────────────────
 
 
@@ -761,17 +857,13 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const availableHubs = useMemo(
     () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
   );
-  const hubDays     = useMemo(() => days.filter(d => (d.hub ?? hub) === selectedHub), [days, selectedHub, hub]);
-  const allPreDays  = useMemo(() => hubDays.filter(d => d.period === "pre"),  [hubDays]);
-  const allPostDays = useMemo(() => hubDays.filter(d => d.period === "post"), [hubDays]);
+  const hubDays = useMemo(() => days.filter(d => (d.hub ?? hub) === selectedHub), [days, selectedHub, hub]);
 
-  const preMin  = allPreDays[0]?.date  ?? "";
-  const preMax  = allPreDays[allPreDays.length - 1]?.date  ?? "";
-  const postMin = allPostDays[0]?.date ?? "";
-  const postMax = allPostDays[allPostDays.length - 1]?.date ?? "";
+  const allMin = useMemo(() => hubDays[0]?.date ?? "", [hubDays]);
+  const allMax = useMemo(() => hubDays[hubDays.length - 1]?.date ?? "", [hubDays]);
 
-  const selectedPre  = useMemo(() => allPreDays.filter(d => d.date >= preStart && d.date <= preEnd),   [allPreDays, preStart, preEnd]);
-  const selectedPost = useMemo(() => allPostDays.filter(d => d.date >= postStart && d.date <= postEnd), [allPostDays, postStart, postEnd]);
+  const selectedPre  = useMemo(() => hubDays.filter(d => d.period !== "gap" && d.date >= preStart && d.date <= preEnd),   [hubDays, preStart, preEnd]);
+  const selectedPost = useMemo(() => hubDays.filter(d => d.period !== "gap" && d.date >= postStart && d.date <= postEnd), [hubDays, postStart, postEnd]);
   const preAgg  = useMemo(() => aggregate(selectedPre),  [selectedPre]);
   const postAgg = useMemo(() => aggregate(selectedPost), [selectedPost]);
 
@@ -861,7 +953,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       </div>
 
       {/* Filters — single row, left-aligned */}
-      <div className="flex flex-wrap items-center gap-3 mb-6">
+      <div className="flex flex-wrap items-center gap-3 mb-3">
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
           <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
@@ -873,20 +965,27 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
         <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</span>
-          <input type="date" value={preStart} min={preMin} max={preEnd}   onChange={e => setPreStart(e.target.value)} className={inputCls} />
+          <input type="date" value={preStart} min={allMin} max={allMax} onChange={e => setPreStart(e.target.value)} className={inputCls} />
           <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
-          <input type="date" value={preEnd}   min={preStart} max={preMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
+          <input type="date" value={preEnd}   min={allMin} max={allMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
           <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPre.length}d</span>
         </div>
         <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</span>
-          <input type="date" value={postStart} min={postMin} max={postEnd}   onChange={e => setPostStart(e.target.value)} className={inputCls} />
+          <input type="date" value={postStart} min={allMin} max={allMax} onChange={e => setPostStart(e.target.value)} className={inputCls} />
           <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
-          <input type="date" value={postEnd}   min={postStart} max={postMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
+          <input type="date" value={postEnd}   min={allMin} max={allMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
           <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPost.length}d</span>
         </div>
       </div>
+
+      {/* Status strip */}
+      <StatusStrip
+        allDays={hubDays}
+        preStart={preStart} preEnd={preEnd}
+        postStart={postStart} postEnd={postEnd}
+      />
 
       {/* Tab bar */}
       <div className="flex border-b border-gray-200 dark:border-zinc-700 mb-6">

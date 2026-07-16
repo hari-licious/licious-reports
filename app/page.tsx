@@ -35,6 +35,13 @@ export default function Home() {
             <p className="text-sm text-gray-500 dark:text-zinc-400">Week-on-week metrics · Jun 3–28 2026</p>
           </div>
         </Link>
+        <Link href="/autobatching-timeline">
+          <div className="bg-white dark:bg-zinc-800 rounded-2xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-zinc-600 transition-all cursor-pointer">
+            <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 dark:text-zinc-500 uppercase mb-3">Operations</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-zinc-100 mb-1">AB Timeline</h2>
+            <p className="text-sm text-gray-500 dark:text-zinc-400">Autobatching rollout history · by hub</p>
+          </div>
+        </Link>
       </div>
     </div>
   );

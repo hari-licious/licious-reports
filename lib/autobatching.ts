@@ -3,7 +3,7 @@ import rawData from "@/data/autobatching/raw_daily.json";
 export interface RawDay {
   date: string;
   hub: string;
-  period: "pre" | "post";
+  period: "pre" | "post" | "gap";
 
   // Orders query
   total_orders: number;
