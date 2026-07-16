@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList,
 } from "recharts";
-import type { RawDay } from "@/lib/autobatching";
+import type { RawDay, DelayDay } from "@/lib/autobatching";
 import { Abbr } from "@/components/ui/Abbr";
 import { COLOR_CTRL, COLOR_POST } from "@/lib/theme";
 import { useChartTheme } from "@/lib/useChartTheme";
@@ -17,6 +17,7 @@ interface Props {
   pre_range: string;
   generated_at: string;
   days: RawDay[];
+  delayReasons?: { days: DelayDay[] };
 }
 
 // ── Aggregation ───────────────────────────────────────────────────────────────
@@ -827,6 +828,18 @@ const GLOSSARY = [
   { term: "Range 1",                        definition: "The baseline comparison window. Default: DOW-aligned pre-AB period (before Jun 18). Can be set to any date range using the picker." },
   { term: "Range 2",                        definition: "The comparison window. Default: AB live days (Phase 1 Jun 18–21 + Phase 2 Jul 7+). Can be set to any date range — e.g. Phase 1 vs Phase 2." },
   { term: "Gap (Jun 22 – Jul 6)",         definition: "Autobatching was rolled back ~Jun 22 due to ground ops issues and re-released Jul 6 night. These days are excluded from all aggregations." },
+  { term: "Delay Reasons",               definition: "Breakdown of why orders breached SLA, from DL delay attribution. Only available for the post-AB period. Killer stage = the first pipeline stage where the cumulative SLA budget hit zero. Flags = co-occurring conditions on that order." },
+  { term: "Last-mile (killer)",          definition: "OFD → RDL stage consumed the remaining SLA budget. Travel from hub to customer was slower than promise allows." },
+  { term: "Handoff (killer)",            definition: "RDL → DEL stage (DE at customer door) consumed the remaining budget. Includes waiting for customer to answer door." },
+  { term: "Cascade (killer)",            definition: "Order was on a multi-stop trip and inherited delay from earlier stops — killer is 'inherited time on prior stops'." },
+  { term: "PREDICTED flag",             definition: "Algo knew this order would breach before dispatch (algo slastatus = BREACHED)." },
+  { term: "RESEQUENCED flag",           definition: "The order's planned delivery sequence in the algo changed vs the actual delivery order." },
+  { term: "CASCADE flag",               definition: "Order was on stop >1 of a multi-stop trip; inherited delay from prior stops exceeded 1 min." },
+  { term: "SLOW_TRAVEL flag",           definition: "Actual OFD→RDL travel time exceeded algo's planned travel time by >3 min." },
+  { term: "AUTO_FAIL flag",             definition: "Auto-allocation failed for this order; DE had to be assigned manually." },
+  { term: "NO_RIDER flag",              definition: "Zero available riders at the time of auto-allocation scan." },
+  { term: "LATE_DEP flag",              definition: "For first-stop orders: actual OFD time was >3 min later than algo's planned departure." },
+  { term: "TEMPORAL flag",              definition: "DP order where algo ran AFTER PACKED event — algo had stale data when making the batching decision." },
 ];
 
 // ── Smart date defaults ───────────────────────────────────────────────────────
@@ -868,7 +881,7 @@ function smartDateDefaults(preDays: RawDay[], postDays: RawDay[]) {
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-export default function Dashboard({ hub, generated_at, days }: Props) {
+export default function Dashboard({ hub, generated_at, days, delayReasons }: Props) {
   const { gridStroke, tickFill, tooltipStyle, legendProps } = useChartTheme();
   const initPreDays  = days.filter(d => d.period === "pre");
   const initPostDays = days.filter(d => d.period === "post");
@@ -897,6 +910,63 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const selectedPost = useMemo(() => hubDays.filter(d => d.period !== "gap" && d.date >= postStart && d.date <= postEnd), [hubDays, postStart, postEnd]);
   const preAgg  = useMemo(() => aggregate(selectedPre),  [selectedPre]);
   const postAgg = useMemo(() => aggregate(selectedPost), [selectedPost]);
+
+  // Delay reasons filtered to post date range (attribution data only exists for post period)
+  const filteredDelayDays = useMemo(() => {
+    if (!delayReasons) return [];
+    return delayReasons.days.filter(d => d.date >= postStart && d.date <= postEnd);
+  }, [delayReasons, postStart, postEnd]);
+
+  const delayKillerChartData = useMemo(() => {
+    return filteredDelayDays.map(d => {
+      const label = d.date.slice(5).replace("-", "/"); // "MM/DD"
+      return {
+        date: label,
+        "Last-mile": d.killer["travel_to_customer"] ?? 0,
+        "Handoff": d.killer["service_rdl_to_del"] ?? 0,
+        "Cascade": d.killer["cascade_prev_stops"] ?? 0,
+        "Rider Allot": d.killer["allocation"] ?? 0,
+        "Rider Accept": d.killer["rider_acceptance"] ?? 0,
+        "Pre-dispatch": d.killer["pre_dispatch"] ?? 0,
+        "OFD Delay": d.killer["ofd_event_delay"] ?? 0,
+        "Algo/Batch": d.killer["algo_batching"] ?? 0,
+        "Other": (d.killer["picklist_gen"] ?? 0) + (d.killer["packing"] ?? 0) + (d.killer["picking"] ?? 0) + (d.killer["MARGINAL"] ?? 0),
+        total: d.total_breached,
+      };
+    });
+  }, [filteredDelayDays]);
+
+  const delayFlagSummary = useMemo(() => {
+    const FLAG_LABELS: Record<string, string> = {
+      TEMPORAL: "Algo ran after packed",
+      OMS_LAG: "OMS→WMS lag >2m",
+      SLOW_PICKLIST: "Slow picklist gen >5m",
+      NO_RIDER: "Zero riders at scan",
+      ALGO_DROP: "Algo UNASSIGNED",
+      AUTO_FAIL: "Auto alloc failed",
+      DIRECT_MANUAL: "Manual assign",
+      SLOW_ACCEPT: "Slow rider accept >5m",
+      CASCADE: "Cascade (prior stop)",
+      RESEQUENCED: "Delivery resequenced",
+      PREDICTED: "Algo predicted breach",
+      MULTI_RUN: "Multiple algo runs",
+      LATE_DEP: "Late departure >3m",
+      SLOW_TRAVEL: "Slow travel vs plan",
+      "3P": "3P fleet used",
+      ESCALATED: "Escalated ticket",
+    };
+    const totals: Record<string, number> = {};
+    let totalBreached = 0;
+    for (const d of filteredDelayDays) {
+      totalBreached += d.total_breached;
+      for (const [tag, cnt] of Object.entries(d.tags)) {
+        totals[tag] = (totals[tag] ?? 0) + cnt;
+      }
+    }
+    return Object.entries(totals)
+      .map(([tag, count]) => ({ tag, label: FLAG_LABELS[tag] ?? tag, count, pct: totalBreached > 0 ? count / totalBreached : 0 }))
+      .sort((a, b) => b.count - a.count);
+  }, [filteredDelayDays]);
 
   const ordersWarn = preAgg.avg_daily_orders > 0
     && Math.abs(postAgg.avg_daily_orders - preAgg.avg_daily_orders) / preAgg.avg_daily_orders > 0.25;
@@ -967,7 +1037,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   return (
     <DashboardLayout>
 
-      {/* Header row: title + refresh */}
+      {/* Header row: title + refresh + download */}
       <div className="flex items-start justify-between mb-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-100" style={{ fontFamily: "var(--font-space-grotesk)" }}>
@@ -975,12 +1045,30 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           </h1>
           <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Range comparison · {hub}</p>
         </div>
-        {refreshLabel && (
-          <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-xl px-3 py-2">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse inline-block" />
-            <span className="text-xs text-blue-700 dark:text-blue-300 font-medium">Data refreshed at {refreshLabel}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {refreshLabel && (
+            <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-xl px-3 py-2">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse inline-block" />
+              <span className="text-xs text-blue-700 dark:text-blue-300 font-medium">Data refreshed at {refreshLabel}</span>
+            </div>
+          )}
+          <button
+            onClick={() => {
+              const cols = Object.keys(days[0] ?? {});
+              const lines = [cols.join(","), ...days.map(d => cols.map(c => {
+                const v = (d as unknown as Record<string, unknown>)[c];
+                return typeof v === "string" && v.includes(",") ? `"${v}"` : String(v ?? "");
+              }).join(","))];
+              const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+              const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+              a.download = `autobatching_raw_${hub}.csv`; a.click();
+            }}
+            className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-zinc-600 rounded-lg px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            CSV
+          </button>
+        </div>
       </div>
 
       {/* Filters — single row, left-aligned */}
@@ -1123,6 +1211,55 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
               { label: "Avg Breach Position (0=first, 1=last)",     pre: preAgg.avg_breach_position,          post: postAgg.avg_breach_position,          higherIsBetter: true,  decimals: 2 },
             ]} />
           </div>
+
+          {/* Delay Reasons */}
+          {delayKillerChartData.length > 0 && (
+            <div className="mb-5">
+              <SectionHeader>Delay Reasons — Breached Orders (Post Period)</SectionHeader>
+              <div className="bg-white dark:bg-zinc-800 rounded-xl p-5 border border-gray-200 dark:border-zinc-700 shadow-sm mb-3">
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={delayKillerChartData} margin={{ top: 10, right: 16, left: -8, bottom: 0 }} barSize={18}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend {...legendProps} />
+                    <Bar dataKey="Last-mile"   stackId="a" fill="#f97316" />
+                    <Bar dataKey="Handoff"     stackId="a" fill="#ef4444" />
+                    <Bar dataKey="Cascade"     stackId="a" fill="#8b5cf6" />
+                    <Bar dataKey="Rider Allot" stackId="a" fill="#3b82f6" />
+                    <Bar dataKey="Rider Accept" stackId="a" fill="#06b6d4" />
+                    <Bar dataKey="Pre-dispatch" stackId="a" fill="#14b8a6" />
+                    <Bar dataKey="OFD Delay"   stackId="a" fill="#f59e0b" />
+                    <Bar dataKey="Algo/Batch"  stackId="a" fill="#84cc16" />
+                    <Bar dataKey="Other"       stackId="a" fill="#d1d5db" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              {delayFlagSummary.length > 0 && (
+                <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
+                  <table className="w-full text-[12px]">
+                    <thead>
+                      <tr className="border-b border-gray-100 dark:border-zinc-700">
+                        <th className="text-left px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400">Flag</th>
+                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400">Orders</th>
+                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400">% of Breached</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {delayFlagSummary.map((row, i) => (
+                        <tr key={row.tag} className={i % 2 === 0 ? "bg-gray-50 dark:bg-zinc-800/50" : ""}>
+                          <td className="px-4 py-1.5 text-gray-700 dark:text-zinc-300 font-medium">{row.label}</td>
+                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-900 dark:text-zinc-100">{row.count}</td>
+                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-500 dark:text-zinc-400">{(row.pct * 100).toFixed(0)}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Order Timeline */}
           <div>

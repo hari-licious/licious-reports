@@ -1,4 +1,5 @@
 import rawData from "@/data/autobatching/raw_daily.json";
+import rawDelayReasons from "@/data/autobatching/delay_reasons.json";
 
 export interface RawDay {
   date: string;
@@ -240,4 +241,19 @@ export interface AutobatchingData {
 
 export function getAutobatchingData(): AutobatchingData {
   return rawData as AutobatchingData;
+}
+
+export interface DelayDay {
+  date: string;
+  total_breached: number;
+  tags: Record<string, number>;
+  killer: Record<string, number>;
+}
+
+export interface DelayReasonsData {
+  days: DelayDay[];
+}
+
+export function getDelayReasonsData(): DelayReasonsData {
+  return rawDelayReasons as unknown as DelayReasonsData;
 }

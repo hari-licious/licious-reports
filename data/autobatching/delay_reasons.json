@@ -1,0 +1,244 @@
+{
+  "days": [
+    {
+      "date": "2026-07-06",
+      "total_breached": 1,
+      "tags": {
+        "SLOW_PICKLIST": 1,
+        "CASCADE": 1,
+        "PREDICTED": 1,
+        "SLOW_TRAVEL": 1
+      },
+      "killer": {
+        "travel_to_customer": 1
+      }
+    },
+    {
+      "date": "2026-07-07",
+      "total_breached": 65,
+      "tags": {
+        "OMS_LAG": 3,
+        "RESEQUENCED": 26,
+        "PREDICTED": 25,
+        "SLOW_TRAVEL": 37,
+        "SLOW_ACCEPT": 5,
+        "LATE_DEP": 10,
+        "CASCADE": 26,
+        "ALGO_DROP": 3,
+        "MULTI_RUN": 1,
+        "NO_RIDER": 1,
+        "AUTO_FAIL": 4,
+        "SLOW_PICKLIST": 5
+      },
+      "killer": {
+        "travel_to_customer": 16,
+        "rider_acceptance": 5,
+        "cascade_prev_stops": 9,
+        "packing": 1,
+        "service_rdl_to_del": 30,
+        "picklist_gen": 1,
+        "pre_dispatch": 3
+      }
+    },
+    {
+      "date": "2026-07-08",
+      "total_breached": 108,
+      "tags": {
+        "TEMPORAL": 19,
+        "OMS_LAG": 2,
+        "PREDICTED": 46,
+        "SLOW_TRAVEL": 57,
+        "RESEQUENCED": 37,
+        "LATE_DEP": 28,
+        "NO_RIDER": 14,
+        "ALGO_DROP": 7,
+        "AUTO_FAIL": 30,
+        "CASCADE": 41,
+        "MULTI_RUN": 1,
+        "SLOW_ACCEPT": 9,
+        "SLOW_PICKLIST": 3
+      },
+      "killer": {
+        "travel_to_customer": 46,
+        "service_rdl_to_del": 31,
+        "allocation": 4,
+        "rider_acceptance": 7,
+        "cascade_prev_stops": 14,
+        "MARGINAL": 1,
+        "ofd_event_delay": 1,
+        "pre_dispatch": 3,
+        "picklist_gen": 1
+      }
+    },
+    {
+      "date": "2026-07-09",
+      "total_breached": 62,
+      "tags": {
+        "TEMPORAL": 19,
+        "PREDICTED": 36,
+        "SLOW_TRAVEL": 22,
+        "RESEQUENCED": 19,
+        "NO_RIDER": 10,
+        "AUTO_FAIL": 12,
+        "LATE_DEP": 13,
+        "ALGO_DROP": 3,
+        "SLOW_ACCEPT": 4,
+        "CASCADE": 11,
+        "SLOW_PICKLIST": 3,
+        "OMS_LAG": 1
+      },
+      "killer": {
+        "travel_to_customer": 19,
+        "service_rdl_to_del": 29,
+        "rider_acceptance": 4,
+        "cascade_prev_stops": 5,
+        "pre_dispatch": 3,
+        "picklist_gen": 1,
+        "MARGINAL": 1
+      }
+    },
+    {
+      "date": "2026-07-10",
+      "total_breached": 132,
+      "tags": {
+        "PREDICTED": 86,
+        "LATE_DEP": 25,
+        "CASCADE": 36,
+        "RESEQUENCED": 60,
+        "SLOW_TRAVEL": 40,
+        "NO_RIDER": 29,
+        "ALGO_DROP": 15,
+        "AUTO_FAIL": 51,
+        "SLOW_PICKLIST": 35,
+        "MULTI_RUN": 4,
+        "SLOW_ACCEPT": 10,
+        "OMS_LAG": 3,
+        "TEMPORAL": 11
+      },
+      "killer": {
+        "service_rdl_to_del": 36,
+        "travel_to_customer": 55,
+        "allocation": 12,
+        "rider_acceptance": 2,
+        "algo_batching": 6,
+        "cascade_prev_stops": 14,
+        "pre_dispatch": 1,
+        "MARGINAL": 4,
+        "picklist_gen": 1,
+        "ofd_event_delay": 1
+      }
+    },
+    {
+      "date": "2026-07-11",
+      "total_breached": 86,
+      "tags": {
+        "AUTO_FAIL": 48,
+        "RESEQUENCED": 86,
+        "PREDICTED": 86,
+        "SLOW_PICKLIST": 19,
+        "NO_RIDER": 45,
+        "CASCADE": 31,
+        "SLOW_ACCEPT": 11,
+        "OMS_LAG": 2
+      },
+      "killer": {
+        "service_rdl_to_del": 25,
+        "travel_to_customer": 18,
+        "cascade_prev_stops": 13,
+        "allocation": 25,
+        "pre_dispatch": 1,
+        "rider_acceptance": 4
+      }
+    },
+    {
+      "date": "2026-07-12",
+      "total_breached": 68,
+      "tags": {
+        "NO_RIDER": 42,
+        "AUTO_FAIL": 59,
+        "CASCADE": 32,
+        "RESEQUENCED": 68,
+        "PREDICTED": 68,
+        "SLOW_ACCEPT": 4,
+        "SLOW_PICKLIST": 2
+      },
+      "killer": {
+        "cascade_prev_stops": 18,
+        "service_rdl_to_del": 24,
+        "allocation": 9,
+        "ofd_event_delay": 2,
+        "travel_to_customer": 14,
+        "pre_dispatch": 1
+      }
+    },
+    {
+      "date": "2026-07-13",
+      "total_breached": 43,
+      "tags": {
+        "AUTO_FAIL": 34,
+        "RESEQUENCED": 43,
+        "PREDICTED": 43,
+        "NO_RIDER": 29,
+        "SLOW_PICKLIST": 2,
+        "CASCADE": 21,
+        "OMS_LAG": 1,
+        "SLOW_ACCEPT": 14
+      },
+      "killer": {
+        "travel_to_customer": 7,
+        "allocation": 6,
+        "cascade_prev_stops": 12,
+        "ofd_event_delay": 1,
+        "service_rdl_to_del": 11,
+        "picklist_gen": 1,
+        "pre_dispatch": 4,
+        "picking": 1
+      }
+    },
+    {
+      "date": "2026-07-14",
+      "total_breached": 24,
+      "tags": {
+        "RESEQUENCED": 24,
+        "PREDICTED": 24,
+        "NO_RIDER": 5,
+        "AUTO_FAIL": 6,
+        "SLOW_ACCEPT": 1,
+        "OMS_LAG": 1,
+        "CASCADE": 2,
+        "SLOW_PICKLIST": 1
+      },
+      "killer": {
+        "service_rdl_to_del": 17,
+        "travel_to_customer": 6,
+        "cascade_prev_stops": 1
+      }
+    },
+    {
+      "date": "2026-07-15",
+      "total_breached": 76,
+      "tags": {
+        "SLOW_ACCEPT": 7,
+        "TEMPORAL": 4,
+        "CASCADE": 17,
+        "PREDICTED": 43,
+        "SLOW_TRAVEL": 38,
+        "RESEQUENCED": 20,
+        "NO_RIDER": 6,
+        "AUTO_FAIL": 6,
+        "LATE_DEP": 6,
+        "OMS_LAG": 4,
+        "SLOW_PICKLIST": 1,
+        "ALGO_DROP": 1,
+        "ESCALATED": 1
+      },
+      "killer": {
+        "service_rdl_to_del": 46,
+        "cascade_prev_stops": 5,
+        "travel_to_customer": 22,
+        "allocation": 2,
+        "picklist_gen": 1
+      }
+    }
+  ]
+}
