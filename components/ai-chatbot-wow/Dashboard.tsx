@@ -7,6 +7,11 @@ import {
 import { COLOR_CTRL, COLOR_TEST } from "@/lib/theme";
 import { useChartTheme } from "@/lib/useChartTheme";
 import { DashboardLayout } from "@/components/ui/DashboardLayout";
+import { DashboardHeader } from "@/components/ui/DashboardHeader";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { KpiCard } from "@/components/ui/KpiCard";
+import { ChartCard } from "@/components/ui/ChartCard";
+import { GlossarySection } from "@/components/ui/GlossarySection";
 import { WowRow } from "@/lib/ai-chatbot-wow";
 
 interface Props {
@@ -26,53 +31,33 @@ function num(v: number): string {
   return v.toLocaleString();
 }
 
-function KpiCard({ label, ctrlValue, testValue, ctrlSub, testSub, downIsGood }: {
-  label: string;
-  ctrlValue: string;
-  testValue: string;
-  ctrlSub?: string;
-  testSub?: string;
-  downIsGood?: boolean;
-}) {
-  void downIsGood;
-  return (
-    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 dark:text-zinc-500 uppercase mb-3">{label}</p>
-      <div className="flex gap-6">
-        <div>
-          <p className="text-xs text-gray-400 dark:text-zinc-500 mb-1">Control</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-zinc-100">{ctrlValue}</p>
-          {ctrlSub && <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">{ctrlSub}</p>}
-        </div>
-        <div>
-          <p className="text-xs text-gray-400 dark:text-zinc-500 mb-1">Test</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-zinc-100">{testValue}</p>
-          {testSub && <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">{testSub}</p>}
-        </div>
-      </div>
-    </div>
-  );
-}
+const BUCKET_LABEL: Record<string, string> = {
+  rest:        "Rest of Options",
+  otherIssues: "Other Issues",
+  minl:        "My Issue Not Listed",
+};
 
-function SingleKpiCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
-  return (
-    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 dark:text-zinc-500 uppercase mb-3">{label}</p>
-      <p className="text-3xl font-bold text-gray-900 dark:text-zinc-100">{value}</p>
-      {sub && <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">{sub}</p>}
-    </div>
-  );
-}
+const BUCKET_ORDER = [
+  { variant: "control", bucket: "rest" },
+  { variant: "control", bucket: "otherIssues" },
+  { variant: "test",    bucket: "rest" },
+  { variant: "test",    bucket: "minl" },
+];
 
-function ChartCard({ title, caption, children }: { title: string; caption?: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm">
-      <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-0.5">{title}</p>
-      {caption && <p className="text-xs text-gray-500 dark:text-zinc-400 mb-4">{caption}</p>}
-      {children}
-    </div>
-  );
-}
+const GLOSSARY = [
+  { term: "Control",        def: "Guided Help variant — users see the standard post-order support flow." },
+  { term: "Test",           def: "AI Chatbot variant — users are offered the AI chatbot after clicking their issue." },
+  { term: "GH",             def: "Guided Help — the post-order support flow. A 'conversation' = one GH session." },
+  { term: "ROTO",           def: "Rest of the Options — users who clicked any issue except the primary bucket (pid6 / pid112)." },
+  { term: "OI",             def: "Other Issues (pid6) — the control bucket. Clicking this leads to agent escalation." },
+  { term: "MINL",           def: "My Issue Is Not Listed (pid112) — the test bucket. Clicking this opens the AI chatbot." },
+  { term: "Optin Rate",     def: "% of all test conversations (ROTO + MINL) that opened the AI chatbot." },
+  { term: "Escalation %",   def: "% of conversations where the user was suggested to speak to a human agent." },
+  { term: "GH O2C",         def: "GH tickets raised per GH shipment (can exceed 100%). Overall = aggregated across all buckets for the variant." },
+  { term: "GH CSAT",        def: "% of post-GH-session CSAT survey responses that were positive. Not ticket CSAT. Overall = aggregated across all buckets for the variant." },
+  { term: "Control Sanity", def: "% of control ROTO users who accidentally entered the AI chatbot — expected ~0." },
+  { term: "WoW",            def: "Week on Week — weekly windows running Tuesday to Monday." },
+];
 
 export default function Dashboard({ generatedAt, rows }: Props) {
   const { gridStroke, tickFill, tooltipStyle, legendProps } = useChartTheme();
@@ -100,7 +85,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     const cOi   = byWeekVariantBucket(w, "control", "otherIssues");
     const tRest  = byWeekVariantBucket(w, "test", "rest");
     const tMinl  = byWeekVariantBucket(w, "test", "minl");
-    const label  = w.replace(" ", "\n").split(" ")[0];
+    const label  = w.split(" ")[0];
     const testOptinRate = (tRest != null && tMinl != null)
       ? (tRest.aiOptin + tMinl.aiOptin) / (tRest.totalConvos + tMinl.totalConvos)
       : null;
@@ -134,21 +119,20 @@ export default function Dashboard({ generatedAt, rows }: Props) {
   const w4CtrlOverallCsat = calcOverallCsat([w4cRest, w4cOi]);
   const w4TestOverallCsat = calcOverallCsat([w4tRest, w4tMinl]);
 
-  const BUCKET_LABEL: Record<string, string> = {
-    rest:        "Rest of Options",
-    otherIssues: "Other Issues",
-    minl:        "My Issue Not Listed",
-  };
-  const BUCKET_ORDER = [
-    { variant: "control", bucket: "rest" },
-    { variant: "control", bucket: "otherIssues" },
-    { variant: "test",    bucket: "rest" },
-    { variant: "test",    bucket: "minl" },
-  ];
-
   const WEEKS_DESC = [...WEEKS].reverse();
-
   const isPending = generatedAt === "pending";
+
+  const formattedAt = (() => {
+    if (isPending) return "pending";
+    const d = new Date(generatedAt);
+    if (isNaN(d.getTime())) return generatedAt;
+    const dd  = d.getDate().toString().padStart(2, "0");
+    const mm  = (d.getMonth() + 1).toString().padStart(2, "0");
+    const yy  = d.getFullYear().toString().slice(2);
+    const hh  = d.getHours().toString().padStart(2, "0");
+    const min = d.getMinutes().toString().padStart(2, "0");
+    return `${dd}/${mm}/${yy} ${hh}:${min}`;
+  })();
 
   function downloadCsv() {
     const headers = [
@@ -170,41 +154,23 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `ai-chatbot-wow-${generatedAt.split(" ")[0]}.csv`;
+    a.download = `ai-chatbot-wow-${formattedAt.replace(/\//g, "-").replace(" ", "_")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
 
   return (
     <DashboardLayout>
-      {/* Header */}
-      <div className="mb-8 flex items-start justify-between">
-        <div>
-          <h1
-            className="text-4xl font-bold tracking-tight text-gray-900 dark:text-zinc-100"
-            style={{ fontFamily: "var(--font-space-grotesk)" }}
-          >
-            AI Chatbot — Week on Week
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2">
-            Guided Help (Control) vs AI Chatbot (Test) · Jun 3–28, 2026 · Ticket attributed to latest conversation before ticket timestamp
-          </p>
-          <span className={`inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full ${isPending ? "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400" : "bg-gray-100 dark:bg-zinc-700 text-gray-500 dark:text-zinc-400"}`}>
-            {isPending ? "⏳ Data pending — run generate_wow_json.py after Trino completes" : `Last updated: ${generatedAt}`}
-          </span>
-        </div>
-        <button
-          onClick={downloadCsv}
-          className="mt-1 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors"
-        >
-          ↓ Download CSV
-        </button>
-      </div>
+      <DashboardHeader
+        title="AI Chatbot — Week on Week"
+        subtitle="Guided Help (Control) vs AI Chatbot (Test) · Jun 3–28, 2026 · Ticket attributed to latest conversation before ticket timestamp"
+        updatedAt={formattedAt}
+        onDownload={downloadCsv}
+      />
 
-      {/* KPI Cards — latest week snapshot */}
-      <p className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Latest week ({lastWeek})</p>
+      <SectionLabel>Latest week ({lastWeek})</SectionLabel>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <SingleKpiCard
+        <KpiCard
           label="Optin Rate"
           value={pct(w4TestOptinRate)}
           sub="AI chat opens / all test convos"
@@ -215,7 +181,6 @@ export default function Dashboard({ generatedAt, rows }: Props) {
           testValue={pct(w4tRest?.escalationRate ?? null)}
           ctrlSub="Rest bucket"
           testSub="Rest bucket"
-          downIsGood
         />
         <KpiCard
           label="Overall GH O2C"
@@ -223,7 +188,6 @@ export default function Dashboard({ generatedAt, rows }: Props) {
           testValue={pct(w4TestOverallO2c)}
           ctrlSub="All buckets"
           testSub="All buckets"
-          downIsGood
         />
         <KpiCard
           label="Overall GH CSAT"
@@ -234,8 +198,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         />
       </div>
 
-      {/* WoW Trend Charts */}
-      <p className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Week-on-week trends</p>
+      <SectionLabel>Week-on-week trends</SectionLabel>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         <ChartCard title="Optin Rate %" caption="All test convos (ROTO + MINL) — % that opened the AI chatbot">
           <ResponsiveContainer width="100%" height={220}>
@@ -293,8 +256,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         </ChartCard>
       </div>
 
-      {/* Weekly Summary Table */}
-      <p className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Full weekly breakdown</p>
+      <SectionLabel>Full weekly breakdown</SectionLabel>
       <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -354,31 +316,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
         </table>
       </div>
 
-      {/* Glossary */}
-      <p className="text-xs font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-widest mb-3 mt-8">Glossary</p>
-      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6">
-        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
-          {[
-            { term: "Control",        def: "Guided Help variant — users see the standard post-order support flow." },
-            { term: "Test",           def: "AI Chatbot variant — users are offered the AI chatbot after clicking their issue." },
-            { term: "GH",             def: "Guided Help — the post-order support flow. A 'conversation' = one GH session." },
-            { term: "ROTO",           def: "Rest of the Options — users who clicked any issue except the primary bucket (pid6 / pid112)." },
-            { term: "OI",             def: "Other Issues (pid6) — the control bucket. Clicking this leads to agent escalation." },
-            { term: "MINL",           def: "My Issue Is Not Listed (pid112) — the test bucket. Clicking this opens the AI chatbot." },
-            { term: "Optin Rate",     def: "% of all test conversations (ROTO + MINL) that opened the AI chatbot." },
-            { term: "Escalation %",   def: "% of conversations where the user was suggested to speak to a human agent." },
-            { term: "GH O2C",         def: "GH tickets raised per GH shipment (can exceed 100%). Overall = aggregated across all buckets for the variant." },
-            { term: "GH CSAT",        def: "% of post-GH-session CSAT survey responses that were positive. Not ticket CSAT. Overall = aggregated across all buckets for the variant." },
-            { term: "Control Sanity", def: "% of control ROTO users who accidentally entered the AI chatbot — expected ~0." },
-            { term: "WoW",            def: "Week on Week — weekly windows running Tuesday to Monday." },
-          ].map(({ term, def }) => (
-            <div key={term}>
-              <dt className="text-xs font-semibold text-gray-700 dark:text-zinc-300">{term}</dt>
-              <dd className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">{def}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+      <GlossarySection items={GLOSSARY} />
     </DashboardLayout>
   );
 }

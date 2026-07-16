@@ -1,3 +1,37 @@
+/*
+ * ─── Standard Dashboard Template ────────────────────────────────────────────
+ *
+ * Every dashboard follows this vertical structure:
+ *
+ *   <DashboardLayout>
+ *     <DashboardHeader
+ *       title="..."
+ *       subtitle="..."
+ *       updatedAt={...}       optional — "pending" | "dd/mm hh:mm" | undefined
+ *       onDownload={fn}       optional — shows "↓ Download CSV" button
+ *       filters={<JSX>}       optional — date pickers, selects, toggles
+ *     />
+ *
+ *     <SectionLabel>Label text</SectionLabel>
+ *     <div className="grid ... gap-4 mb-8">
+ *       <KpiCard label="..." value="..." ... />
+ *     </div>
+ *
+ *     <SectionLabel>Section name</SectionLabel>
+ *     <div className="grid ... gap-4 mb-8">
+ *       <ChartCard title="..." caption="...">
+ *         <ResponsiveContainer>...</ResponsiveContainer>
+ *       </ChartCard>
+ *     </div>
+ *
+ *     <GlossarySection items={[{ term, def }, ...]} />  ← always last
+ *   </DashboardLayout>
+ *
+ * Shared primitives: DashboardHeader, SectionLabel, KpiCard, ChartCard, GlossarySection
+ * All in components/ui/ — import individually, no barrel export.
+ * ────────────────────────────────────────────────────────────────────────────
+ */
+
 import Link from "next/link";
 import { DarkModeToggle } from "./DarkModeToggle";
 

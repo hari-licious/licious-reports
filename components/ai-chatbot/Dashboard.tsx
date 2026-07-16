@@ -7,6 +7,11 @@ import {
 import { COLOR_CTRL, COLOR_TEST } from "@/lib/theme";
 import { useChartTheme } from "@/lib/useChartTheme";
 import { DashboardLayout } from "@/components/ui/DashboardLayout";
+import { DashboardHeader } from "@/components/ui/DashboardHeader";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { KpiCard } from "@/components/ui/KpiCard";
+import { ChartCard } from "@/components/ui/ChartCard";
+import { GlossarySection } from "@/components/ui/GlossarySection";
 
 interface Props {
   kpi: {
@@ -22,63 +27,63 @@ interface Props {
   returnData:    { window: string; control: number; test: number }[];
 }
 
-function KpiCard({ label, value, sub, delta, downIsGood }: {
-  label: string; value: string; sub?: string; delta?: number; downIsGood?: boolean;
-}) {
-  const isGood = delta !== undefined ? (downIsGood ? delta < 0 : delta > 0) : null;
-  return (
-    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm">
-      <p className="text-[11px] font-semibold tracking-[0.12em] text-gray-400 dark:text-zinc-500 uppercase mb-3">{label}</p>
-      <p className="text-4xl font-bold text-gray-900 dark:text-zinc-100 mb-2">{value}</p>
-      {delta !== undefined && (
-        <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${
-          isGood
-            ? "bg-green-50 dark:bg-green-950/40 text-green-600 dark:text-green-400"
-            : "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400"
-        }`}>
-          {isGood ? "↑" : "↓"} {Math.abs(delta)}pp vs Control
-        </span>
-      )}
-      {sub && !delta && <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{sub}</p>}
-    </div>
-  );
-}
-
-function ChartCard({ title, caption, children }: { title: string; caption?: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-gray-200 dark:border-zinc-700 shadow-sm">
-      <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-0.5">{title}</p>
-      {caption && <p className="text-xs text-gray-500 dark:text-zinc-400 mb-4">{caption}</p>}
-      {children}
-    </div>
-  );
-}
-
 const CTRL = COLOR_CTRL;
 const TEST = COLOR_TEST;
+
+const GLOSSARY = [
+  { term: "Control", def: "Guided Help variant — users see the standard post-order support flow." },
+  { term: "Test", def: "AI Chatbot variant — users are offered the AI chatbot after selecting their issue." },
+  { term: "GH (Guided Help)", def: "Post-order customer support flow. One session = one conversation." },
+  { term: "Opt-in Rate", def: "% of all test conversations (Apr–May) where the user opened the AI chatbot." },
+  { term: "Escalation Rate", def: "% of conversations escalated to a human agent. Comparable bucket: Other Issues (Control) and My Issue Not Listed (Test)." },
+  { term: "O2C (Order-to-Contact)", def: "GH tickets raised per shipment in the comparable bucket. Lower is better." },
+  { term: "Test Group Size", def: "Total shipments in the Test variant (Apr–Jun), all buckets combined." },
+  { term: "Retention Rate", def: "% of users who returned to use Guided Help within the time window (7/14/28 days)." },
+  { term: "Return Rate", def: "% of users who placed another order within the time window (7/14/28 days)." },
+];
 
 export default function Dashboard({ kpi, trendData, retentionData, returnData }: Props) {
   const { gridStroke, tickFill, tooltipStyle, legendProps } = useChartTheme();
 
+  function downloadCsv() {
+    const rows: (string | number | null)[][] = [
+      ["Section", "Period/Window", "Metric", "Control", "Test"],
+      ["Summary", "Apr–May", "Opt-in Rate %", "", kpi.optinPct],
+      ["Summary", "Apr–May", "Escalation Rate %", kpi.ctrlEsc, kpi.testEsc],
+      ["Summary", "Apr–May", "O2C %", kpi.ctrlO2c, kpi.testO2c],
+      ["Summary", "Apr–Jun", "Test Group Size (shipments)", "", kpi.testSize],
+      ...trendData.map(r => ["Trend", r.month, "Escalation Rate %", r.ctrlEsc ?? "", r.testEsc ?? ""]),
+      ...trendData.map(r => ["Trend", r.month, "O2C %", r.ctrlO2c ?? "", r.testO2c ?? ""]),
+      ...retentionData.map(r => ["Retention", r.window, "Retention Rate %", r.control, r.test]),
+      ...returnData.map(r => ["Return", r.window, "Return Rate %", r.control, r.test]),
+    ];
+    const csv = rows.map(r => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "ai-chatbot-ab.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-zinc-100" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-          AI Chatbot A/B Test
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2">
-          Guided Help (Control) vs AI Chatbot (Test) · April – June 2026 · User-level assignment
-        </p>
-      </div>
+      <DashboardHeader
+        title="AI Chatbot A/B Test"
+        subtitle="Guided Help (Control) vs AI Chatbot (Test) · April – June 2026 · User-level assignment"
+        onDownload={downloadCsv}
+      />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <KpiCard label="Opt-in Rate"           value={`${kpi.optinPct}%`}          sub="Apr–May avg" />
-        <KpiCard label="Escalation Rate"       value={`${kpi.testEsc}%`}           delta={kpi.testEsc - kpi.ctrlEsc} downIsGood />
-        <KpiCard label="Ticket Creation (O2C)" value={`${kpi.testO2c}%`}           delta={kpi.testO2c - kpi.ctrlO2c} downIsGood />
+      <SectionLabel>Summary · Apr–May 2026</SectionLabel>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <KpiCard label="Opt-in Rate"           value={`${kpi.optinPct}%`}            sub="Apr–May avg" />
+        <KpiCard label="Escalation Rate"       value={`${kpi.testEsc}%`}             delta={kpi.testEsc - kpi.ctrlEsc} downIsGood />
+        <KpiCard label="Ticket Creation (O2C)" value={`${kpi.testO2c}%`}             delta={kpi.testO2c - kpi.ctrlO2c} downIsGood />
         <KpiCard label="Test Group Size"       value={kpi.testSize.toLocaleString()} sub="Shipments (Apr–Jun)" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      <SectionLabel>Monthly Trends</SectionLabel>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         <ChartCard title="Escalation Rate" caption="% of users escalated to a human agent · Other Issues bucket">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
@@ -108,13 +113,12 @@ export default function Dashboard({ kpi, trendData, retentionData, returnData }:
         </ChartCard>
       </div>
 
-      <div className="mb-2">
-        <p className="text-xs text-gray-500 dark:text-zinc-400 mb-4">
-          Retention · Control: Jan–Mar 2026 baseline &nbsp;·&nbsp; Test: Apr–Jun 2026
-        </p>
-      </div>
+      <SectionLabel>Retention &amp; Return</SectionLabel>
+      <p className="text-xs text-gray-500 dark:text-zinc-400 -mt-2 mb-4">
+        Control: Jan–Mar 2026 baseline &nbsp;·&nbsp; Test: Apr–Jun 2026
+      </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartCard title="Retention Rate" caption="Returned to use support">
+        <ChartCard title="Retention Rate" caption="Returned to use Guided Help within window">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={retentionData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }} barGap={4}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
@@ -128,7 +132,7 @@ export default function Dashboard({ kpi, trendData, retentionData, returnData }:
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Return Rate" caption="Placed another order">
+        <ChartCard title="Return Rate" caption="Placed another order within window">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={returnData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }} barGap={4}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
@@ -142,6 +146,8 @@ export default function Dashboard({ kpi, trendData, retentionData, returnData }:
           </ResponsiveContainer>
         </ChartCard>
       </div>
+
+      <GlossarySection items={GLOSSARY} />
     </DashboardLayout>
   );
 }
