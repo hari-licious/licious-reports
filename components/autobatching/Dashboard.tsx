@@ -44,7 +44,7 @@ interface Aggregated {
   dp_batched_pct: number;
   express_batched_pct: number;
   scheduled_batched_pct: number;
-  // SLA
+  // SLA (DEL-based)
   overall_sla_pct: number;
   scheduled_sla_pct: number;
   express_sla_pct: number;
@@ -57,6 +57,17 @@ interface Aggregated {
   avg_batched_breach_mins: number;
   avg_breach_p50_mins: number;
   avg_batched_breach_p50_mins: number;
+  // SLA (RDL-based)
+  overall_sla_pct_rdl: number;
+  scheduled_sla_pct_rdl: number;
+  express_sla_pct_rdl: number;
+  dp_sla_pct_rdl: number;
+  batched_sla_pct_rdl: number;
+  overall_on_time_rdl_count: number;
+  dp_on_time_rdl_count: number;
+  express_on_time_rdl_count: number;
+  scheduled_on_time_rdl_count: number;
+  batched_on_time_rdl_count: number;
   // Trip SLA
   trip_batched_count: number;
   trip_breached_count: number;
@@ -185,6 +196,10 @@ function aggregate(days: RawDay[]): Aggregated {
     dp_sla_pct: 0, p3_sla_pct: 0, avg_breach_mins: 0,
     batched_sla_pct: 0, batched_on_time_count: 0, batched_with_rdl_count: 0,
     avg_batched_breach_mins: 0, avg_breach_p50_mins: 0, avg_batched_breach_p50_mins: 0,
+    overall_sla_pct_rdl: 0, scheduled_sla_pct_rdl: 0, express_sla_pct_rdl: 0,
+    dp_sla_pct_rdl: 0, batched_sla_pct_rdl: 0,
+    overall_on_time_rdl_count: 0, dp_on_time_rdl_count: 0,
+    express_on_time_rdl_count: 0, scheduled_on_time_rdl_count: 0, batched_on_time_rdl_count: 0,
     overall_on_time_count: 0, overall_with_rdl_count: 0,
     dp_on_time_count: 0, dp_with_rdl_count: 0,
     express_on_time_count: 0, express_with_rdl_count: 0,
@@ -290,6 +305,16 @@ function aggregate(days: RawDay[]): Aggregated {
     batched_sla_pct:             div(s("batched_on_time"),          s("batched_with_rdl")),
     batched_on_time_count:       s("batched_on_time"),
     batched_with_rdl_count:      s("batched_with_rdl"),
+    overall_sla_pct_rdl:       div(s("on_time_rdl"),          s("orders_with_rdl_ts")),
+    scheduled_sla_pct_rdl:     div(s("scheduled_on_time_rdl"), s("scheduled_with_rdl_ts")),
+    express_sla_pct_rdl:       div(s("express_on_time_rdl"),   s("express_with_rdl_ts")),
+    dp_sla_pct_rdl:            div(s("dp_on_time_rdl"),        s("dp_with_rdl_ts")),
+    batched_sla_pct_rdl:       div(s("batched_on_time_rdl"),   s("batched_with_rdl_ts")),
+    overall_on_time_rdl_count:     s("on_time_rdl"),
+    dp_on_time_rdl_count:          s("dp_on_time_rdl"),
+    express_on_time_rdl_count:     s("express_on_time_rdl"),
+    scheduled_on_time_rdl_count:   s("scheduled_on_time_rdl"),
+    batched_on_time_rdl_count:     s("batched_on_time_rdl"),
     avg_batched_breach_mins:     div(s("batched_breach_mins_sum"),  s("batched_breach_count")),
     avg_breach_p50_mins:         div(s("breach_p50_mins"),          n),
     avg_batched_breach_p50_mins: div(s("batched_breach_p50_mins"),  n),
@@ -550,17 +575,19 @@ function OrderMixTable({ pre, post, expressExpanded, onToggleExpress }: {
 
 // ── SLA table with express drill-down ─────────────────────────────────────────
 
-function SlaTable({ pre, post, expressExpanded, onToggleExpress }: {
+function SlaTable({ pre, post, expressExpanded, onToggleExpress, slaMode, onToggleSlaMode }: {
   pre: Aggregated; post: Aggregated; expressExpanded: boolean; onToggleExpress: () => void;
+  slaMode: "del" | "rdl"; onToggleSlaMode: () => void;
 }) {
+  const rdl = slaMode === "rdl";
   const rows: MetricRow[] = [
-    { label: "Overall SLA %",           pre: pre.overall_sla_pct * 100,   post: post.overall_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.overall_on_time_count,    countPost: post.overall_on_time_count },
-    { label: "DP SLA %",                pre: pre.dp_sla_pct * 100,        post: post.dp_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.dp_on_time_count,         countPost: post.dp_on_time_count },
-    { label: "Express SLA %",           pre: pre.express_sla_pct * 100,   post: post.express_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.express_on_time_count,    countPost: post.express_on_time_count },
-    { label: "Scheduled SLA %",         pre: pre.scheduled_sla_pct * 100, post: post.scheduled_sla_pct * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.scheduled_on_time_count,  countPost: post.scheduled_on_time_count },
+    { label: "Overall SLA %",           pre: (rdl ? pre.overall_sla_pct_rdl   : pre.overall_sla_pct)   * 100, post: (rdl ? post.overall_sla_pct_rdl   : post.overall_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: rdl ? pre.overall_on_time_rdl_count   : pre.overall_on_time_count,   countPost: rdl ? post.overall_on_time_rdl_count   : post.overall_on_time_count },
+    { label: "DP SLA %",                pre: (rdl ? pre.dp_sla_pct_rdl        : pre.dp_sla_pct)        * 100, post: (rdl ? post.dp_sla_pct_rdl        : post.dp_sla_pct)        * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: rdl ? pre.dp_on_time_rdl_count        : pre.dp_on_time_count,       countPost: rdl ? post.dp_on_time_rdl_count        : post.dp_on_time_count },
+    { label: "Express SLA %",           pre: (rdl ? pre.express_sla_pct_rdl   : pre.express_sla_pct)   * 100, post: (rdl ? post.express_sla_pct_rdl   : post.express_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: rdl ? pre.express_on_time_rdl_count   : pre.express_on_time_count,   countPost: rdl ? post.express_on_time_rdl_count   : post.express_on_time_count },
+    { label: "Scheduled SLA %",         pre: (rdl ? pre.scheduled_sla_pct_rdl : pre.scheduled_sla_pct) * 100, post: (rdl ? post.scheduled_sla_pct_rdl : post.scheduled_sla_pct) * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: rdl ? pre.scheduled_on_time_rdl_count : pre.scheduled_on_time_count, countPost: rdl ? post.scheduled_on_time_rdl_count : post.scheduled_on_time_count },
     { label: "3P SLA % (at Delivered)", pre: pre.p3_sla_pct * 100,        post: post.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.p3_on_time_count,         countPost: post.p3_on_time_count },
     { label: "Avg Breach (mins)",       pre: pre.avg_breach_mins,          post: post.avg_breach_mins,         higherIsBetter: false, decimals: 1 },
-    { label: "Batched SLA %",           pre: pre.batched_sla_pct * 100,    post: post.batched_sla_pct * 100,   unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.batched_on_time_count,  countPost: post.batched_on_time_count },
+    { label: "Batched SLA %",           pre: (rdl ? pre.batched_sla_pct_rdl : pre.batched_sla_pct) * 100, post: (rdl ? post.batched_sla_pct_rdl : post.batched_sla_pct) * 100, unit: "%", higherIsBetter: true, decimals: 1, countPre: rdl ? pre.batched_on_time_rdl_count : pre.batched_on_time_count, countPost: rdl ? post.batched_on_time_rdl_count : post.batched_on_time_count },
     { label: "EOB — All (median breach)",     pre: pre.avg_breach_p50_mins,         post: post.avg_breach_p50_mins,         higherIsBetter: false, decimals: 1 },
     { label: "EOB — Batched (median breach)", pre: pre.avg_batched_breach_p50_mins, post: post.avg_batched_breach_p50_mins, higherIsBetter: false, decimals: 1 },
   ];
@@ -572,7 +599,19 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress }: {
       <table className="w-full">
         <thead>
           <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
-            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Metric</th>
+            <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">
+              <span className="flex items-center gap-3">
+                Metric
+                <button
+                  onClick={onToggleSlaMode}
+                  className="flex items-center gap-1 rounded-full border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-2 py-0.5 text-[10px] font-semibold tracking-widest text-gray-500 dark:text-zinc-400 hover:border-gray-400 dark:hover:border-zinc-500 transition-colors normal-case"
+                >
+                  <span className={slaMode === "del" ? "text-gray-900 dark:text-zinc-100" : ""}>DEL</span>
+                  <span className="text-gray-300 dark:text-zinc-600">/</span>
+                  <span className={slaMode === "rdl" ? "text-gray-900 dark:text-zinc-100" : ""}>RDL</span>
+                </button>
+              </span>
+            </th>
             <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</th>
             <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</th>
             <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Change</th>
@@ -775,6 +814,8 @@ const GLOSSARY = [
   { term: "RDL (Reached Delivery Location)", definition: "Shipment state when the DE arrives at the customer's location. Used in the order timeline (OFD→RDL stage) but NOT used as the SLA event — SLA is measured at delivered." },
   { term: "Avg Breach (mins)",             definition: "Average minutes late across breached orders: (deliveredat − promiseendtime) / 60000, for delivered orders where deliveredat > promiseendtime." },
   { term: "Batched SLA %",                definition: "On-time rate for orders delivered with 2+ orders on the same trip. Formula: batched_on_time / batched_with_rdl." },
+  { term: "SLA at DEL",                   definition: "Default SLA mode. Order is on-time if deliveredat ≤ promiseendtime. Anchored at the moment the customer confirms receipt." },
+  { term: "SLA at RDL",                   definition: "Toggle mode. Order is on-time if reached_delivery_location ≤ promiseendtime. Anchored at the moment the DE arrives at the door. Typically a few minutes stricter than DEL." },
   { term: "EOB (Extent of Breach)",       definition: "Median breach time (mins) among orders that missed their SLA window. Lower is better. Shown for all orders (EOB — All) and batched-only orders (EOB — Batched). Computed as mean of daily medians across the selected period." },
   { term: "Trip Breach Rate %",            definition: "% of batched trips (>1 order) where at least one order breached SLA." },
   { term: "First-Order Breach %",          definition: "Of all breached batched trips: % where the breach was the first delivery on the trip." },
@@ -854,6 +895,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const [tlMetric,          setTlMetric]          = useState<"avg" | "p50" | "p90">("avg");
   const [expressExpanded,   setExpressExpanded]   = useState(false);
   const [activeTab,         setActiveTab]         = useState<"metrics" | "glossary" | "timeline">("metrics");
+  const [slaMode,           setSlaMode]           = useState<"del" | "rdl">("del");
 
   const availableHubs = useMemo(
     () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
@@ -1062,7 +1104,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           {/* SLA */}
           <div className="mb-5">
             <SectionHeader>SLA — Check Signal · All at Delivered (deliveredat vs promiseendtime)</SectionHeader>
-            <SlaTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} />
+            <SlaTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} slaMode={slaMode} onToggleSlaMode={() => setSlaMode(m => m === "del" ? "rdl" : "del")} />
           </div>
 
           {/* Trip-level SLA */}

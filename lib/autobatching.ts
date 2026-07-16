@@ -212,6 +212,22 @@ export interface RawDay {
   batched_breach_count: number;
   breach_p50_mins: number;
   batched_breach_p50_mins: number;
+
+  // RDL-based SLA (SLA measured at REACHED_DELIVERY_LOCATION instead of DELIVERED)
+  orders_with_rdl_ts: number;
+  on_time_rdl: number;
+  breached_rdl: number;
+  breach_mins_rdl_sum: number;
+  scheduled_with_rdl_ts: number;
+  scheduled_on_time_rdl: number;
+  express_with_rdl_ts: number;
+  express_on_time_rdl: number;
+  dp_with_rdl_ts: number;
+  dp_on_time_rdl: number;
+  batched_with_rdl_ts: number;
+  batched_on_time_rdl: number;
+  batched_breach_mins_rdl_sum: number;
+  batched_breach_rdl_count: number;
 }
 
 export interface AutobatchingData {
