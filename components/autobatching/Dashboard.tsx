@@ -691,25 +691,6 @@ function StatusStrip({ allDays, preStart, preEnd, postStart, postEnd }: {
 
   return (
     <div className="mb-5">
-      {/* Legend */}
-      <div className="flex items-center gap-4 mb-1.5">
-        {(["post", "pre", "gap"] as const).map((p) => (
-          <div key={p} className="flex items-center gap-1.5">
-            <span className={`inline-block w-4 h-3 rounded-sm ${STRIP_PERIOD_COLOR[p]}`} />
-            <span className="text-[10px] text-gray-400 dark:text-zinc-500">
-              {p === "post" ? "AB Live" : p === "pre" ? "No AB" : "Rolled back"}
-            </span>
-          </div>
-        ))}
-        <div className="flex items-center gap-1.5">
-          <span className="inline-block w-4 h-3 border-t-2 border-blue-500" />
-          <span className="text-[10px] text-gray-400 dark:text-zinc-500">Pre range</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="inline-block w-4 h-3 border-t-2 border-orange-500" />
-          <span className="text-[10px] text-gray-400 dark:text-zinc-500">Post range</span>
-        </div>
-      </div>
       {/* Strip */}
       <div className="relative overflow-x-auto">
         <div className="flex items-end" style={{ height: 28 }}>
