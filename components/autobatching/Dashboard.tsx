@@ -10,6 +10,7 @@ import { Abbr } from "@/components/ui/Abbr";
 import { COLOR_CTRL, COLOR_POST } from "@/lib/theme";
 import { useChartTheme } from "@/lib/useChartTheme";
 import { DashboardLayout } from "@/components/ui/DashboardLayout";
+import { TimelineContent } from "@/components/autobatching/Timeline";
 
 interface Props {
   hub: string;
@@ -428,8 +429,8 @@ function ComparisonTable({ rows }: { rows: MetricRow[] }) {
         <thead>
           <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
             <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Metric</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</th>
             <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Change</th>
           </tr>
         </thead>
@@ -505,8 +506,8 @@ function OrderMixTable({ pre, post, expressExpanded, onToggleExpress }: {
         <thead>
           <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
             <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Order Type</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</th>
           </tr>
         </thead>
         <tbody>
@@ -572,8 +573,8 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress }: {
         <thead>
           <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
             <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Metric</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</th>
-            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</th>
+            <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</th>
             <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Change</th>
           </tr>
         </thead>
@@ -794,8 +795,8 @@ const GLOSSARY = [
   { term: "Median (P50)",                   definition: "50th percentile of stage duration across orders in the selected period. Weighted average of daily medians, weighted by order count. Less sensitive to outliers than avg." },
   { term: "P90",                            definition: "90th percentile of stage duration. Shows tail latency — the worst 10% of orders. Weighted average of daily P90s." },
   { term: "DE (Delivery Executive)",       definition: "Last-mile delivery rider. Headcount sourced from rider_events login data, filtered to hours with active logins." },
-  { term: "Pre Period",                    definition: "Baseline period before autobatching v2 went live. Ends Jun 17. Length matches number of post days — extends backward as post grows." },
-  { term: "Post Period",                   definition: "Two phases: Phase 1 Jun 18–21 (initial release), Phase 2 Jul 7+ (re-release). Both tagged 'post'. Jun 22–Jul 6 is a gap (rollback)." },
+  { term: "Range 1",                        definition: "The baseline comparison window. Default: DOW-aligned pre-AB period (before Jun 18). Can be set to any date range using the picker." },
+  { term: "Range 2",                        definition: "The comparison window. Default: AB live days (Phase 1 Jun 18–21 + Phase 2 Jul 7+). Can be set to any date range — e.g. Phase 1 vs Phase 2." },
   { term: "Gap (Jun 22 – Jul 6)",         definition: "Autobatching was rolled back ~Jun 22 due to ground ops issues and re-released Jul 6 night. These days are excluded from all aggregations." },
 ];
 
@@ -852,7 +853,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
   const [timelineType,      setTimelineType]      = useState<"dp" | "express" | "scheduled">("dp");
   const [tlMetric,          setTlMetric]          = useState<"avg" | "p50" | "p90">("avg");
   const [expressExpanded,   setExpressExpanded]   = useState(false);
-  const [activeTab,         setActiveTab]         = useState<"metrics" | "glossary">("metrics");
+  const [activeTab,         setActiveTab]         = useState<"metrics" | "glossary" | "timeline">("metrics");
 
   const availableHubs = useMemo(
     () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
@@ -942,7 +943,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-100" style={{ fontFamily: "var(--font-space-grotesk)" }}>
             Autobatching v2
           </h1>
-          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Pre vs Post impact · {hub}</p>
+          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Range comparison · {hub}</p>
         </div>
         {refreshLabel && (
           <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-xl px-3 py-2">
@@ -964,7 +965,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
         </div>
         <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Pre</span>
+          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</span>
           <input type="date" value={preStart} min={allMin} max={allMax} onChange={e => setPreStart(e.target.value)} className={inputCls} />
           <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
           <input type="date" value={preEnd}   min={allMin} max={allMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
@@ -972,7 +973,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
         </div>
         <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Post</span>
+          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</span>
           <input type="date" value={postStart} min={allMin} max={allMax} onChange={e => setPostStart(e.target.value)} className={inputCls} />
           <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
           <input type="date" value={postEnd}   min={allMin} max={allMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
@@ -991,6 +992,7 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
       <div className="flex border-b border-gray-200 dark:border-zinc-700 mb-6">
         <button className={tabCls("metrics")}  onClick={() => setActiveTab("metrics")}>Metrics</button>
         <button className={tabCls("glossary")} onClick={() => setActiveTab("glossary")}>Glossary</button>
+        <button className={tabCls("timeline")} onClick={() => setActiveTab("timeline")}>Timeline</button>
       </div>
 
       {activeTab === "glossary" ? (
@@ -1012,6 +1014,8 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
             </tbody>
           </table>
         </div>
+      ) : activeTab === "timeline" ? (
+        <TimelineContent allDays={hubDays} />
       ) : (
         <>
           {/* Comparability */}
@@ -1100,10 +1104,10 @@ export default function Dashboard({ hub, generated_at, days }: Props) {
                   <YAxis tickFormatter={v => `${v}m`} tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${Number(v).toFixed(1)} mins`]} />
                   <Legend {...legendProps} />
-                  <Bar dataKey="pre"  name="Pre"  fill={COLOR_CTRL} radius={[4, 4, 0, 0]} barSize={28} minPointSize={2}>
+                  <Bar dataKey="pre"  name="Range 1"  fill={COLOR_CTRL} radius={[4, 4, 0, 0]} barSize={28} minPointSize={2}>
                     <LabelList dataKey="pre"  position="top" style={{ fontSize: 10, fill: COLOR_CTRL, fontWeight: 600 }} formatter={(v: unknown) => v == null ? "" : `${v}m`} />
                   </Bar>
-                  <Bar dataKey="post" name="Post" fill={COLOR_POST} radius={[4, 4, 0, 0]} barSize={28} minPointSize={2}>
+                  <Bar dataKey="post" name="Range 2" fill={COLOR_POST} radius={[4, 4, 0, 0]} barSize={28} minPointSize={2}>
                     <LabelList dataKey="post" position="top" style={{ fontSize: 10, fill: COLOR_POST, fontWeight: 600 }} formatter={(v: unknown) => v == null ? "" : `${v}m`} />
                   </Bar>
                 </BarChart>

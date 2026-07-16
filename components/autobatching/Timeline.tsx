@@ -22,7 +22,7 @@ function periodLabel(from: string | null, to: string): string {
   return "";
 }
 
-export function AutobatchingTimeline({ allDays }: Props) {
+export function TimelineContent({ allDays }: Props) {
   // Group by hub
   const hubs = useMemo(
     () => [...new Set(allDays.map(d => d.hub).filter(Boolean))].sort(),
@@ -98,7 +98,7 @@ export function AutobatchingTimeline({ allDays }: Props) {
   const CELL_H = 28;
 
   return (
-    <DashboardLayout>
+    <div>
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-100" style={{ fontFamily: "var(--font-space-grotesk)" }}>
@@ -274,6 +274,14 @@ export function AutobatchingTimeline({ allDays }: Props) {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+export function AutobatchingTimeline({ allDays }: Props) {
+  return (
+    <DashboardLayout>
+      <TimelineContent allDays={allDays} />
     </DashboardLayout>
   );
 }
