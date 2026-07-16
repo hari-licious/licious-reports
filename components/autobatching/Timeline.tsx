@@ -125,28 +125,29 @@ export function TimelineContent({ allDays }: Props) {
       <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm p-5 mb-6 overflow-x-auto">
         <div className="inline-block min-w-max">
           {/* Milestone row */}
-          <div className="flex mb-1" style={{ marginLeft: 64 }}>
+          <div className="flex items-end mb-1" style={{ marginLeft: 64 }}>
             {dates.map((date) => (
               <div
                 key={date}
-                className="relative flex-shrink-0"
+                className="flex-shrink-0 flex items-end justify-start"
                 style={{ width: CELL_W }}
               >
                 {milestones[date] && (
-                  <div
-                    className="absolute bottom-0 left-0 origin-bottom-left"
+                  <span
                     style={{
-                      transform: "rotate(-55deg) translateY(-2px)",
+                      writingMode: "vertical-rl",
+                      transform: "rotate(180deg)",
                       whiteSpace: "nowrap",
                       fontSize: 9,
                       lineHeight: 1,
                       color: "#6b7280",
                       fontWeight: 600,
                       letterSpacing: "0.05em",
+                      paddingBottom: 3,
                     }}
                   >
                     {milestones[date]}
-                  </div>
+                  </span>
                 )}
               </div>
             ))}
