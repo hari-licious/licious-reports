@@ -198,13 +198,19 @@ export interface RawDay {
   ex_90p_with_rdl: number;
   ex_90p_on_time: number;
 
-  // Trip-level SLA
+  // Trip-level SLA (DEL-based)
   trip_sla_batched_trips: number;
   trip_sla_breached_trips: number;
   trip_sla_first_order_breach: number;
   trip_sla_last_order_breach: number;
   trip_sla_breach_pos_sum: number;
   trip_sla_breach_pos_cnt: number;
+  // Trip-level SLA (RDL-based)
+  trip_sla_breached_trips_rdl: number;
+  trip_sla_first_order_breach_rdl: number;
+  trip_sla_last_order_breach_rdl: number;
+  trip_sla_breach_pos_sum_rdl: number;
+  trip_sla_breach_pos_cnt_rdl: number;
 
   // Batched order SLA + EOB
   batched_with_rdl: number;

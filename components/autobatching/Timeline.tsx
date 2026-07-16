@@ -56,7 +56,7 @@ export function TimelineContent({ allDays }: Props) {
         seen.add(key);
         result.push({
           idx,
-          label: d.toLocaleDateString("en-IN", { month: "short", year: "numeric" }),
+          label: d.toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
         });
       }
     });
@@ -186,21 +186,31 @@ export function TimelineContent({ allDays }: Props) {
             );
           })}
 
-          {/* X-axis: month labels */}
+          {/* X-axis: month labels + weekly day ticks */}
           <div className="flex mt-2" style={{ marginLeft: 64 }}>
             {dates.map((date, idx) => {
               const mb = monthBoundaries.find(m => m.idx === idx);
+              const dt = new Date(date + "T00:00:00");
+              const dayNum = dt.getDate();
+              const isWeeklyTick = !mb && (dayNum === 8 || dayNum === 15 || dayNum === 22 || dayNum === 29);
               return (
                 <div
                   key={date}
                   className="relative flex-shrink-0"
-                  style={{ width: CELL_W }}
+                  style={{ width: CELL_W, height: 20 }}
                 >
                   {mb && (
                     <span
                       className="absolute left-0 top-0 text-[10px] font-semibold tracking-wide text-gray-400 dark:text-zinc-500 whitespace-nowrap"
                     >
                       {mb.label}
+                    </span>
+                  )}
+                  {isWeeklyTick && (
+                    <span
+                      className="absolute left-0 top-0 text-[9px] text-gray-300 dark:text-zinc-600 whitespace-nowrap"
+                    >
+                      {dayNum}
                     </span>
                   )}
                 </div>

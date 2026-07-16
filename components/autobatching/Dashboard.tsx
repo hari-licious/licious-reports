@@ -10,6 +10,7 @@ import { Abbr } from "@/components/ui/Abbr";
 import { COLOR_CTRL, COLOR_POST } from "@/lib/theme";
 import { useChartTheme } from "@/lib/useChartTheme";
 import { DashboardLayout } from "@/components/ui/DashboardLayout";
+import { DashboardHeader } from "@/components/ui/DashboardHeader";
 import { TimelineContent } from "@/components/autobatching/Timeline";
 
 interface Props {
@@ -69,13 +70,19 @@ interface Aggregated {
   express_on_time_rdl_count: number;
   scheduled_on_time_rdl_count: number;
   batched_on_time_rdl_count: number;
-  // Trip SLA
+  // Trip SLA (DEL)
   trip_batched_count: number;
   trip_breached_count: number;
   trip_breach_rate: number;
   first_order_breach_pct: number;
   last_order_breach_pct: number;
   avg_breach_position: number;
+  // Trip SLA (RDL)
+  trip_breached_count_rdl: number;
+  trip_breach_rate_rdl: number;
+  first_order_breach_pct_rdl: number;
+  last_order_breach_pct_rdl: number;
+  avg_breach_position_rdl: number;
   // OD (3P fleet)
   total_3p_orders: number;
   avg_daily_3p_orders: number;
@@ -209,6 +216,8 @@ function aggregate(days: RawDay[]): Aggregated {
     total_orders_batched_count: 0, total_licious_dispatched_count: 0, total_trips_count: 0,
     trip_batched_count: 0, trip_breached_count: 0,
     trip_breach_rate: 0, first_order_breach_pct: 0, last_order_breach_pct: 0, avg_breach_position: 0,
+    trip_breached_count_rdl: 0, trip_breach_rate_rdl: 0,
+    first_order_breach_pct_rdl: 0, last_order_breach_pct_rdl: 0, avg_breach_position_rdl: 0,
     total_3p_orders: 0, avg_daily_3p_orders: 0,
     ex_30_45_orders_total: 0, ex_30_45_sla_pct: 0,
     ex_45_60_orders_total: 0, ex_45_60_sla_pct: 0,
@@ -261,10 +270,13 @@ function aggregate(days: RawDay[]): Aggregated {
   const express_orders       = s("express_orders");
   const scheduled_orders     = s("scheduled_orders");
   const total_licious_sla    = s("total_licious");
-  const trip_batched         = s("trip_sla_batched_trips");
-  const trip_breached        = s("trip_sla_breached_trips");
-  const first_breach         = s("trip_sla_first_order_breach");
-  const last_breach          = s("trip_sla_last_order_breach");
+  const trip_batched             = s("trip_sla_batched_trips");
+  const trip_breached            = s("trip_sla_breached_trips");
+  const first_breach             = s("trip_sla_first_order_breach");
+  const last_breach              = s("trip_sla_last_order_breach");
+  const trip_breached_rdl        = s("trip_sla_breached_trips_rdl");
+  const first_breach_rdl         = s("trip_sla_first_order_breach_rdl");
+  const last_breach_rdl          = s("trip_sla_last_order_breach_rdl");
 
   // Weighted avg of daily percentiles: sum(p * cnt) / sum(cnt)
   const wp = (pKey: keyof RawDay, wKey: keyof RawDay) =>
@@ -339,6 +351,11 @@ function aggregate(days: RawDay[]): Aggregated {
     first_order_breach_pct:       div(first_breach, trip_breached),
     last_order_breach_pct:        div(last_breach,  trip_breached),
     avg_breach_position:          div(s("trip_sla_breach_pos_sum"), s("trip_sla_breach_pos_cnt")),
+    trip_breached_count_rdl:      trip_breached_rdl,
+    trip_breach_rate_rdl:         div(trip_breached_rdl, trip_batched),
+    first_order_breach_pct_rdl:   div(first_breach_rdl, trip_breached_rdl),
+    last_order_breach_pct_rdl:    div(last_breach_rdl,  trip_breached_rdl),
+    avg_breach_position_rdl:      div(s("trip_sla_breach_pos_sum_rdl"), s("trip_sla_breach_pos_cnt_rdl")),
 
     total_3p_orders:       s("dispatched_3p"),
     avg_daily_3p_orders:   div(s("dispatched_3p"), n),
@@ -1028,6 +1045,20 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
     return `${dd}/${mm} ${hh}:${min}`;
   }, [generated_at]);
 
+  function handleDownload() {
+    const cols = Object.keys(days[0] ?? {});
+    const lines = [cols.join(","), ...days.map(d => cols.map(c => {
+      const v = (d as unknown as Record<string, unknown>)[c];
+      return typeof v === "string" && v.includes(",") ? `"${v}"` : String(v ?? "");
+    }).join(","))];
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `autobatching_raw_${hub}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
   const inputCls    = "bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5 text-sm text-gray-800 dark:text-zinc-200 focus:outline-none focus:border-gray-400 dark:focus:border-zinc-500 shadow-sm";
   const typeBtnCls  = (active: boolean) =>
     `px-3 py-1 text-xs font-semibold rounded-full transition-colors ${active ? "bg-blue-600 text-white" : "bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:border-gray-400 dark:hover:border-zinc-500"}`;
@@ -1037,67 +1068,41 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   return (
     <DashboardLayout>
 
-      {/* Header row: title + refresh + download */}
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-100" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-            Autobatching v2
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Range comparison · {hub}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {refreshLabel && (
-            <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-xl px-3 py-2">
-              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse inline-block" />
-              <span className="text-xs text-blue-700 dark:text-blue-300 font-medium">Data refreshed at {refreshLabel}</span>
+      <DashboardHeader
+        title="Autobatching v2"
+        subtitle={`Range comparison · ${hub}`}
+        updatedAt={refreshLabel ?? undefined}
+        onDownload={handleDownload}
+        className="mb-3"
+        filters={
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
+              <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
+                {availableHubs.length > 0
+                  ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
+                  : <option value={hub}>{hub}</option>}
+              </select>
             </div>
-          )}
-          <button
-            onClick={() => {
-              const cols = Object.keys(days[0] ?? {});
-              const lines = [cols.join(","), ...days.map(d => cols.map(c => {
-                const v = (d as unknown as Record<string, unknown>)[c];
-                return typeof v === "string" && v.includes(",") ? `"${v}"` : String(v ?? "");
-              }).join(","))];
-              const blob = new Blob([lines.join("\n")], { type: "text/csv" });
-              const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-              a.download = `autobatching_raw_${hub}.csv`; a.click();
-            }}
-            className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 dark:text-zinc-400 border border-gray-200 dark:border-zinc-600 rounded-lg px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            CSV
-          </button>
-        </div>
-      </div>
-
-      {/* Filters — single row, left-aligned */}
-      <div className="flex flex-wrap items-center gap-3 mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
-          <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
-            {availableHubs.length > 0
-              ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
-              : <option value={hub}>{hub}</option>}
-          </select>
-        </div>
-        <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</span>
-          <input type="date" value={preStart} min={allMin} max={allMax} onChange={e => setPreStart(e.target.value)} className={inputCls} />
-          <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
-          <input type="date" value={preEnd}   min={allMin} max={allMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
-          <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPre.length}d</span>
-        </div>
-        <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</span>
-          <input type="date" value={postStart} min={allMin} max={allMax} onChange={e => setPostStart(e.target.value)} className={inputCls} />
-          <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
-          <input type="date" value={postEnd}   min={allMin} max={allMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
-          <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPost.length}d</span>
-        </div>
-      </div>
+            <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</span>
+              <input type="date" value={preStart} min={allMin} max={allMax} onChange={e => setPreStart(e.target.value)} className={inputCls} />
+              <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
+              <input type="date" value={preEnd}   min={allMin} max={allMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
+              <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPre.length}d</span>
+            </div>
+            <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</span>
+              <input type="date" value={postStart} min={allMin} max={allMax} onChange={e => setPostStart(e.target.value)} className={inputCls} />
+              <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
+              <input type="date" value={postEnd}   min={allMin} max={allMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
+              <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPost.length}d</span>
+            </div>
+          </div>
+        }
+      />
 
       {/* Status strip */}
       <StatusStrip
@@ -1201,14 +1206,27 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
 
           {/* Trip-level SLA */}
           <div className="mb-5">
-            <SectionHeader>Trip-level SLA · Batched Trips · Trip Breached if Any Order Breached</SectionHeader>
+            <div className="flex items-center justify-between mb-2">
+              <SectionHeader noMargin>Trip-level SLA · Batched Trips · Trip Breached if Any Order Breached</SectionHeader>
+              <div className="flex rounded-lg border border-gray-200 dark:border-zinc-600 overflow-hidden text-[11px] font-semibold">
+                {(["del", "rdl"] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setSlaMode(mode)}
+                    className={`px-3 py-1 transition-colors ${slaMode === mode ? "bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900" : "bg-white dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-300"}`}
+                  >
+                    {mode === "del" ? "At DEL" : "At RDL"}
+                  </button>
+                ))}
+              </div>
+            </div>
             <ComparisonTable rows={[
-              { label: "Batched Trips (count)",                     pre: preAgg.trip_batched_count,           post: postAgg.trip_batched_count,           higherIsBetter: true, decimals: 0 },
-              { label: "Breached Trips (count)",                    pre: preAgg.trip_breached_count,          post: postAgg.trip_breached_count,          higherIsBetter: false, decimals: 0 },
-              { label: "Trip Breach Rate %",                        pre: preAgg.trip_breach_rate * 100,       post: postAgg.trip_breach_rate * 100,       unit: "%", higherIsBetter: false, decimals: 1 },
-              { label: "First-Order Breach % (of breached trips)",  pre: preAgg.first_order_breach_pct * 100, post: postAgg.first_order_breach_pct * 100, unit: "%", higherIsBetter: false, decimals: 1 },
-              { label: "Last-Order Breach % (of breached trips)",   pre: preAgg.last_order_breach_pct * 100,  post: postAgg.last_order_breach_pct * 100,  unit: "%", higherIsBetter: false, decimals: 1 },
-              { label: "Avg Breach Position (0=first, 1=last)",     pre: preAgg.avg_breach_position,          post: postAgg.avg_breach_position,          higherIsBetter: true,  decimals: 2 },
+              { label: "Batched Trips (count)",                     pre: preAgg.trip_batched_count,                                                          post: postAgg.trip_batched_count,                                                          higherIsBetter: true,  decimals: 0 },
+              { label: "Breached Trips (count)",                    pre: slaMode === "del" ? preAgg.trip_breached_count     : preAgg.trip_breached_count_rdl,  post: slaMode === "del" ? postAgg.trip_breached_count     : postAgg.trip_breached_count_rdl,  higherIsBetter: false, decimals: 0 },
+              { label: "Trip Breach Rate %",                        pre: slaMode === "del" ? preAgg.trip_breach_rate * 100  : preAgg.trip_breach_rate_rdl * 100, post: slaMode === "del" ? postAgg.trip_breach_rate * 100 : postAgg.trip_breach_rate_rdl * 100, unit: "%", higherIsBetter: false, decimals: 1 },
+              { label: "First-Order Breach % (of breached trips)",  pre: slaMode === "del" ? preAgg.first_order_breach_pct * 100 : preAgg.first_order_breach_pct_rdl * 100, post: slaMode === "del" ? postAgg.first_order_breach_pct * 100 : postAgg.first_order_breach_pct_rdl * 100, unit: "%", higherIsBetter: false, decimals: 1 },
+              { label: "Last-Order Breach % (of breached trips)",   pre: slaMode === "del" ? preAgg.last_order_breach_pct * 100  : preAgg.last_order_breach_pct_rdl * 100,  post: slaMode === "del" ? postAgg.last_order_breach_pct * 100  : postAgg.last_order_breach_pct_rdl * 100,  unit: "%", higherIsBetter: false, decimals: 1 },
+              { label: "Avg Breach Position (0=first, 1=last)",     pre: slaMode === "del" ? preAgg.avg_breach_position          : preAgg.avg_breach_position_rdl,           post: slaMode === "del" ? postAgg.avg_breach_position          : postAgg.avg_breach_position_rdl,           higherIsBetter: true,  decimals: 2 },
             ]} />
           </div>
 
