@@ -811,7 +811,7 @@ const GLOSSARY = [
   { term: "Express",                        definition: "Express order with a promise window of 30 min or more (wms_order_type = 'EXPRESS' AND expressminutes >= 30)." },
   { term: "Scheduled",                      definition: "Scheduled slot order (wms_order_type = 'SCHEDULED'). Created the day before the promise date in WMS." },
   { term: "Batched Orders %",               definition: "Orders that left the hub on a trip with >1 order, as a % of all Licious-dispatched orders. Formula: batched_orders / total_licious_dispatched." },
-  { term: "Avg Orders / Trip",              definition: "Total Licious-dispatched orders ÷ total trips. Higher = more efficient batching." },
+  { term: "OPT (Orders / Trip)",             definition: "Total Licious-dispatched orders ÷ total dispatched trips. Higher = denser batching." },
   { term: "Single-Order Trips %",          definition: "Trips with exactly 1 order as a % of all trips. Lower is better post-autobatching." },
   { term: "Avg Orders / DE",               definition: "Total Licious-dispatched orders ÷ total DE headcount across the selected period." },
   { term: "Orders / Login Hr (OPH)",       definition: "Total orders ÷ total DE login hours. Measures throughput per hour of DE availability." },
@@ -845,7 +845,7 @@ const GLOSSARY = [
   { term: "Range 1",                        definition: "The baseline comparison window. Default: DOW-aligned pre-AB period (before Jun 18). Can be set to any date range using the picker." },
   { term: "Range 2",                        definition: "The comparison window. Default: AB live days (Phase 1 Jun 18–21 + Phase 2 Jul 7+). Can be set to any date range — e.g. Phase 1 vs Phase 2." },
   { term: "Gap (Jun 22 – Jul 6)",         definition: "Autobatching was rolled back ~Jun 22 due to ground ops issues and re-released Jul 6 night. These days are excluded from all aggregations." },
-  { term: "Delay Reasons",               definition: "Breakdown of why orders breached SLA, from DL delay attribution. Only available for the post-AB period. Killer stage = the first pipeline stage where the cumulative SLA budget hit zero. Flags = co-occurring conditions on that order." },
+  { term: "Delay Reasons",               definition: "Breakdown of why orders breached SLA, from DL delay attribution. Available for all dates (Jun 1–Jul 16). Killer stage = the first pipeline stage where the cumulative SLA budget hit zero. Flags = co-occurring conditions on that order." },
   { term: "Last-mile (killer)",          definition: "OFD → RDL stage consumed the remaining SLA budget. Travel from hub to customer was slower than promise allows." },
   { term: "Handoff (killer)",            definition: "RDL → DEL stage (DE at customer door) consumed the remaining budget. Includes waiting for customer to answer door." },
   { term: "Cascade (killer)",            definition: "Order was on a multi-stop trip and inherited delay from earlier stops — killer is 'inherited time on prior stops'." },
@@ -1153,7 +1153,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
             <SectionHeader>Batch Metrics — Success Signal</SectionHeader>
             <ComparisonTable rows={[
               { label: "Batched Orders %",        pre: preAgg.batched_orders_pct * 100,    post: postAgg.batched_orders_pct * 100,    unit: "%", higherIsBetter: true,  decimals: 1, countPre: preAgg.total_orders_batched_count, countPost: postAgg.total_orders_batched_count },
-              { label: "Avg Orders / Trip",       pre: preAgg.avg_orders_per_trip,          post: postAgg.avg_orders_per_trip,          higherIsBetter: true,  decimals: 2, countPre: preAgg.total_licious_dispatched_count, countPost: postAgg.total_licious_dispatched_count },
+              { label: <>Orders / Trip (<Abbr tip="Total Licious-dispatched orders ÷ total dispatched trips. Higher = denser batching.">OPT</Abbr>)</>, pre: preAgg.avg_orders_per_trip, post: postAgg.avg_orders_per_trip, higherIsBetter: true, decimals: 2, countPre: preAgg.total_licious_dispatched_count, countPost: postAgg.total_licious_dispatched_count },
               { label: "Single-Order Trips %",    pre: preAgg.single_order_trips_pct * 100, post: postAgg.single_order_trips_pct * 100, unit: "%", higherIsBetter: false, decimals: 1, countPre: preAgg.total_trips_count, countPost: postAgg.total_trips_count },
               { label: "Avg Orders / DE",         pre: preAgg.avg_orders_per_de,            post: postAgg.avg_orders_per_de,            higherIsBetter: true,  decimals: 1 },
               { label: <>Orders / Login Hr (<Abbr tip="Total orders ÷ total DE login hours. Measures throughput per hour of rider availability.">OPH</Abbr>)</>, pre: preAgg.orders_per_login_hour,        post: postAgg.orders_per_login_hour,        higherIsBetter: true,  decimals: 2 },
@@ -1222,7 +1222,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
           {/* Delay Reasons */}
           {delayKillerChartData.length > 0 && (
             <div className="mb-5">
-              <SectionHeader>Delay Reasons — Breached Orders · ① Range 1 &nbsp; ② Range 2</SectionHeader>
+              <SectionHeader>Delay Reasons — Breached Orders</SectionHeader>
               <div className="bg-white dark:bg-zinc-800 rounded-xl p-5 border border-gray-200 dark:border-zinc-700 shadow-sm mb-3">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={delayKillerChartData} margin={{ top: 10, right: 16, left: -8, bottom: 0 }} barSize={18}>
