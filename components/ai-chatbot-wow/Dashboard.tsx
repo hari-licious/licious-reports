@@ -125,7 +125,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
   const formattedAt = (() => {
     if (isPending) return "pending";
     const d = new Date(generatedAt);
-    if (isNaN(d.getTime())) return generatedAt;
+    if (isNaN(d.getTime())) return null;
     const dd  = d.getDate().toString().padStart(2, "0");
     const mm  = (d.getMonth() + 1).toString().padStart(2, "0");
     const yy  = d.getFullYear().toString().slice(2);
@@ -164,7 +164,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
       <DashboardHeader
         title="AI Chatbot — Week on Week"
         subtitle="Guided Help (Control) vs AI Chatbot (Test) · Jun 3–28, 2026 · Ticket attributed to latest conversation before ticket timestamp"
-        updatedAt={formattedAt}
+        updatedAt={formattedAt ?? undefined}
         onDownload={downloadCsv}
       />
 
