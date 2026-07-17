@@ -1059,49 +1059,52 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
         subtitle={`Range comparison · ${hub}`}
         updatedAt={refreshLabel ?? undefined}
         onDownload={handleDownload}
-        className="mb-3"
-        filters={
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
-              <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
-                {availableHubs.length > 0
-                  ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
-                  : <option value={hub}>{hub}</option>}
-              </select>
-            </div>
-            <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</span>
-              <input type="date" value={preStart} min={allMin} max={allMax} onChange={e => setPreStart(e.target.value)} className={inputCls} />
-              <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
-              <input type="date" value={preEnd}   min={allMin} max={allMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
-              <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPre.length}d</span>
-            </div>
-            <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</span>
-              <input type="date" value={postStart} min={allMin} max={allMax} onChange={e => setPostStart(e.target.value)} className={inputCls} />
-              <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
-              <input type="date" value={postEnd}   min={allMin} max={allMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
-              <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPost.length}d</span>
-            </div>
+        className="mb-4"
+      />
+
+      {/* Sticky filter + status strip + tab bar */}
+      <div className="sticky top-11 z-30 bg-zinc-100 dark:bg-zinc-900 -mx-6 px-6 lg:-mx-8 lg:px-8 pb-0 shadow-[0_1px_0_0_#e5e7eb] dark:shadow-[0_1px_0_0_#3f3f46] mb-6">
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-3 pb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
+            <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
+              {availableHubs.length > 0
+                ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
+                : <option value={hub}>{hub}</option>}
+            </select>
           </div>
-        }
-      />
+          <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</span>
+            <input type="date" value={preStart} min={allMin} max={allMax} onChange={e => setPreStart(e.target.value)} className={inputCls} />
+            <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
+            <input type="date" value={preEnd}   min={allMin} max={allMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
+            <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPre.length}d</span>
+          </div>
+          <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</span>
+            <input type="date" value={postStart} min={allMin} max={allMax} onChange={e => setPostStart(e.target.value)} className={inputCls} />
+            <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
+            <input type="date" value={postEnd}   min={allMin} max={allMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
+            <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPost.length}d</span>
+          </div>
+        </div>
 
-      {/* Status strip */}
-      <StatusStrip
-        allDays={hubDays}
-        preStart={preStart} preEnd={preEnd}
-        postStart={postStart} postEnd={postEnd}
-      />
+        {/* Status strip */}
+        <StatusStrip
+          allDays={hubDays}
+          preStart={preStart} preEnd={preEnd}
+          postStart={postStart} postEnd={postEnd}
+        />
 
-      {/* Tab bar */}
-      <div className="flex border-b border-gray-200 dark:border-zinc-700 mb-6">
-        <button className={tabCls("metrics")}  onClick={() => setActiveTab("metrics")}>Metrics</button>
-        <button className={tabCls("glossary")} onClick={() => setActiveTab("glossary")}>Glossary</button>
-        <button className={tabCls("timeline")} onClick={() => setActiveTab("timeline")}>Timeline</button>
+        {/* Tab bar */}
+        <div className="flex border-b border-gray-200 dark:border-zinc-700">
+          <button className={tabCls("metrics")}  onClick={() => setActiveTab("metrics")}>Metrics</button>
+          <button className={tabCls("glossary")} onClick={() => setActiveTab("glossary")}>Glossary</button>
+          <button className={tabCls("timeline")} onClick={() => setActiveTab("timeline")}>Timeline</button>
+        </div>
       </div>
 
       {activeTab === "glossary" ? (
