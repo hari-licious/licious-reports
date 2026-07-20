@@ -1008,6 +1008,86 @@
         "cascade_prev_stops": 1,
         "packing": 1
       }
+    },
+    {
+      "date": "2026-07-17",
+      "total_breached": 77,
+      "tags": {
+        "TEMPORAL": 5,
+        "OMS_LAG": 4,
+        "SLOW_PICKLIST": 9,
+        "NO_RIDER": 2,
+        "ALGO_DROP": 7,
+        "AUTO_FAIL": 5,
+        "CASCADE": 15,
+        "RESEQUENCED": 26,
+        "PREDICTED": 47,
+        "LATE_DEP": 4,
+        "SLOW_TRAVEL": 32,
+        "SLOW_ACCEPT": 2
+      },
+      "killer": {
+        "service_rdl_to_del": 46,
+        "travel_to_customer": 21,
+        "MARGINAL": 3,
+        "algo_batching": 3,
+        "picklist_gen": 2,
+        "cascade_prev_stops": 2
+      }
+    },
+    {
+      "date": "2026-07-18",
+      "total_breached": 121,
+      "tags": {
+        "TEMPORAL": 12,
+        "OMS_LAG": 2,
+        "SLOW_PICKLIST": 18,
+        "NO_RIDER": 6,
+        "ALGO_DROP": 9,
+        "AUTO_FAIL": 14,
+        "CASCADE": 29,
+        "RESEQUENCED": 34,
+        "PREDICTED": 62,
+        "MULTI_RUN": 9,
+        "LATE_DEP": 8,
+        "SLOW_TRAVEL": 51,
+        "SLOW_ACCEPT": 3
+      },
+      "killer": {
+        "service_rdl_to_del": 54,
+        "travel_to_customer": 44,
+        "cascade_prev_stops": 10,
+        "algo_batching": 5,
+        "rider_acceptance": 4,
+        "allocation": 2,
+        "ofd_event_delay": 1,
+        "pre_dispatch": 1
+      }
+    },
+    {
+      "date": "2026-07-19",
+      "total_breached": 77,
+      "tags": {
+        "TEMPORAL": 5,
+        "OMS_LAG": 1,
+        "SLOW_PICKLIST": 6,
+        "NO_RIDER": 6,
+        "ALGO_DROP": 1,
+        "AUTO_FAIL": 9,
+        "CASCADE": 14,
+        "RESEQUENCED": 27,
+        "PREDICTED": 45,
+        "LATE_DEP": 4,
+        "SLOW_TRAVEL": 18
+      },
+      "killer": {
+        "service_rdl_to_del": 52,
+        "travel_to_customer": 18,
+        "cascade_prev_stops": 4,
+        "picklist_gen": 1,
+        "rider_acceptance": 1,
+        "packing": 1
+      }
     }
   ]
 }
