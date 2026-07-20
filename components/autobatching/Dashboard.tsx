@@ -1063,7 +1063,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
       />
 
       {/* Sticky filter + status strip + tab bar */}
-      <div className="sticky top-11 z-30 bg-zinc-100 dark:bg-zinc-900 -mx-6 px-6 lg:-mx-8 lg:px-8 pb-0 shadow-[0_1px_0_0_#e5e7eb] dark:shadow-[0_1px_0_0_#3f3f46] mb-6">
+      <div className="sticky top-11 z-30 bg-zinc-100 dark:bg-zinc-900 -mx-6 px-6 lg:-mx-8 lg:px-8 pt-3 pb-0 shadow-[0_1px_0_0_#e5e7eb] dark:shadow-[0_1px_0_0_#3f3f46] mb-6">
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3 pb-3">
           <div className="flex items-center gap-2">
