@@ -32,16 +32,29 @@
  * ────────────────────────────────────────────────────────────────────────────
  */
 
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { DarkModeToggle } from "./DarkModeToggle";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [atTop, setAtTop] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => setAtTop(window.scrollY < 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-zinc-100 dark:bg-zinc-900">
       <nav className="sticky top-0 z-40 bg-white dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700 px-6 h-11 flex items-center justify-between">
         <Link
           href="/"
-          className="text-sm font-medium text-gray-400 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors"
+          className={`text-sm font-medium text-gray-400 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-all duration-200 ${
+            atTop ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         >
           ← Licious Reports
         </Link>
