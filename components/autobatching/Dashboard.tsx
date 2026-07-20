@@ -1227,7 +1227,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={delayKillerChartData} margin={{ top: 10, right: 16, left: -8, bottom: 0 }} barSize={18}>
                     <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: tickFill }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: tickFill }} axisLine={false} tickLine={false} tickFormatter={(d: string) => { const [y,m,day] = d.replace(/ [①②]$/,"").split("-"); return `${day}/${m}/${y.slice(2)}`; }} />
                     <YAxis tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
                     <Tooltip contentStyle={tooltipStyle} />
                     <Legend {...legendProps} />
