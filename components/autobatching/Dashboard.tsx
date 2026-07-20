@@ -927,15 +927,15 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   const delayKillerChartData = useMemo(() => {
     const toRow = (d: DelayDay, suffix: string) => ({
       date: d.date.slice(8) + "/" + d.date.slice(5,7) + "/" + d.date.slice(2,4) + suffix,
-      "Last-mile":   d.killer["travel_to_customer"] ?? 0,
-      "Handoff":     d.killer["service_rdl_to_del"] ?? 0,
-      "Cascade":     d.killer["cascade_prev_stops"] ?? 0,
-      "Rider Allot": d.killer["allocation"] ?? 0,
-      "Rider Accept":d.killer["rider_acceptance"] ?? 0,
-      "Pre-dispatch":d.killer["pre_dispatch"] ?? 0,
-      "OFD Delay":   d.killer["ofd_event_delay"] ?? 0,
-      "Algo/Batch":  d.killer["algo_batching"] ?? 0,
-      "Other":       (d.killer["picklist_gen"] ?? 0) + (d.killer["packing"] ?? 0) + (d.killer["picking"] ?? 0) + (d.killer["MARGINAL"] ?? 0),
+      "Last-mile travel":    d.killer["travel_to_customer"] ?? 0,
+      "Handoff at door":     d.killer["service_rdl_to_del"] ?? 0,
+      "Cascade (prior stops)": d.killer["cascade_prev_stops"] ?? 0,
+      "Rider allotment":     d.killer["allocation"] ?? 0,
+      "Rider acceptance":    d.killer["rider_acceptance"] ?? 0,
+      "Pre-dispatch at hub": d.killer["pre_dispatch"] ?? 0,
+      "OFD event delay":     d.killer["ofd_event_delay"] ?? 0,
+      "Algo / batching":     d.killer["algo_batching"] ?? 0,
+      "Other stages":        (d.killer["picklist_gen"] ?? 0) + (d.killer["packing"] ?? 0) + (d.killer["picking"] ?? 0) + (d.killer["MARGINAL"] ?? 0),
       total:         d.total_breached,
     });
     const preRows  = delayPreDays.map(d  => toRow(d, " ①"));
@@ -1231,15 +1231,15 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
                     <YAxis tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
                     <Tooltip contentStyle={tooltipStyle} />
                     <Legend {...legendProps} />
-                    <Bar dataKey="Last-mile"    stackId="a" fill="#f97316" />
-                    <Bar dataKey="Handoff"      stackId="a" fill="#ef4444" />
-                    <Bar dataKey="Cascade"      stackId="a" fill="#8b5cf6" />
-                    <Bar dataKey="Rider Allot"  stackId="a" fill="#3b82f6" />
-                    <Bar dataKey="Rider Accept" stackId="a" fill="#06b6d4" />
-                    <Bar dataKey="Pre-dispatch" stackId="a" fill="#14b8a6" />
-                    <Bar dataKey="OFD Delay"    stackId="a" fill="#f59e0b" />
-                    <Bar dataKey="Algo/Batch"   stackId="a" fill="#84cc16" />
-                    <Bar dataKey="Other"        stackId="a" fill="#d1d5db" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Last-mile travel"     stackId="a" fill="#f97316" />
+                    <Bar dataKey="Handoff at door"      stackId="a" fill="#ef4444" />
+                    <Bar dataKey="Cascade (prior stops)"stackId="a" fill="#8b5cf6" />
+                    <Bar dataKey="Rider allotment"      stackId="a" fill="#3b82f6" />
+                    <Bar dataKey="Rider acceptance"     stackId="a" fill="#06b6d4" />
+                    <Bar dataKey="Pre-dispatch at hub"  stackId="a" fill="#14b8a6" />
+                    <Bar dataKey="OFD event delay"      stackId="a" fill="#f59e0b" />
+                    <Bar dataKey="Algo / batching"      stackId="a" fill="#84cc16" />
+                    <Bar dataKey="Other stages"  stackId="a" fill="#d1d5db" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
