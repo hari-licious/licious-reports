@@ -926,7 +926,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
 
   const delayKillerChartData = useMemo(() => {
     const toRow = (d: DelayDay, suffix: string) => ({
-      date: d.date.slice(5).replace("-", "/") + suffix,
+      date: d.date.slice(8) + "/" + d.date.slice(5,7) + "/" + d.date.slice(2,4) + suffix,
       "Last-mile":   d.killer["travel_to_customer"] ?? 0,
       "Handoff":     d.killer["service_rdl_to_del"] ?? 0,
       "Cascade":     d.killer["cascade_prev_stops"] ?? 0,
@@ -1227,7 +1227,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={delayKillerChartData} margin={{ top: 10, right: 16, left: -8, bottom: 0 }} barSize={18}>
                     <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: tickFill }} axisLine={false} tickLine={false} tickFormatter={(d: string) => { const [y,m,day] = d.replace(/ [①②]$/,"").split("-"); return `${day}/${m}/${y.slice(2)}`; }} />
+                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: tickFill }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: tickFill }} axisLine={false} tickLine={false} />
                     <Tooltip contentStyle={tooltipStyle} />
                     <Legend {...legendProps} />
