@@ -154,7 +154,7 @@ export default function Dashboard({ generatedAt, rows }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `ai-chatbot-wow-${formattedAt.replace(/\//g, "-").replace(" ", "_")}.csv`;
+    a.download = `ai-chatbot-wow-${(formattedAt ?? "export").replace(/\//g, "-").replace(" ", "_")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
