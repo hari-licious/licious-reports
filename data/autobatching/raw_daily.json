@@ -2,7 +2,7 @@
   "hub": "PSN",
   "pre_range": "2026-05-31 to 2026-06-17",
   "post_range": "2026-06-18 to 2026-06-22 + 2026-07-07 to 2026-07-20",
-  "generated_at": "2026-07-21T12:49:22.959665",
+  "generated_at": "2026-07-21T12:59:44.872056",
   "days": [
     {
       "date": "2026-05-31",
@@ -195,7 +195,7 @@
       "trip_sla_breached_trips_rdl": 15,
       "trip_sla_first_order_breach_rdl": 10,
       "trip_sla_last_order_breach_rdl": 5,
-      "trip_sla_breach_pos_sum_rdl": 4.833333333333333,
+      "trip_sla_breach_pos_sum_rdl": 4.833333333333334,
       "trip_sla_breach_pos_cnt_rdl": 14,
       "hub": "PSN",
       "period": "pre"
@@ -2743,7 +2743,7 @@
       "trip_sla_breached_trips_rdl": 23,
       "trip_sla_first_order_breach_rdl": 8,
       "trip_sla_last_order_breach_rdl": 9,
-      "trip_sla_breach_pos_sum_rdl": 12.133333333333333,
+      "trip_sla_breach_pos_sum_rdl": 12.133333333333335,
       "trip_sla_breach_pos_cnt_rdl": 23,
       "hub": "PSN",
       "period": "pre"
@@ -3723,7 +3723,7 @@
       "trip_sla_breached_trips_rdl": 17,
       "trip_sla_first_order_breach_rdl": 7,
       "trip_sla_last_order_breach_rdl": 7,
-      "trip_sla_breach_pos_sum_rdl": 8.666666666666666,
+      "trip_sla_breach_pos_sum_rdl": 8.666666666666668,
       "trip_sla_breach_pos_cnt_rdl": 17,
       "hub": "PSN",
       "period": "post"
@@ -4502,7 +4502,7 @@
       "trip_sla_breached_trips": 16,
       "trip_sla_first_order_breach": 9,
       "trip_sla_last_order_breach": 4,
-      "trip_sla_breach_pos_sum": 5.583333333333334,
+      "trip_sla_breach_pos_sum": 5.583333333333333,
       "trip_sla_breach_pos_cnt": 16,
       "trip_sla_breached_trips_rdl": 9,
       "trip_sla_first_order_breach_rdl": 4,
@@ -4894,12 +4894,12 @@
       "trip_sla_breached_trips": 28,
       "trip_sla_first_order_breach": 15,
       "trip_sla_last_order_breach": 8,
-      "trip_sla_breach_pos_sum": 9.541666666666666,
+      "trip_sla_breach_pos_sum": 9.541666666666668,
       "trip_sla_breach_pos_cnt": 28,
       "trip_sla_breached_trips_rdl": 23,
       "trip_sla_first_order_breach_rdl": 8,
       "trip_sla_last_order_breach_rdl": 10,
-      "trip_sla_breach_pos_sum_rdl": 11.541666666666666,
+      "trip_sla_breach_pos_sum_rdl": 11.541666666666668,
       "trip_sla_breach_pos_cnt_rdl": 23,
       "hub": "PSN",
       "period": "gap"
@@ -9206,7 +9206,7 @@
       "trip_sla_breached_trips": 5,
       "trip_sla_first_order_breach": 1,
       "trip_sla_last_order_breach": 2,
-      "trip_sla_breach_pos_sum": 2.583333333333333,
+      "trip_sla_breach_pos_sum": 2.5833333333333335,
       "trip_sla_breach_pos_cnt": 5,
       "trip_sla_breached_trips_rdl": 2,
       "trip_sla_first_order_breach_rdl": 1,
