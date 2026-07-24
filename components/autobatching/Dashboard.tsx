@@ -599,13 +599,13 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress, slaMode }: {
 }) {
   const rdl = slaMode === "rdl";
   const rows: MetricRow[] = [
-    { label: "Overall SLA %",           pre: (rdl ? pre.overall_sla_pct_rdl   : pre.overall_sla_pct)   * 100, post: (rdl ? post.overall_sla_pct_rdl   : post.overall_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: rdl ? pre.overall_on_time_rdl_count   : pre.overall_on_time_count,   countPost: rdl ? post.overall_on_time_rdl_count   : post.overall_on_time_count },
-    { label: "DP SLA %",                pre: (rdl ? pre.dp_sla_pct_rdl        : pre.dp_sla_pct)        * 100, post: (rdl ? post.dp_sla_pct_rdl        : post.dp_sla_pct)        * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: rdl ? pre.dp_on_time_rdl_count        : pre.dp_on_time_count,       countPost: rdl ? post.dp_on_time_rdl_count        : post.dp_on_time_count },
-    { label: "Express SLA %",           pre: (rdl ? pre.express_sla_pct_rdl   : pre.express_sla_pct)   * 100, post: (rdl ? post.express_sla_pct_rdl   : post.express_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: rdl ? pre.express_on_time_rdl_count   : pre.express_on_time_count,   countPost: rdl ? post.express_on_time_rdl_count   : post.express_on_time_count },
-    { label: "Scheduled SLA %",         pre: (rdl ? pre.scheduled_sla_pct_rdl : pre.scheduled_sla_pct) * 100, post: (rdl ? post.scheduled_sla_pct_rdl : post.scheduled_sla_pct) * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: rdl ? pre.scheduled_on_time_rdl_count : pre.scheduled_on_time_count, countPost: rdl ? post.scheduled_on_time_rdl_count : post.scheduled_on_time_count },
-    { label: "3P SLA % (at Delivered)", pre: pre.p3_sla_pct * 100,        post: post.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.p3_on_time_count,         countPost: post.p3_on_time_count },
+    { label: "Overall SLA %",           pre: (rdl ? pre.overall_sla_pct_rdl   : pre.overall_sla_pct)   * 100, post: (rdl ? post.overall_sla_pct_rdl   : post.overall_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.overall_with_rdl_count,   countPost: post.overall_with_rdl_count },
+    { label: "DP SLA %",                pre: (rdl ? pre.dp_sla_pct_rdl        : pre.dp_sla_pct)        * 100, post: (rdl ? post.dp_sla_pct_rdl        : post.dp_sla_pct)        * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.dp_with_rdl_count,        countPost: post.dp_with_rdl_count },
+    { label: "Express SLA %",           pre: (rdl ? pre.express_sla_pct_rdl   : pre.express_sla_pct)   * 100, post: (rdl ? post.express_sla_pct_rdl   : post.express_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.express_with_rdl_count,   countPost: post.express_with_rdl_count },
+    { label: "Scheduled SLA %",         pre: (rdl ? pre.scheduled_sla_pct_rdl : pre.scheduled_sla_pct) * 100, post: (rdl ? post.scheduled_sla_pct_rdl : post.scheduled_sla_pct) * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.scheduled_with_rdl_count, countPost: post.scheduled_with_rdl_count },
+    { label: "3P SLA % (at Delivered)", pre: pre.p3_sla_pct * 100,        post: post.p3_sla_pct * 100,        unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.p3_delivered_count,       countPost: post.p3_delivered_count },
     { label: "Avg Breach (mins)",       pre: pre.avg_breach_mins,          post: post.avg_breach_mins,         higherIsBetter: false, decimals: 1 },
-    { label: "Batched SLA %",           pre: (rdl ? pre.batched_sla_pct_rdl : pre.batched_sla_pct) * 100, post: (rdl ? post.batched_sla_pct_rdl : post.batched_sla_pct) * 100, unit: "%", higherIsBetter: true, decimals: 1, countPre: rdl ? pre.batched_on_time_rdl_count : pre.batched_on_time_count, countPost: rdl ? post.batched_on_time_rdl_count : post.batched_on_time_count },
+    { label: "Batched SLA %",           pre: (rdl ? pre.batched_sla_pct_rdl : pre.batched_sla_pct) * 100, post: (rdl ? post.batched_sla_pct_rdl : post.batched_sla_pct) * 100, unit: "%", higherIsBetter: true, decimals: 1, countPre: pre.batched_with_rdl_count,   countPost: post.batched_with_rdl_count },
     { label: "EOB — All (median breach)",     pre: pre.avg_breach_p50_mins,         post: post.avg_breach_p50_mins,         higherIsBetter: false, decimals: 1 },
     { label: "EOB — Batched (median breach)", pre: pre.avg_batched_breach_p50_mins, post: post.avg_batched_breach_p50_mins, higherIsBetter: false, decimals: 1 },
   ];
@@ -860,13 +860,14 @@ const GLOSSARY = [
 ];
 
 // ── Date defaults ─────────────────────────────────────────────────────────────
-// Range 2 = latest available day; Range 1 = the day before that.
-function smartDateDefaults(preDays: RawDay[], postDays: RawDay[]) {
+// Range 2 = latest day with delay attribution data; Range 1 = unset by default.
+function smartDateDefaults(preDays: RawDay[], postDays: RawDay[], delayDays?: DelayDay[]) {
   const all = [...preDays, ...postDays].sort((a, b) => a.date.localeCompare(b.date));
   if (all.length === 0) return { preStart: "", preEnd: "", postStart: "", postEnd: "" };
-  const latest = all[all.length - 1].date;
-  const prev   = all.length >= 2 ? all[all.length - 2].date : latest;
-  return { preStart: prev, preEnd: prev, postStart: latest, postEnd: latest };
+  const latestDelay = delayDays && delayDays.length > 0
+    ? delayDays[delayDays.length - 1].date
+    : all[all.length - 1].date;
+  return { preStart: "", preEnd: "", postStart: latestDelay, postEnd: latestDelay };
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
@@ -875,7 +876,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   const { gridStroke, tickFill, tooltipStyle, legendProps } = useChartTheme();
   const initPreDays  = days.filter(d => d.period === "pre");
   const initPostDays = days.filter(d => d.period === "post");
-  const defaults     = smartDateDefaults(initPreDays, initPostDays);
+  const defaults     = smartDateDefaults(initPreDays, initPostDays, delayReasons?.days);
 
   const [selectedHub,       setSelectedHub]       = useState<string>(days[0]?.hub ?? hub);
   const [preStart,          setPreStart]          = useState(defaults.preStart);
@@ -1165,9 +1166,9 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
           <div className="mb-5">
             <SectionHeader>Batching by Order Type · % of Orders Batched</SectionHeader>
             <ComparisonTable rows={[
-              { label: "DP Batched %",        pre: preAgg.dp_batched_pct * 100,        post: postAgg.dp_batched_pct * 100,        unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.dp_batched_count,        countPost: postAgg.dp_batched_count },
-              { label: "Express Batched %",   pre: preAgg.express_batched_pct * 100,   post: postAgg.express_batched_pct * 100,   unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.express_batched_count,   countPost: postAgg.express_batched_count },
-              { label: "Scheduled Batched %", pre: preAgg.scheduled_batched_pct * 100, post: postAgg.scheduled_batched_pct * 100, unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.scheduled_batched_count, countPost: postAgg.scheduled_batched_count },
+              { label: "DP Batched %",        pre: preAgg.dp_batched_pct * 100,        post: postAgg.dp_batched_pct * 100,        unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.dp_orders_total,        countPost: postAgg.dp_orders_total },
+              { label: "Express Batched %",   pre: preAgg.express_batched_pct * 100,   post: postAgg.express_batched_pct * 100,   unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.express_orders_total,   countPost: postAgg.express_orders_total },
+              { label: "Scheduled Batched %", pre: preAgg.scheduled_batched_pct * 100, post: postAgg.scheduled_batched_pct * 100, unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.scheduled_orders_total, countPost: postAgg.scheduled_orders_total },
             ]} />
           </div>
 
@@ -1220,7 +1221,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
           </div>
 
           {/* Delay Reasons */}
-          {delayKillerChartData.length > 0 && (
+          {delayReasons && (preStart !== "" || postStart !== "") && (
             <div className="mb-5">
               <SectionHeader>Delay Reasons — Breached Orders</SectionHeader>
               <div className="bg-white dark:bg-zinc-800 rounded-xl p-5 border border-gray-200 dark:border-zinc-700 shadow-sm mb-3">

@@ -1088,6 +1088,96 @@
         "rider_acceptance": 1,
         "packing": 1
       }
+    },
+    {
+      "date": "2026-07-20",
+      "total_breached": 40,
+      "tags": {
+        "SLOW_PICKLIST": 2,
+        "SLOW_ACCEPT": 1,
+        "CASCADE": 4,
+        "RESEQUENCED": 13,
+        "PREDICTED": 14,
+        "LATE_DEP": 2,
+        "SLOW_TRAVEL": 17
+      },
+      "killer": {
+        "service_rdl_to_del": 30,
+        "travel_to_customer": 9,
+        "cascade_prev_stops": 1
+      }
+    },
+    {
+      "date": "2026-07-21",
+      "total_breached": 37,
+      "tags": {
+        "TEMPORAL": 1,
+        "OMS_LAG": 1,
+        "SLOW_PICKLIST": 2,
+        "SLOW_ACCEPT": 2,
+        "CASCADE": 1,
+        "RESEQUENCED": 11,
+        "PREDICTED": 16,
+        "SLOW_TRAVEL": 19
+      },
+      "killer": {
+        "service_rdl_to_del": 23,
+        "travel_to_customer": 14
+      }
+    },
+    {
+      "date": "2026-07-22",
+      "total_breached": 63,
+      "tags": {
+        "TEMPORAL": 8,
+        "OMS_LAG": 1,
+        "SLOW_PICKLIST": 2,
+        "NO_RIDER": 1,
+        "ALGO_DROP": 4,
+        "AUTO_FAIL": 2,
+        "SLOW_ACCEPT": 3,
+        "CASCADE": 4,
+        "RESEQUENCED": 20,
+        "PREDICTED": 39,
+        "MULTI_RUN": 1,
+        "LATE_DEP": 1,
+        "SLOW_TRAVEL": 27
+      },
+      "killer": {
+        "service_rdl_to_del": 36,
+        "travel_to_customer": 20,
+        "MARGINAL": 3,
+        "picklist_gen": 1,
+        "cascade_prev_stops": 1,
+        "ofd_event_delay": 1,
+        "picking": 1
+      }
+    },
+    {
+      "date": "2026-07-23",
+      "total_breached": 59,
+      "tags": {
+        "TEMPORAL": 1,
+        "OMS_LAG": 1,
+        "SLOW_PICKLIST": 7,
+        "NO_RIDER": 3,
+        "ALGO_DROP": 1,
+        "AUTO_FAIL": 5,
+        "SLOW_ACCEPT": 3,
+        "CASCADE": 4,
+        "RESEQUENCED": 23,
+        "PREDICTED": 41,
+        "LATE_DEP": 4,
+        "SLOW_TRAVEL": 25
+      },
+      "killer": {
+        "service_rdl_to_del": 29,
+        "travel_to_customer": 22,
+        "picklist_gen": 4,
+        "cascade_prev_stops": 2,
+        "rider_acceptance": 1,
+        "allocation": 1
+      }
     }
   ]
 }
