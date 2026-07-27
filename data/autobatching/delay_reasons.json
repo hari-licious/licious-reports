@@ -54,6 +54,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 39,
+        "unexpected": 0,
+        "predicted_eob_p50": 4.1,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -131,6 +137,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 62,
+        "unexpected": 0,
+        "predicted_eob_p50": 8.6,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -208,6 +220,12 @@
             "travel_to_customer": 2
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 90,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.3,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -288,6 +306,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 94,
+        "unexpected": 0,
+        "predicted_eob_p50": 6.0,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -369,6 +393,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 107,
+        "unexpected": 0,
+        "predicted_eob_p50": 6.3,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -433,6 +463,12 @@
             "service_rdl_to_del": 2
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 95,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.1,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -510,6 +546,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 98,
+        "unexpected": 0,
+        "predicted_eob_p50": 5.5,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -545,6 +587,12 @@
             "rider_acceptance": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 35,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.5,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -611,6 +659,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 41,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.8,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -672,6 +726,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 65,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.3,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -721,6 +781,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 26,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.2,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -796,6 +862,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 73,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.1,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -876,6 +948,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 84,
+        "unexpected": 0,
+        "predicted_eob_p50": 4.3,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -933,6 +1011,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 62,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.1,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -972,6 +1056,12 @@
             "packing": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 36,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.9,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1015,6 +1105,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 38,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.4,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1075,6 +1171,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 88,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.8,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1153,6 +1255,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 109,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.7,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1229,6 +1337,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 131,
+        "unexpected": 0,
+        "predicted_eob_p50": 6.1,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1293,6 +1407,12 @@
             "ofd_event_delay": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 113,
+        "unexpected": 0,
+        "predicted_eob_p50": 5.7,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1375,6 +1495,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 117,
+        "unexpected": 0,
+        "predicted_eob_p50": 6.9,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1435,6 +1561,12 @@
             "service_rdl_to_del": 3
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 49,
+        "unexpected": 3,
+        "predicted_eob_p50": 2.8,
+        "unexpected_eob_p50": 0.8
       }
     },
     {
@@ -1505,6 +1637,12 @@
             "service_rdl_to_del": 2
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 34,
+        "unexpected": 30,
+        "predicted_eob_p50": 9.0,
+        "unexpected_eob_p50": 3.0
       }
     },
     {
@@ -1600,6 +1738,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 81,
+        "unexpected": 39,
+        "predicted_eob_p50": 6.4,
+        "unexpected_eob_p50": 3.2
       }
     },
     {
@@ -1666,6 +1810,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 26,
+        "unexpected": 0,
+        "predicted_eob_p50": 6.2,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1732,6 +1882,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 36,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.5,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1807,6 +1963,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 64,
+        "unexpected": 0,
+        "predicted_eob_p50": 5.0,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1861,6 +2023,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 19,
+        "unexpected": 0,
+        "predicted_eob_p50": 4.2,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1900,6 +2068,12 @@
             "picking": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 13,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.1,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1927,6 +2101,12 @@
             "travel_to_customer": 4
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 13,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.2,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -1981,6 +2161,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 42,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.3,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2023,6 +2209,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 14,
+        "unexpected": 0,
+        "predicted_eob_p50": 3.1,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2085,6 +2277,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 36,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.0,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2127,6 +2325,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 16,
+        "unexpected": 0,
+        "predicted_eob_p50": 1.8,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2164,6 +2368,12 @@
             "picklist_gen": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 14,
+        "unexpected": 0,
+        "predicted_eob_p50": 1.7,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2204,6 +2414,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 14,
+        "unexpected": 0,
+        "predicted_eob_p50": 2.1,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2274,6 +2490,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 25,
+        "unexpected": 40,
+        "predicted_eob_p50": 9.5,
+        "unexpected_eob_p50": 3.2
       }
     },
     {
@@ -2370,6 +2592,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 46,
+        "unexpected": 62,
+        "predicted_eob_p50": 8.9,
+        "unexpected_eob_p50": 4.6
       }
     },
     {
@@ -2454,6 +2682,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 36,
+        "unexpected": 26,
+        "predicted_eob_p50": 6.3,
+        "unexpected_eob_p50": 2.8
       }
     },
     {
@@ -2555,6 +2789,12 @@
             "service_rdl_to_del": 3
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 86,
+        "unexpected": 46,
+        "predicted_eob_p50": 10.7,
+        "unexpected_eob_p50": 5.5
       }
     },
     {
@@ -2631,6 +2871,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 86,
+        "unexpected": 0,
+        "predicted_eob_p50": 10.5,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2704,6 +2950,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 68,
+        "unexpected": 0,
+        "predicted_eob_p50": 8.2,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2784,6 +3036,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 43,
+        "unexpected": 0,
+        "predicted_eob_p50": 12.0,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2846,6 +3104,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 24,
+        "unexpected": 0,
+        "predicted_eob_p50": 1.9,
+        "unexpected_eob_p50": null
       }
     },
     {
@@ -2926,6 +3190,12 @@
             "cascade_prev_stops": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 43,
+        "unexpected": 33,
+        "predicted_eob_p50": 3.3,
+        "unexpected_eob_p50": 2.0
       }
     },
     {
@@ -2979,6 +3249,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 22,
+        "unexpected": 17,
+        "predicted_eob_p50": 5.6,
+        "unexpected_eob_p50": 2.1
       }
     },
     {
@@ -3064,6 +3340,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 47,
+        "unexpected": 30,
+        "predicted_eob_p50": 4.7,
+        "unexpected_eob_p50": 1.9
       }
     },
     {
@@ -3142,6 +3424,12 @@
             "pre_dispatch": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 62,
+        "unexpected": 59,
+        "predicted_eob_p50": 6.7,
+        "unexpected_eob_p50": 3.3
       }
     },
     {
@@ -3217,6 +3505,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 46,
+        "unexpected": 32,
+        "predicted_eob_p50": 3.8,
+        "unexpected_eob_p50": 3.5
       }
     },
     {
@@ -3264,6 +3558,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 14,
+        "unexpected": 26,
+        "predicted_eob_p50": 2.5,
+        "unexpected_eob_p50": 2.7
       }
     },
     {
@@ -3323,6 +3623,12 @@
             "service_rdl_to_del": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 16,
+        "unexpected": 22,
+        "predicted_eob_p50": 4.5,
+        "unexpected_eob_p50": 2.5
       }
     },
     {
@@ -3401,6 +3707,12 @@
             "travel_to_customer": 2
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 39,
+        "unexpected": 24,
+        "predicted_eob_p50": 5.3,
+        "unexpected_eob_p50": 3.8
       }
     },
     {
@@ -3478,6 +3790,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 41,
+        "unexpected": 19,
+        "predicted_eob_p50": 3.7,
+        "unexpected_eob_p50": 3.8
       }
     },
     {
@@ -3544,6 +3862,12 @@
             "travel_to_customer": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 26,
+        "unexpected": 20,
+        "predicted_eob_p50": 1.9,
+        "unexpected_eob_p50": 2.6
       }
     },
     {
@@ -3601,6 +3925,12 @@
             "allocation": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 28,
+        "unexpected": 20,
+        "predicted_eob_p50": 3.7,
+        "unexpected_eob_p50": 1.8
       }
     },
     {
@@ -3663,6 +3993,12 @@
             "MARGINAL": 1
           }
         }
+      },
+      "predicted_stats": {
+        "predicted": 37,
+        "unexpected": 20,
+        "predicted_eob_p50": 4.6,
+        "unexpected_eob_p50": 2.0
       }
     }
   ]
