@@ -255,12 +255,20 @@ export interface DelayTypeBreakdown {
   killer: Record<string, number>;
 }
 
+export interface PredictedStats {
+  predicted: number;
+  unexpected: number;
+  predicted_eob_p50: number | null;
+  unexpected_eob_p50: number | null;
+}
+
 export interface DelayDay {
   date: string;
   total_breached: number;
   tags: Record<string, number>;
   killer: Record<string, number>;
   by_type?: Record<string, DelayTypeBreakdown>;
+  predicted_stats?: PredictedStats;
 }
 
 export interface DelayReasonsData {

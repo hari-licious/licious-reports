@@ -985,6 +985,28 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delayPreDays, delayPostDays, delayOrderType]);
 
+  const delayPredictedStats = useMemo(() => {
+    const agg = (days: DelayDay[]) => {
+      let predicted = 0, unexpected = 0;
+      const predEOBs: number[] = [], unpredEOBs: number[] = [];
+      for (const d of days) {
+        const ps = d.predicted_stats;
+        if (!ps) continue;
+        predicted  += ps.predicted;
+        unexpected += ps.unexpected;
+        if (ps.predicted_eob_p50  != null) predEOBs.push(...Array(ps.predicted).fill(ps.predicted_eob_p50));
+        if (ps.unexpected_eob_p50 != null) unpredEOBs.push(...Array(ps.unexpected).fill(ps.unexpected_eob_p50));
+      }
+      const medianArr = (arr: number[]) => {
+        if (!arr.length) return null;
+        const s = [...arr].sort((a, b) => a - b);
+        return +s[Math.floor(s.length / 2)].toFixed(1);
+      };
+      return { predicted, unexpected, predEOBp50: medianArr(predEOBs), unpredEOBp50: medianArr(unpredEOBs) };
+    };
+    return { r1: agg(delayPreDays), r2: agg(delayPostDays) };
+  }, [delayPreDays, delayPostDays]);
+
   const ordersWarn = preAgg.avg_daily_orders > 0
     && Math.abs(postAgg.avg_daily_orders - preAgg.avg_daily_orders) / preAgg.avg_daily_orders > 0.25;
   const ridersWarn = preAgg.avg_daily_riders > 0
@@ -1206,6 +1228,65 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
               </div>
             </div>
             <SlaTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} slaMode={slaMode} />
+            {(delayPredictedStats.r1.predicted + delayPredictedStats.r1.unexpected + delayPredictedStats.r2.predicted + delayPredictedStats.r2.unexpected) > 0 && (
+              <div className="mt-2 bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
+                      <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Algo Prediction (breached orders)</th>
+                      <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</th>
+                      <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        label: "Predicted breaches",
+                        r1: delayPredictedStats.r1.predicted,
+                        r2: delayPredictedStats.r2.predicted,
+                        r1Total: delayPredictedStats.r1.predicted + delayPredictedStats.r1.unexpected,
+                        r2Total: delayPredictedStats.r2.predicted + delayPredictedStats.r2.unexpected,
+                        fmt: (v: number, total: number) => total > 0 ? `${v} (${(100*v/total).toFixed(0)}%)` : "—",
+                      },
+                      {
+                        label: "Unexpected breaches",
+                        r1: delayPredictedStats.r1.unexpected,
+                        r2: delayPredictedStats.r2.unexpected,
+                        r1Total: delayPredictedStats.r1.predicted + delayPredictedStats.r1.unexpected,
+                        r2Total: delayPredictedStats.r2.predicted + delayPredictedStats.r2.unexpected,
+                        fmt: (v: number, total: number) => total > 0 ? `${v} (${(100*v/total).toFixed(0)}%)` : "—",
+                      },
+                      {
+                        label: "EOB — Predicted (median breach)",
+                        r1: delayPredictedStats.r1.predEOBp50,
+                        r2: delayPredictedStats.r2.predEOBp50,
+                        r1Total: null,
+                        r2Total: null,
+                        fmt: (v: number | null) => v != null ? `${v} min` : "—",
+                      },
+                      {
+                        label: "EOB — Unexpected (median breach)",
+                        r1: delayPredictedStats.r1.unpredEOBp50,
+                        r2: delayPredictedStats.r2.unpredEOBp50,
+                        r1Total: null,
+                        r2Total: null,
+                        fmt: (v: number | null) => v != null ? `${v} min` : "—",
+                      },
+                    ].map((row, i) => (
+                      <tr key={row.label} className={i % 2 === 0 ? "bg-gray-50 dark:bg-zinc-800/50" : ""}>
+                        <td className="px-4 py-2 text-[12px] text-gray-700 dark:text-zinc-300 font-medium">{row.label}</td>
+                        <td className="px-4 py-2 text-[12px] text-right tabular-nums text-gray-900 dark:text-zinc-100" style={{ color: COLOR_CTRL }}>
+                          {row.r1Total !== null ? row.fmt(row.r1 as number, row.r1Total) : row.fmt(row.r1 as number | null)}
+                        </td>
+                        <td className="px-4 py-2 text-[12px] text-right tabular-nums text-gray-900 dark:text-zinc-100" style={{ color: COLOR_POST }}>
+                          {row.r2Total !== null ? row.fmt(row.r2 as number, row.r2Total) : row.fmt(row.r2 as number | null)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
           {/* Trip-level SLA */}
