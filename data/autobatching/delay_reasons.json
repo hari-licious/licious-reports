@@ -1178,6 +1178,70 @@
         "rider_acceptance": 1,
         "allocation": 1
       }
+    },
+    {
+      "date": "2026-07-24",
+      "total_breached": 46,
+      "tags": {
+        "SLOW_PICKLIST": 5,
+        "AUTO_FAIL": 1,
+        "SLOW_ACCEPT": 4,
+        "CASCADE": 7,
+        "RESEQUENCED": 16,
+        "PREDICTED": 26,
+        "LATE_DEP": 1,
+        "SLOW_TRAVEL": 16
+      },
+      "killer": {
+        "service_rdl_to_del": 31,
+        "travel_to_customer": 12,
+        "cascade_prev_stops": 3
+      }
+    },
+    {
+      "date": "2026-07-25",
+      "total_breached": 48,
+      "tags": {
+        "SLOW_PICKLIST": 5,
+        "NO_RIDER": 1,
+        "AUTO_FAIL": 4,
+        "SLOW_ACCEPT": 1,
+        "CASCADE": 10,
+        "RESEQUENCED": 14,
+        "PREDICTED": 28,
+        "LATE_DEP": 1,
+        "SLOW_TRAVEL": 23
+      },
+      "killer": {
+        "service_rdl_to_del": 29,
+        "travel_to_customer": 16,
+        "cascade_prev_stops": 2,
+        "allocation": 1
+      }
+    },
+    {
+      "date": "2026-07-26",
+      "total_breached": 57,
+      "tags": {
+        "OMS_LAG": 2,
+        "SLOW_PICKLIST": 2,
+        "NO_RIDER": 2,
+        "ALGO_DROP": 1,
+        "AUTO_FAIL": 5,
+        "SLOW_ACCEPT": 4,
+        "CASCADE": 18,
+        "RESEQUENCED": 8,
+        "PREDICTED": 37,
+        "MULTI_RUN": 3,
+        "LATE_DEP": 4,
+        "SLOW_TRAVEL": 20
+      },
+      "killer": {
+        "service_rdl_to_del": 29,
+        "travel_to_customer": 22,
+        "cascade_prev_stops": 5,
+        "MARGINAL": 1
+      }
     }
   ]
 }
