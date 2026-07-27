@@ -888,6 +888,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   const [expressExpanded,   setExpressExpanded]   = useState(false);
   const [activeTab,         setActiveTab]         = useState<"metrics" | "glossary" | "timeline">("metrics");
   const [slaMode,           setSlaMode]           = useState<"del" | "rdl">("del");
+  const [delayOrderType,    setDelayOrderType]    = useState<"all" | "DP" | "EXPRESS" | "SCHEDULED">("all");
 
   const availableHubs = useMemo(
     () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
@@ -925,34 +926,46 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   const delayPreDays  = useMemo(() => !delayReasons ? [] : delayReasons.days.filter(d => d.date >= preStart  && d.date <= preEnd),  [delayReasons, preStart,  preEnd]);
   const delayPostDays = useMemo(() => !delayReasons ? [] : delayReasons.days.filter(d => d.date >= postStart && d.date <= postEnd), [delayReasons, postStart, postEnd]);
 
+  const getDelayFields = (d: DelayDay) => {
+    if (delayOrderType === "all") return { tags: d.tags, killer: d.killer, total_breached: d.total_breached };
+    const bt = d.by_type?.[delayOrderType];
+    return bt ? { tags: bt.tags, killer: bt.killer, total_breached: bt.total_breached }
+              : { tags: {}, killer: {}, total_breached: 0 };
+  };
+
   const delayKillerChartData = useMemo(() => {
-    const toRow = (d: DelayDay, suffix: string) => ({
-      date: d.date.slice(8) + "/" + d.date.slice(5,7) + "/" + d.date.slice(2,4) + suffix,
-      "Last-mile travel":    d.killer["travel_to_customer"] ?? 0,
-      "Handoff at door":     d.killer["service_rdl_to_del"] ?? 0,
-      "Cascade (prior stops)": d.killer["cascade_prev_stops"] ?? 0,
-      "Rider allotment":     d.killer["allocation"] ?? 0,
-      "Rider acceptance":    d.killer["rider_acceptance"] ?? 0,
-      "Pre-dispatch at hub": d.killer["pre_dispatch"] ?? 0,
-      "OFD event delay":     d.killer["ofd_event_delay"] ?? 0,
-      "Algo / batching":     d.killer["algo_batching"] ?? 0,
-      "Other stages":        (d.killer["picklist_gen"] ?? 0) + (d.killer["packing"] ?? 0) + (d.killer["picking"] ?? 0) + (d.killer["MARGINAL"] ?? 0),
-      total:         d.total_breached,
-    });
+    const toRow = (d: DelayDay, suffix: string) => {
+      const { killer, total_breached } = getDelayFields(d);
+      return {
+        date: d.date.slice(8) + "/" + d.date.slice(5,7) + "/" + d.date.slice(2,4) + suffix,
+        "Last-mile travel":      killer["travel_to_customer"] ?? 0,
+        "Handoff at door":       killer["service_rdl_to_del"] ?? 0,
+        "Cascade (prior stops)": killer["cascade_prev_stops"] ?? 0,
+        "Rider allotment":       killer["allocation"] ?? 0,
+        "Rider acceptance":      killer["rider_acceptance"] ?? 0,
+        "Pre-dispatch at hub":   killer["pre_dispatch"] ?? 0,
+        "OFD event delay":       killer["ofd_event_delay"] ?? 0,
+        "Algo / batching":       killer["algo_batching"] ?? 0,
+        "Other stages":          (killer["picklist_gen"] ?? 0) + (killer["packing"] ?? 0) + (killer["picking"] ?? 0) + (killer["MARGINAL"] ?? 0),
+        total: total_breached,
+      };
+    };
     const preRows  = delayPreDays.map(d  => toRow(d, " ①"));
     const postRows = delayPostDays.map(d => toRow(d, " ②"));
     // Show chronologically; if both ranges have same dates (same day selected) deduplicate
     const allRows = [...preRows, ...postRows].sort((a, b) => a.date.localeCompare(b.date));
     return allRows;
-  }, [delayPreDays, delayPostDays]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delayPreDays, delayPostDays, delayOrderType]);
 
   const delayFlagSummary = useMemo(() => {
     const agg = (days: DelayDay[]) => {
       const totals: Record<string, number> = {};
       let totalBreached = 0;
       for (const d of days) {
-        totalBreached += d.total_breached;
-        for (const [tag, cnt] of Object.entries(d.tags)) totals[tag] = (totals[tag] ?? 0) + cnt;
+        const { tags, total_breached } = getDelayFields(d);
+        totalBreached += total_breached;
+        for (const [tag, cnt] of Object.entries(tags)) totals[tag] = (totals[tag] ?? 0) + cnt;
       }
       return { totals, totalBreached };
     };
@@ -969,7 +982,8 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
         r2Pct: r2.totalBreached > 0 ? (r2.totals[tag] ?? 0) / r2.totalBreached : 0,
       }))
       .sort((a, b) => (b.r1Count + b.r2Count) - (a.r1Count + a.r2Count));
-  }, [delayPreDays, delayPostDays]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delayPreDays, delayPostDays, delayOrderType]);
 
   const ordersWarn = preAgg.avg_daily_orders > 0
     && Math.abs(postAgg.avg_daily_orders - preAgg.avg_daily_orders) / preAgg.avg_daily_orders > 0.25;
@@ -1223,7 +1237,16 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
           {/* Delay Reasons */}
           {delayReasons && (preStart !== "" || postStart !== "") && (
             <div className="mb-5">
-              <SectionHeader>Delay Reasons — Breached Orders</SectionHeader>
+              <div className="flex items-center justify-between mb-3">
+                <SectionHeader noMargin>Delay Reasons — Breached Orders</SectionHeader>
+                <div className="flex gap-1">
+                  {(["all", "DP", "EXPRESS", "SCHEDULED"] as const).map(t => (
+                    <button key={t} className={typeBtnCls(delayOrderType === t)} onClick={() => setDelayOrderType(t)}>
+                      {t === "all" ? "All" : t === "EXPRESS" ? "Express" : t[0] + t.slice(1).toLowerCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="bg-white dark:bg-zinc-800 rounded-xl p-5 border border-gray-200 dark:border-zinc-700 shadow-sm mb-3">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={delayKillerChartData} margin={{ top: 10, right: 16, left: -8, bottom: 0 }} barSize={18}>

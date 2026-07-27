@@ -249,11 +249,18 @@ export function getAutobatchingData(): AutobatchingData {
   return rawData as AutobatchingData;
 }
 
+export interface DelayTypeBreakdown {
+  total_breached: number;
+  tags: Record<string, number>;
+  killer: Record<string, number>;
+}
+
 export interface DelayDay {
   date: string;
   total_breached: number;
   tags: Record<string, number>;
   killer: Record<string, number>;
+  by_type?: Record<string, DelayTypeBreakdown>;
 }
 
 export interface DelayReasonsData {
