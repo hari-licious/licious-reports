@@ -1,6 +1,18 @@
 import rawData from "@/data/autobatching/raw_daily.json";
 import rawDelayReasons from "@/data/autobatching/delay_reasons.json";
 
+import rawPSN  from "@/data/autobatching/raw_daily_PSN.json";
+import rawJPNS from "@/data/autobatching/raw_daily_JPNS.json";
+import rawOUC  from "@/data/autobatching/raw_daily_OUC.json";
+import rawMGR  from "@/data/autobatching/raw_daily_MGR.json";
+import rawKLJ  from "@/data/autobatching/raw_daily_KLJ.json";
+
+import delayPSN  from "@/data/autobatching/delay_reasons_PSN.json";
+import delayJPNS from "@/data/autobatching/delay_reasons_JPNS.json";
+import delayOUC  from "@/data/autobatching/delay_reasons_OUC.json";
+import delayMGR  from "@/data/autobatching/delay_reasons_MGR.json";
+import delayKLJ  from "@/data/autobatching/delay_reasons_KLJ.json";
+
 export interface RawDay {
   date: string;
   hub: string;
@@ -249,17 +261,42 @@ export function getAutobatchingData(): AutobatchingData {
   return rawData as AutobatchingData;
 }
 
+export const HUB_LIST = [
+  { id: "PSN",  label: "PSN",  profile: "" },
+  { id: "JPNS", label: "JPNS", profile: "High Batching" },
+  { id: "OUC",  label: "OUC",  profile: "High 30-min" },
+  { id: "MGR",  label: "MGR",  profile: "Mother Hub" },
+  { id: "KLJ",  label: "KLJ",  profile: "High OD" },
+] as const;
+
+export type HubId = typeof HUB_LIST[number]["id"];
+
 export interface DelayTypeBreakdown {
   total_breached: number;
   tags: Record<string, number>;
   killer: Record<string, number>;
 }
 
+export interface PredictedStatsByType {
+  algo_predicted: number;
+  true_positive: number;
+  false_positive: number;
+  hit_rate: number | null;
+  error_p50: number | null;
+  error_p90: number | null;
+}
+
 export interface PredictedStats {
-  predicted: number;
+  algo_predicted: number;
+  true_positive: number;
+  false_positive: number;
   unexpected: number;
+  hit_rate: number | null;
   predicted_eob_p50: number | null;
   unexpected_eob_p50: number | null;
+  error_p50: number | null;
+  error_p90: number | null;
+  by_type?: Record<string, PredictedStatsByType>;
 }
 
 export interface DelayDay {
@@ -277,4 +314,36 @@ export interface DelayReasonsData {
 
 export function getDelayReasonsData(): DelayReasonsData {
   return rawDelayReasons as unknown as DelayReasonsData;
+}
+
+const ALL_RAW_DATA: Record<HubId, AutobatchingData> = {
+  PSN:  rawPSN  as AutobatchingData,
+  JPNS: rawJPNS as AutobatchingData,
+  OUC:  rawOUC  as AutobatchingData,
+  MGR:  rawMGR  as AutobatchingData,
+  KLJ:  rawKLJ  as AutobatchingData,
+};
+
+const ALL_DELAY_DATA: Record<HubId, DelayReasonsData> = {
+  PSN:  delayPSN  as unknown as DelayReasonsData,
+  JPNS: delayJPNS as unknown as DelayReasonsData,
+  OUC:  delayOUC  as unknown as DelayReasonsData,
+  MGR:  delayMGR  as unknown as DelayReasonsData,
+  KLJ:  delayKLJ  as unknown as DelayReasonsData,
+};
+
+export function getAutobatchingDataForHub(hub: HubId): AutobatchingData {
+  return ALL_RAW_DATA[hub];
+}
+
+export function getDelayReasonsForHub(hub: HubId): DelayReasonsData {
+  return ALL_DELAY_DATA[hub];
+}
+
+export function getAllGeneratedAt(): Record<HubId, string> {
+  const result = {} as Record<HubId, string>;
+  for (const h of HUB_LIST) {
+    result[h.id] = ALL_RAW_DATA[h.id].generated_at;
+  }
+  return result;
 }

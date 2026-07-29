@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList,
 } from "recharts";
-import type { RawDay, DelayDay } from "@/lib/autobatching";
+import type { RawDay, DelayDay, DelayReasonsData, HubId } from "@/lib/autobatching";
 import { Abbr } from "@/components/ui/Abbr";
 import { COLOR_CTRL, COLOR_POST } from "@/lib/theme";
 import { useChartTheme } from "@/lib/useChartTheme";
@@ -13,12 +13,12 @@ import { DashboardLayout } from "@/components/ui/DashboardLayout";
 import { DashboardHeader } from "@/components/ui/DashboardHeader";
 import { TimelineContent } from "@/components/autobatching/Timeline";
 
+interface HubMeta { id: string; label: string; profile: string; }
 interface Props {
-  hub: string;
-  pre_range: string;
-  generated_at: string;
+  hubList: readonly HubMeta[];
   days: RawDay[];
-  delayReasons?: { days: DelayDay[] };
+  allDelayReasons: Record<string, DelayReasonsData>;
+  allGeneratedAt: Record<string, string>;
 }
 
 // ── Aggregation ───────────────────────────────────────────────────────────────
@@ -872,13 +872,14 @@ function smartDateDefaults(preDays: RawDay[], postDays: RawDay[], delayDays?: De
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-export default function Dashboard({ hub, generated_at, days, delayReasons }: Props) {
+export default function Dashboard({ hubList, days, allDelayReasons, allGeneratedAt }: Props) {
   const { gridStroke, tickFill, tooltipStyle, legendProps } = useChartTheme();
-  const initPreDays  = days.filter(d => d.period === "pre");
-  const initPostDays = days.filter(d => d.period === "post");
-  const defaults     = smartDateDefaults(initPreDays, initPostDays, delayReasons?.days);
+  const defaultHub      = hubList[0]?.id ?? "PSN";
+  const initPreDays  = days.filter(d => d.period === "pre" && d.hub === defaultHub);
+  const initPostDays = days.filter(d => d.period === "post" && d.hub === defaultHub);
+  const defaults     = smartDateDefaults(initPreDays, initPostDays, allDelayReasons[defaultHub]?.days);
 
-  const [selectedHub,       setSelectedHub]       = useState<string>(days[0]?.hub ?? hub);
+  const [selectedHub,       setSelectedHub]       = useState<string>(defaultHub);
   const [preStart,          setPreStart]          = useState(defaults.preStart);
   const [preEnd,            setPreEnd]            = useState(defaults.preEnd);
   const [postStart,         setPostStart]         = useState(defaults.postStart);
@@ -890,10 +891,13 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   const [slaMode,           setSlaMode]           = useState<"del" | "rdl">("del");
   const [delayOrderType,    setDelayOrderType]    = useState<"all" | "DP" | "EXPRESS" | "SCHEDULED">("all");
 
+  const delayReasons = allDelayReasons[selectedHub];
+  const generated_at = allGeneratedAt[selectedHub] ?? "";
+
   const availableHubs = useMemo(
-    () => [...new Set(days.map(d => d.hub).filter(Boolean))].sort(), [days]
+    () => hubList.map(h => h.id), [hubList]
   );
-  const hubDays = useMemo(() => days.filter(d => (d.hub ?? hub) === selectedHub), [days, selectedHub, hub]);
+  const hubDays = useMemo(() => days.filter(d => d.hub === selectedHub), [days, selectedHub]);
 
   const allMin = useMemo(() => hubDays[0]?.date ?? "", [hubDays]);
   const allMax = useMemo(() => hubDays[hubDays.length - 1]?.date ?? "", [hubDays]);
@@ -986,23 +990,49 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
   }, [delayPreDays, delayPostDays, delayOrderType]);
 
   const delayPredictedStats = useMemo(() => {
+    const medianArr = (arr: number[]) => {
+      if (!arr.length) return null;
+      const s = [...arr].sort((a, b) => a - b);
+      return +s[Math.floor(s.length / 2)].toFixed(1);
+    };
     const agg = (days: DelayDay[]) => {
-      let predicted = 0, unexpected = 0;
+      let algoPred = 0, tp = 0, fp = 0, unexp = 0;
       const predEOBs: number[] = [], unpredEOBs: number[] = [];
+      const errAll: number[] = [];
+      const byType: Record<string, { algoPred: number; tp: number; fp: number; errs: number[] }> = {};
       for (const d of days) {
         const ps = d.predicted_stats;
         if (!ps) continue;
-        predicted  += ps.predicted;
-        unexpected += ps.unexpected;
-        if (ps.predicted_eob_p50  != null) predEOBs.push(...Array(ps.predicted).fill(ps.predicted_eob_p50));
+        algoPred += ps.algo_predicted ?? (ps as never as {predicted:number}).predicted ?? 0;
+        tp       += ps.true_positive  ?? (ps as never as {predicted:number}).predicted ?? 0;
+        fp       += ps.false_positive ?? 0;
+        unexp    += ps.unexpected;
+        if (ps.predicted_eob_p50  != null) predEOBs.push(...Array(ps.true_positive ?? 0).fill(ps.predicted_eob_p50));
         if (ps.unexpected_eob_p50 != null) unpredEOBs.push(...Array(ps.unexpected).fill(ps.unexpected_eob_p50));
+        if (ps.error_p50 != null) errAll.push(...Array(ps.true_positive ?? 0).fill(ps.error_p50));
+        for (const [ot, bt] of Object.entries(ps.by_type ?? {})) {
+          if (!byType[ot]) byType[ot] = { algoPred: 0, tp: 0, fp: 0, errs: [] };
+          byType[ot].algoPred += bt.algo_predicted;
+          byType[ot].tp       += bt.true_positive;
+          byType[ot].fp       += bt.false_positive;
+          if (bt.error_p50 != null) byType[ot].errs.push(...Array(bt.true_positive).fill(bt.error_p50));
+        }
       }
-      const medianArr = (arr: number[]) => {
-        if (!arr.length) return null;
-        const s = [...arr].sort((a, b) => a - b);
-        return +s[Math.floor(s.length / 2)].toFixed(1);
+      const typeStats: Record<string, { hitRate: number | null; errP50: number | null }> = {};
+      for (const [ot, bt] of Object.entries(byType)) {
+        typeStats[ot] = {
+          hitRate: bt.algoPred > 0 ? bt.tp / bt.algoPred : null,
+          errP50:  medianArr(bt.errs),
+        };
+      }
+      return {
+        algoPred, tp, fp, unexp,
+        hitRate:      algoPred > 0 ? tp / algoPred : null,
+        predEOBp50:   medianArr(predEOBs),
+        unpredEOBp50: medianArr(unpredEOBs),
+        errP50:       medianArr(errAll),
+        byType:       typeStats,
       };
-      return { predicted, unexpected, predEOBp50: medianArr(predEOBs), unpredEOBp50: medianArr(unpredEOBs) };
     };
     return { r1: agg(delayPreDays), r2: agg(delayPostDays) };
   }, [delayPreDays, delayPostDays]);
@@ -1077,7 +1107,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
     const blob = new Blob([lines.join("\n")], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `autobatching_raw_${hub}.csv`;
+    a.download = `autobatching_raw_${selectedHub}.csv`;
     a.click();
     URL.revokeObjectURL(a.href);
   }
@@ -1093,7 +1123,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
 
       <DashboardHeader
         title="Autobatching v2"
-        subtitle={`Range comparison · ${hub}`}
+        subtitle={`Range comparison · ${selectedHub}`}
         updatedAt={refreshLabel ?? undefined}
         onDownload={handleDownload}
         className="mb-4"
@@ -1106,9 +1136,7 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
             <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
-              {availableHubs.length > 0
-                ? availableHubs.map(h => <option key={h} value={h}>{h}</option>)
-                : <option value={hub}>{hub}</option>}
+              {availableHubs.map(h => <option key={h} value={h}>{h}</option>)}
             </select>
           </div>
           <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
@@ -1228,61 +1256,71 @@ export default function Dashboard({ hub, generated_at, days, delayReasons }: Pro
               </div>
             </div>
             <SlaTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} slaMode={slaMode} />
-            {(delayPredictedStats.r1.predicted + delayPredictedStats.r1.unexpected + delayPredictedStats.r2.predicted + delayPredictedStats.r2.unexpected) > 0 && (
+            {(delayPredictedStats.r1.algoPred + delayPredictedStats.r1.unexp + delayPredictedStats.r2.algoPred + delayPredictedStats.r2.unexp) > 0 && (
               <div className="mt-2 bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
-                      <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Algo Prediction (breached orders)</th>
+                      <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Algo Prediction</th>
                       <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 1</th>
                       <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Range 2</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      {
-                        label: "Predicted breaches",
-                        r1: delayPredictedStats.r1.predicted,
-                        r2: delayPredictedStats.r2.predicted,
-                        r1Total: delayPredictedStats.r1.predicted + delayPredictedStats.r1.unexpected,
-                        r2Total: delayPredictedStats.r2.predicted + delayPredictedStats.r2.unexpected,
-                        fmt: (v: number, total: number) => total > 0 ? `${v} (${(100*v/total).toFixed(0)}%)` : "—",
-                      },
-                      {
-                        label: "Unexpected breaches",
-                        r1: delayPredictedStats.r1.unexpected,
-                        r2: delayPredictedStats.r2.unexpected,
-                        r1Total: delayPredictedStats.r1.predicted + delayPredictedStats.r1.unexpected,
-                        r2Total: delayPredictedStats.r2.predicted + delayPredictedStats.r2.unexpected,
-                        fmt: (v: number, total: number) => total > 0 ? `${v} (${(100*v/total).toFixed(0)}%)` : "—",
-                      },
-                      {
-                        label: "EOB — Predicted (median breach)",
-                        r1: delayPredictedStats.r1.predEOBp50,
-                        r2: delayPredictedStats.r2.predEOBp50,
-                        r1Total: null,
-                        r2Total: null,
-                        fmt: (v: number | null) => v != null ? `${v} min` : "—",
-                      },
-                      {
-                        label: "EOB — Unexpected (median breach)",
-                        r1: delayPredictedStats.r1.unpredEOBp50,
-                        r2: delayPredictedStats.r2.unpredEOBp50,
-                        r1Total: null,
-                        r2Total: null,
-                        fmt: (v: number | null) => v != null ? `${v} min` : "—",
-                      },
-                    ].map((row, i) => (
-                      <tr key={row.label} className={i % 2 === 0 ? "bg-gray-50 dark:bg-zinc-800/50" : ""}>
-                        <td className="px-4 py-2 text-[12px] text-gray-700 dark:text-zinc-300 font-medium">{row.label}</td>
-                        <td className="px-4 py-2 text-[12px] text-right tabular-nums text-gray-900 dark:text-zinc-100" style={{ color: COLOR_CTRL }}>
-                          {row.r1Total !== null ? row.fmt(row.r1 as number, row.r1Total) : row.fmt(row.r1 as number | null)}
-                        </td>
-                        <td className="px-4 py-2 text-[12px] text-right tabular-nums text-gray-900 dark:text-zinc-100" style={{ color: COLOR_POST }}>
-                          {row.r2Total !== null ? row.fmt(row.r2 as number, row.r2Total) : row.fmt(row.r2 as number | null)}
-                        </td>
-                      </tr>
-                    ))}
+                    {(() => {
+                      const fmtHit = (tp: number, total: number) =>
+                        total > 0 ? `${tp} / ${total} (${(100 * tp / total).toFixed(0)}%)` : "—";
+                      const fmtErr = (v: number | null) =>
+                        v == null ? "—" : `${v > 0 ? "+" : ""}${v} min`;
+                      const fmtEOB = (v: number | null) =>
+                        v == null ? "—" : `${v} min`;
+                      const ps1 = delayPredictedStats.r1;
+                      const ps2 = delayPredictedStats.r2;
+                      const rows: { label: string; r1: string; r2: string; indent?: boolean }[] = [
+                        {
+                          label: "Hit rate — predicted → breached",
+                          r1: fmtHit(ps1.tp, ps1.algoPred),
+                          r2: fmtHit(ps2.tp, ps2.algoPred),
+                        },
+                        {
+                          label: "False positive — predicted → on time",
+                          r1: fmtHit(ps1.fp, ps1.algoPred),
+                          r2: fmtHit(ps2.fp, ps2.algoPred),
+                        },
+                        {
+                          label: "Prediction error p50 (actual − predicted) · All",
+                          r1: fmtErr(ps1.errP50),
+                          r2: fmtErr(ps2.errP50),
+                        },
+                        ...["DP", "EXPRESS", "SCHEDULED"].flatMap(ot => {
+                          const b1 = ps1.byType[ot], b2 = ps2.byType[ot];
+                          if (!b1 && !b2) return [];
+                          return [{
+                            label: `Prediction error p50 · ${ot.charAt(0) + ot.slice(1).toLowerCase()}`,
+                            r1: fmtErr(b1?.errP50 ?? null),
+                            r2: fmtErr(b2?.errP50 ?? null),
+                            indent: true,
+                          }];
+                        }),
+                        {
+                          label: "Unexpected breaches (algo missed)",
+                          r1: ps1.unexp > 0 ? `${ps1.unexp}` : "—",
+                          r2: ps2.unexp > 0 ? `${ps2.unexp}` : "—",
+                        },
+                        {
+                          label: "EOB — Unexpected (median)",
+                          r1: fmtEOB(ps1.unpredEOBp50),
+                          r2: fmtEOB(ps2.unpredEOBp50),
+                        },
+                      ];
+                      return rows.map((row, i) => (
+                        <tr key={row.label} className={i % 2 === 0 ? "bg-gray-50 dark:bg-zinc-800/50" : ""}>
+                          <td className={`px-4 py-2 text-[12px] text-gray-700 dark:text-zinc-300 font-medium ${row.indent ? "pl-8" : ""}`}>{row.label}</td>
+                          <td className="px-4 py-2 text-[12px] text-right tabular-nums" style={{ color: COLOR_CTRL }}>{row.r1}</td>
+                          <td className="px-4 py-2 text-[12px] text-right tabular-nums" style={{ color: COLOR_POST }}>{row.r2}</td>
+                        </tr>
+                      ));
+                    })()}
                   </tbody>
                 </table>
               </div>
