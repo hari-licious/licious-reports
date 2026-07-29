@@ -4892,6 +4892,90 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-07-28",
+      "total_breached": 36,
+      "tags": {
+        "TEMPORAL": 1,
+        "OMS_LAG": 1,
+        "SLOW_PICKLIST": 2,
+        "NO_RIDER": 1,
+        "AUTO_FAIL": 2,
+        "SLOW_ACCEPT": 2,
+        "CASCADE": 2,
+        "RESEQUENCED": 6,
+        "PREDICTED": 17,
+        "LATE_DEP": 2,
+        "SLOW_TRAVEL": 15
+      },
+      "killer": {
+        "service_rdl_to_del": 27,
+        "travel_to_customer": 9
+      },
+      "by_type": {
+        "DP": {
+          "total_breached": 34,
+          "tags": {
+            "TEMPORAL": 1,
+            "OMS_LAG": 1,
+            "NO_RIDER": 1,
+            "AUTO_FAIL": 2,
+            "SLOW_ACCEPT": 2,
+            "CASCADE": 1,
+            "RESEQUENCED": 6,
+            "PREDICTED": 16,
+            "LATE_DEP": 2,
+            "SLOW_TRAVEL": 13
+          },
+          "killer": {
+            "service_rdl_to_del": 26,
+            "travel_to_customer": 8
+          }
+        },
+        "EXPRESS": {
+          "total_breached": 2,
+          "tags": {
+            "SLOW_PICKLIST": 2,
+            "CASCADE": 1,
+            "PREDICTED": 1,
+            "SLOW_TRAVEL": 2
+          },
+          "killer": {
+            "travel_to_customer": 1,
+            "service_rdl_to_del": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 29,
+        "true_positive": 11,
+        "false_positive": 18,
+        "unexpected": 25,
+        "hit_rate": 0.379,
+        "predicted_eob_p50": 2.4,
+        "unexpected_eob_p50": 1.9,
+        "error_p50": -1.0,
+        "error_p90": 6.0,
+        "by_type": {
+          "DP": {
+            "algo_predicted": 26,
+            "true_positive": 10,
+            "false_positive": 16,
+            "hit_rate": 0.385,
+            "error_p50": -1.3,
+            "error_p90": 3.2
+          },
+          "EXPRESS": {
+            "algo_predicted": 3,
+            "true_positive": 1,
+            "false_positive": 2,
+            "hit_rate": 0.333,
+            "error_p50": 15.6,
+            "error_p90": 15.6
+          }
+        }
+      }
     }
   ]
 }
