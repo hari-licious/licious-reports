@@ -2,7 +2,7 @@
   "hub": "PSN",
   "pre_range": "2026-05-27 to 2026-06-17",
   "post_range": "2026-06-18 to 2026-06-21 + 2026-07-07 to 2026-07-10 + 2026-07-15 to 2026-07-28",
-  "generated_at": "2026-07-29T10:26:44.619514",
+  "generated_at": "2026-07-29T10:59:54.009478",
   "days": [
     {
       "date": "2026-05-27",
@@ -3522,12 +3522,12 @@
       "trip_sla_breached_trips": 25,
       "trip_sla_first_order_breach": 12,
       "trip_sla_last_order_breach": 7,
-      "trip_sla_breach_pos_sum": 10.514285714285714,
+      "trip_sla_breach_pos_sum": 10.514285714285716,
       "trip_sla_breach_pos_cnt": 25,
       "trip_sla_breached_trips_rdl": 23,
       "trip_sla_first_order_breach_rdl": 8,
       "trip_sla_last_order_breach_rdl": 9,
-      "trip_sla_breach_pos_sum_rdl": 12.133333333333335,
+      "trip_sla_breach_pos_sum_rdl": 12.133333333333333,
       "trip_sla_breach_pos_cnt_rdl": 23,
       "hub": "PSN",
       "period": "pre"
