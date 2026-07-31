@@ -4976,6 +4976,174 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-07-29",
+      "total_breached": 30,
+      "tags": {
+        "OMS_LAG": 1,
+        "SLOW_PICKLIST": 1,
+        "CASCADE": 2,
+        "RESEQUENCED": 6,
+        "PREDICTED": 14,
+        "SLOW_TRAVEL": 16
+      },
+      "killer": {
+        "service_rdl_to_del": 21,
+        "travel_to_customer": 8,
+        "picklist_gen": 1
+      },
+      "by_type": {
+        "DP": {
+          "total_breached": 29,
+          "tags": {
+            "OMS_LAG": 1,
+            "CASCADE": 2,
+            "RESEQUENCED": 5,
+            "PREDICTED": 13,
+            "SLOW_TRAVEL": 16
+          },
+          "killer": {
+            "service_rdl_to_del": 21,
+            "travel_to_customer": 8
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 1,
+          "tags": {
+            "SLOW_PICKLIST": 1,
+            "RESEQUENCED": 1,
+            "PREDICTED": 1
+          },
+          "killer": {
+            "picklist_gen": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 36,
+        "true_positive": 10,
+        "false_positive": 26,
+        "unexpected": 20,
+        "hit_rate": 0.278,
+        "predicted_eob_p50": 3.7,
+        "unexpected_eob_p50": 1.6,
+        "error_p50": 0.0,
+        "error_p90": 2.8,
+        "by_type": {
+          "DP": {
+            "algo_predicted": 34,
+            "true_positive": 10,
+            "false_positive": 24,
+            "hit_rate": 0.294,
+            "error_p50": 0.0,
+            "error_p90": 2.8
+          },
+          "EXPRESS": {
+            "algo_predicted": 1,
+            "true_positive": 0,
+            "false_positive": 1,
+            "hit_rate": 0.0,
+            "error_p50": null,
+            "error_p90": null
+          },
+          "SCHEDULED": {
+            "algo_predicted": 1,
+            "true_positive": 0,
+            "false_positive": 1,
+            "hit_rate": 0.0,
+            "error_p50": null,
+            "error_p90": null
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-07-30",
+      "total_breached": 23,
+      "tags": {
+        "TEMPORAL": 6,
+        "SLOW_PICKLIST": 2,
+        "NO_RIDER": 2,
+        "ALGO_DROP": 4,
+        "AUTO_FAIL": 1,
+        "CASCADE": 2,
+        "RESEQUENCED": 16,
+        "PREDICTED": 20,
+        "LATE_DEP": 1,
+        "SLOW_TRAVEL": 5
+      },
+      "killer": {
+        "service_rdl_to_del": 12,
+        "travel_to_customer": 7,
+        "algo_batching": 2,
+        "allocation": 1,
+        "cascade_prev_stops": 1
+      },
+      "by_type": {
+        "DP": {
+          "total_breached": 20,
+          "tags": {
+            "TEMPORAL": 6,
+            "NO_RIDER": 2,
+            "ALGO_DROP": 4,
+            "AUTO_FAIL": 1,
+            "RESEQUENCED": 15,
+            "PREDICTED": 17,
+            "LATE_DEP": 1,
+            "SLOW_TRAVEL": 3
+          },
+          "killer": {
+            "service_rdl_to_del": 12,
+            "travel_to_customer": 5,
+            "algo_batching": 2,
+            "allocation": 1
+          }
+        },
+        "EXPRESS": {
+          "total_breached": 3,
+          "tags": {
+            "SLOW_PICKLIST": 2,
+            "CASCADE": 2,
+            "RESEQUENCED": 1,
+            "PREDICTED": 3,
+            "SLOW_TRAVEL": 2
+          },
+          "killer": {
+            "travel_to_customer": 2,
+            "cascade_prev_stops": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 21,
+        "true_positive": 9,
+        "false_positive": 12,
+        "unexpected": 14,
+        "hit_rate": 0.429,
+        "predicted_eob_p50": 6.0,
+        "unexpected_eob_p50": 1.9,
+        "error_p50": 0.8,
+        "error_p90": 21.2,
+        "by_type": {
+          "DP": {
+            "algo_predicted": 16,
+            "true_positive": 6,
+            "false_positive": 10,
+            "hit_rate": 0.375,
+            "error_p50": 0.5,
+            "error_p90": 0.7
+          },
+          "EXPRESS": {
+            "algo_predicted": 5,
+            "true_positive": 3,
+            "false_positive": 2,
+            "hit_rate": 0.6,
+            "error_p50": 4.9,
+            "error_p90": 26.7
+          }
+        }
+      }
     }
   ]
 }

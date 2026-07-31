@@ -3431,6 +3431,110 @@
         "error_p90": null,
         "by_type": {}
       }
+    },
+    {
+      "date": "2026-07-30",
+      "total_breached": 113,
+      "tags": {
+        "SLOW_PICKLIST": 80,
+        "NO_RIDER": 62,
+        "ALGO_DROP": 8,
+        "AUTO_FAIL": 104,
+        "SLOW_ACCEPT": 70,
+        "CASCADE": 81,
+        "RESEQUENCED": 77,
+        "PREDICTED": 57,
+        "MULTI_RUN": 6,
+        "LATE_DEP": 11,
+        "SLOW_TRAVEL": 33
+      },
+      "killer": {
+        "cascade_prev_stops": 36,
+        "allocation": 28,
+        "travel_to_customer": 23,
+        "service_rdl_to_del": 15,
+        "pre_dispatch": 6,
+        "rider_acceptance": 3,
+        "MARGINAL": 1,
+        "ofd_event_delay": 1
+      },
+      "by_type": {
+        "EXPRESS": {
+          "total_breached": 97,
+          "tags": {
+            "SLOW_PICKLIST": 65,
+            "NO_RIDER": 56,
+            "ALGO_DROP": 8,
+            "AUTO_FAIL": 91,
+            "SLOW_ACCEPT": 63,
+            "CASCADE": 68,
+            "RESEQUENCED": 65,
+            "PREDICTED": 48,
+            "MULTI_RUN": 6,
+            "LATE_DEP": 10,
+            "SLOW_TRAVEL": 30
+          },
+          "killer": {
+            "cascade_prev_stops": 30,
+            "travel_to_customer": 22,
+            "allocation": 21,
+            "service_rdl_to_del": 13,
+            "pre_dispatch": 6,
+            "rider_acceptance": 3,
+            "MARGINAL": 1,
+            "ofd_event_delay": 1
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 16,
+          "tags": {
+            "SLOW_PICKLIST": 15,
+            "NO_RIDER": 6,
+            "AUTO_FAIL": 13,
+            "SLOW_ACCEPT": 7,
+            "CASCADE": 13,
+            "RESEQUENCED": 12,
+            "PREDICTED": 9,
+            "LATE_DEP": 1,
+            "SLOW_TRAVEL": 3
+          },
+          "killer": {
+            "allocation": 7,
+            "cascade_prev_stops": 6,
+            "service_rdl_to_del": 2,
+            "travel_to_customer": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 54,
+        "true_positive": 35,
+        "false_positive": 19,
+        "unexpected": 78,
+        "hit_rate": 0.648,
+        "predicted_eob_p50": 21.1,
+        "unexpected_eob_p50": 41.2,
+        "error_p50": 13.6,
+        "error_p90": 54.0,
+        "by_type": {
+          "EXPRESS": {
+            "algo_predicted": 46,
+            "true_positive": 33,
+            "false_positive": 13,
+            "hit_rate": 0.717,
+            "error_p50": 13.6,
+            "error_p90": 49.9
+          },
+          "SCHEDULED": {
+            "algo_predicted": 4,
+            "true_positive": 2,
+            "false_positive": 2,
+            "hit_rate": 0.5,
+            "error_p50": 36.7,
+            "error_p90": 69.6
+          }
+        }
+      }
     }
   ]
 }
