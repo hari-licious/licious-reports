@@ -4,14 +4,14 @@ import rawDelayReasons from "@/data/autobatching/delay_reasons.json";
 import rawPSN  from "@/data/autobatching/raw_daily_PSN.json";
 import rawJPNS from "@/data/autobatching/raw_daily_JPNS.json";
 import rawOUC  from "@/data/autobatching/raw_daily_OUC.json";
-import rawMGR  from "@/data/autobatching/raw_daily_MGR.json";
-import rawKLJ  from "@/data/autobatching/raw_daily_KLJ.json";
+import rawKYN  from "@/data/autobatching/raw_daily_KYN.json";
+import rawTBM  from "@/data/autobatching/raw_daily_TBM.json";
 
 import delayPSN  from "@/data/autobatching/delay_reasons_PSN.json";
 import delayJPNS from "@/data/autobatching/delay_reasons_JPNS.json";
 import delayOUC  from "@/data/autobatching/delay_reasons_OUC.json";
-import delayMGR  from "@/data/autobatching/delay_reasons_MGR.json";
-import delayKLJ  from "@/data/autobatching/delay_reasons_KLJ.json";
+import delayKYN  from "@/data/autobatching/delay_reasons_KYN.json";
+import delayTBM  from "@/data/autobatching/delay_reasons_TBM.json";
 
 export interface RawDay {
   date: string;
@@ -263,10 +263,10 @@ export function getAutobatchingData(): AutobatchingData {
 
 export const HUB_LIST = [
   { id: "PSN",  label: "PSN",  profile: "" },
-  { id: "JPNS", label: "JPNS", profile: "High Batching" },
-  { id: "OUC",  label: "OUC",  profile: "High 30-min" },
-  { id: "MGR",  label: "MGR",  profile: "Mother Hub" },
-  { id: "KLJ",  label: "KLJ",  profile: "High OD" },
+  { id: "JPNS", label: "JPNS", profile: "30 + 90" },
+  { id: "OUC",  label: "OUC",  profile: "30" },
+  { id: "KYN",  label: "KYN",  profile: "Mother Hub" },
+  { id: "TBM",  label: "TBM",  profile: "High OD" },
 ] as const;
 
 export type HubId = typeof HUB_LIST[number]["id"];
@@ -320,16 +320,16 @@ const ALL_RAW_DATA: Record<HubId, AutobatchingData> = {
   PSN:  rawPSN  as AutobatchingData,
   JPNS: rawJPNS as AutobatchingData,
   OUC:  rawOUC  as AutobatchingData,
-  MGR:  rawMGR  as AutobatchingData,
-  KLJ:  rawKLJ  as AutobatchingData,
+  KYN:  rawKYN  as AutobatchingData,
+  TBM:  rawTBM  as AutobatchingData,
 };
 
 const ALL_DELAY_DATA: Record<HubId, DelayReasonsData> = {
   PSN:  delayPSN  as unknown as DelayReasonsData,
   JPNS: delayJPNS as unknown as DelayReasonsData,
   OUC:  delayOUC  as unknown as DelayReasonsData,
-  MGR:  delayMGR  as unknown as DelayReasonsData,
-  KLJ:  delayKLJ  as unknown as DelayReasonsData,
+  KYN:  delayKYN  as unknown as DelayReasonsData,
+  TBM:  delayTBM  as unknown as DelayReasonsData,
 };
 
 export function getAutobatchingDataForHub(hub: HubId): AutobatchingData {
