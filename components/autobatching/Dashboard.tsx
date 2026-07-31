@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo, Fragment } from "react";
+import { useState, useMemo, useEffect, Fragment } from "react";
 import {
   BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList,
+  PieChart, Pie, Cell,
 } from "recharts";
 import type { RawDay, DelayDay, DelayReasonsData, HubId } from "@/lib/autobatching";
 import { Abbr } from "@/components/ui/Abbr";
@@ -599,7 +600,7 @@ function SlaTable({ pre, post, expressExpanded, onToggleExpress, slaMode }: {
 }) {
   const rdl = slaMode === "rdl";
   const rows: MetricRow[] = [
-    { label: "Overall SLA %",           pre: (rdl ? pre.overall_sla_pct_rdl   : pre.overall_sla_pct)   * 100, post: (rdl ? post.overall_sla_pct_rdl   : post.overall_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.overall_with_rdl_count,   countPost: post.overall_with_rdl_count },
+    { label: "Overall Licious SLA %",   pre: (rdl ? pre.overall_sla_pct_rdl   : pre.overall_sla_pct)   * 100, post: (rdl ? post.overall_sla_pct_rdl   : post.overall_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.overall_with_rdl_count,   countPost: post.overall_with_rdl_count },
     { label: "DP SLA %",                pre: (rdl ? pre.dp_sla_pct_rdl        : pre.dp_sla_pct)        * 100, post: (rdl ? post.dp_sla_pct_rdl        : post.dp_sla_pct)        * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.dp_with_rdl_count,        countPost: post.dp_with_rdl_count },
     { label: "Express SLA %",           pre: (rdl ? pre.express_sla_pct_rdl   : pre.express_sla_pct)   * 100, post: (rdl ? post.express_sla_pct_rdl   : post.express_sla_pct)   * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.express_with_rdl_count,   countPost: post.express_with_rdl_count },
     { label: "Scheduled SLA %",         pre: (rdl ? pre.scheduled_sla_pct_rdl : pre.scheduled_sla_pct) * 100, post: (rdl ? post.scheduled_sla_pct_rdl : post.scheduled_sla_pct) * 100, unit: "%", higherIsBetter: true,  decimals: 1, countPre: pre.scheduled_with_rdl_count, countPost: post.scheduled_with_rdl_count },
@@ -886,6 +887,16 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
   const [postEnd,           setPostEnd]           = useState(defaults.postEnd);
   const [timelineType,      setTimelineType]      = useState<"dp" | "express" | "scheduled">("dp");
   const [tlMetric,          setTlMetric]          = useState<"avg" | "p50" | "p90">("avg");
+
+  // Auto-select first non-empty order type when hub changes
+  useEffect(() => {
+    const postDays = days.filter(d => d.hub === selectedHub && d.period === "post");
+    const hasDP       = postDays.some(d => d.dp_orders > 0);
+    const hasExpress  = postDays.some(d => d.express_orders > 0);
+    if (!hasDP) setTimelineType(hasExpress ? "express" : "scheduled");
+    else        setTimelineType("dp");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedHub]);
   const [expressExpanded,   setExpressExpanded]   = useState(false);
   const [activeTab,         setActiveTab]         = useState<"metrics" | "glossary" | "timeline">("metrics");
   const [slaMode,           setSlaMode]           = useState<"del" | "rdl">("del");
@@ -906,6 +917,24 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
   const selectedPost = useMemo(() => hubDays.filter(d => d.period !== "gap" && d.date >= postStart && d.date <= postEnd), [hubDays, postStart, postEnd]);
   const preAgg  = useMemo(() => aggregate(selectedPre),  [selectedPre]);
   const postAgg = useMemo(() => aggregate(selectedPost), [selectedPost]);
+
+  const ORDER_MIX_COLORS: Record<string, string> = {
+    "DP":             "#6366f1",
+    "Express 30-45":  "#ef4444",
+    "Express 45-60":  "#f97316",
+    "Express 60-90":  "#f59e0b",
+    "Express 90+":    "#eab308",
+    "Scheduled":      "#10b981",
+  };
+
+  const buildOrderMixPie = (agg: typeof preAgg) => [
+    { name: "DP",            value: agg.dp_orders_total },
+    { name: "Express 30-45", value: agg.ex_30_45_orders_total },
+    { name: "Express 45-60", value: agg.ex_45_60_orders_total },
+    { name: "Express 60-90", value: agg.ex_60_90_orders_total },
+    { name: "Express 90+",   value: agg.ex_90p_orders_total },
+    { name: "Scheduled",     value: agg.scheduled_orders_total },
+  ].filter(d => d.value > 0);
 
   const FLAG_LABELS: Record<string, string> = {
     TEMPORAL: "Algo ran after packed",
@@ -1070,7 +1099,6 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
         { stage: "Packed→Allotted",     pre: g(preAgg,  "express_packed_to_allotted_mins"),     post: g(postAgg, "express_packed_to_allotted_mins") },
         { stage: "Allotted→Accepted",   pre: g(preAgg,  "express_allotted_to_accepted_mins"),   post: g(postAgg, "express_allotted_to_accepted_mins") },
         { stage: "Accepted→Dispatched", pre: g(preAgg,  "express_accepted_to_dispatch_mins"),   post: g(postAgg, "express_accepted_to_dispatch_mins") },
-        { stage: "Dispatched→OFD",      pre: g(preAgg,  "express_dispatch_to_ofd_mins"),        post: g(postAgg, "express_dispatch_to_ofd_mins") },
         { stage: "OFD→RDL",             pre: g(preAgg,  "express_ofd_to_rdl_mins"),             post: g(postAgg, "express_ofd_to_rdl_mins") },
         { stage: "RDL→DEL",             pre: gOrNull(preAgg,  "express_rdl_to_del_mins", "express_rdl_to_del_total_cnt"), post: gOrNull(postAgg, "express_rdl_to_del_mins", "express_rdl_to_del_total_cnt") },
       ];
@@ -1079,7 +1107,6 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
     return [
       { stage: "Allotted→Accepted",   pre: g(preAgg,  "sched_allotted_to_accepted_mins"),   post: g(postAgg, "sched_allotted_to_accepted_mins") },
       { stage: "Accepted→Dispatched", pre: g(preAgg,  "sched_accepted_to_dispatched_mins"), post: g(postAgg, "sched_accepted_to_dispatched_mins") },
-      { stage: "Dispatched→OFD",      pre: g(preAgg,  "sched_dispatch_to_ofd_mins"),        post: g(postAgg, "sched_dispatch_to_ofd_mins") },
       { stage: "OFD→RDL",             pre: g(preAgg,  "sched_ofd_to_rdl_mins"),             post: g(postAgg, "sched_ofd_to_rdl_mins") },
       { stage: "RDL→DEL",             pre: gOrNull(preAgg,  "sched_rdl_to_del_mins", "sched_rdl_to_del_total_cnt"), post: gOrNull(postAgg, "sched_rdl_to_del_mins", "sched_rdl_to_del_total_cnt") },
     ];
@@ -1210,6 +1237,57 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
           {/* Order Mix */}
           <div className="mb-5">
             <SectionHeader>Order Mix · Count &amp; Share of Dispatched Licious Orders</SectionHeader>
+
+            {/* Order Mix Pie */}
+            {(() => {
+              const renderPie = (data: { name: string; value: number }[], label: string, color: string) => {
+                const total = data.reduce((s, d) => s + d.value, 0);
+                if (total === 0) return (
+                  <div className="flex flex-col items-center justify-center flex-1 min-h-[160px]">
+                    <p className="text-[11px] font-semibold tracking-widest uppercase mb-1" style={{ color }}>{label}</p>
+                    <p className="text-[11px] text-gray-400 dark:text-zinc-500">No data selected</p>
+                  </div>
+                );
+                return (
+                  <div className="flex flex-col items-center flex-1">
+                    <p className="text-[11px] font-semibold tracking-widest uppercase mb-1" style={{ color }}>{label}</p>
+                    <PieChart width={160} height={160}>
+                      <Pie data={data} cx={75} cy={75} innerRadius={42} outerRadius={70} dataKey="value" strokeWidth={1}>
+                        {data.map((entry) => (
+                          <Cell key={entry.name} fill={ORDER_MIX_COLORS[entry.name] ?? "#94a3b8"} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{ fontSize: 11, borderRadius: 8 }}
+                        formatter={(v) => [`${v} orders (${((Number(v) / total) * 100).toFixed(0)}%)`]}
+                      />
+                    </PieChart>
+                    <div className="flex flex-col gap-0.5 mt-1 w-full max-w-[160px]">
+                      {data.map(d => (
+                        <div key={d.name} className="flex items-center justify-between text-[11px]">
+                          <span className="flex items-center gap-1.5">
+                            <span className="inline-block w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: ORDER_MIX_COLORS[d.name] ?? "#94a3b8" }} />
+                            <span className="text-gray-600 dark:text-zinc-400">{d.name}</span>
+                          </span>
+                          <span className="tabular-nums text-gray-500 dark:text-zinc-500">{((d.value / total) * 100).toFixed(0)}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              };
+              const preData  = buildOrderMixPie(preAgg);
+              const postData = buildOrderMixPie(postAgg);
+              return (
+                <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm p-4 mb-3">
+                  <div className="flex justify-around">
+                    {renderPie(preData,  "Range 1", COLOR_CTRL)}
+                    {renderPie(postData, "Range 2", COLOR_POST)}
+                  </div>
+                </div>
+              );
+            })()}
+
             <OrderMixTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} />
           </div>
 
