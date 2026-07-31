@@ -261,15 +261,18 @@ export function getAutobatchingData(): AutobatchingData {
   return rawData as AutobatchingData;
 }
 
-export const HUB_LIST = [
-  { id: "PSN",  label: "PSN",  profile: "" },
-  { id: "JPNS", label: "JPNS", profile: "30 + 90" },
-  { id: "OUC",  label: "OUC",  profile: "30" },
-  { id: "KYN",  label: "KYN",  profile: "Mother Hub" },
-  { id: "TBM",  label: "TBM",  profile: "High OD" },
+const ALL_HUBS = [
+  { id: "PSN",  label: "PSN",  profile: "",            go_live: "2026-06-18" },
+  { id: "JPNS", label: "JPNS", profile: "30 + 90",     go_live: "2026-07-30" },
+  { id: "OUC",  label: "OUC",  profile: "30",          go_live: "2026-07-30" },
+  { id: "KYN",  label: "KYN",  profile: "Mother Hub",  go_live: "2026-08-04" },
+  { id: "TBM",  label: "TBM",  profile: "High OD",     go_live: "2026-08-04" },
 ] as const;
 
-export type HubId = typeof HUB_LIST[number]["id"];
+const TODAY = new Date().toISOString().slice(0, 10);
+export const HUB_LIST = ALL_HUBS.filter(h => h.go_live <= TODAY);
+
+export type HubId = typeof ALL_HUBS[number]["id"];
 
 export interface DelayTypeBreakdown {
   total_breached: number;
