@@ -84,6 +84,10 @@ interface Aggregated {
   first_order_breach_pct_rdl: number;
   last_order_breach_pct_rdl: number;
   avg_breach_position_rdl: number;
+  // Rider queue
+  avg_empty_queue_mins: number;
+  avg_rider_return_p50: number;
+  avg_rider_return_p90: number;
   // OD (3P fleet)
   total_3p_orders: number;
   avg_daily_3p_orders: number;
@@ -219,6 +223,7 @@ function aggregate(days: RawDay[]): Aggregated {
     trip_breach_rate: 0, first_order_breach_pct: 0, last_order_breach_pct: 0, avg_breach_position: 0,
     trip_breached_count_rdl: 0, trip_breach_rate_rdl: 0,
     first_order_breach_pct_rdl: 0, last_order_breach_pct_rdl: 0, avg_breach_position_rdl: 0,
+    avg_empty_queue_mins: 0, avg_rider_return_p50: 0, avg_rider_return_p90: 0,
     total_3p_orders: 0, avg_daily_3p_orders: 0,
     ex_30_45_orders_total: 0, ex_30_45_sla_pct: 0,
     ex_45_60_orders_total: 0, ex_45_60_sla_pct: 0,
@@ -360,6 +365,19 @@ function aggregate(days: RawDay[]): Aggregated {
 
     total_3p_orders:       s("dispatched_3p"),
     avg_daily_3p_orders:   div(s("dispatched_3p"), n),
+
+    avg_empty_queue_mins: (() => {
+      const active = days.filter(d => (d.rider_return_trip_count ?? 0) > 0);
+      return active.length > 0 ? active.reduce((a, d) => a + (d.empty_queue_mins ?? 0), 0) / active.length : 0;
+    })(),
+    avg_rider_return_p50: (() => {
+      const active = days.filter(d => (d.rider_return_p50 ?? 0) > 0);
+      return active.length > 0 ? active.reduce((a, d) => a + (d.rider_return_p50 ?? 0), 0) / active.length : 0;
+    })(),
+    avg_rider_return_p90: (() => {
+      const active = days.filter(d => (d.rider_return_p90 ?? 0) > 0);
+      return active.length > 0 ? active.reduce((a, d) => a + (d.rider_return_p90 ?? 0), 0) / active.length : 0;
+    })(),
 
     ex_30_45_orders_total: s("ex_30_45_orders"),
     ex_30_45_sla_pct:      div(s("ex_30_45_on_time"), s("ex_30_45_with_rdl")),
@@ -842,7 +860,9 @@ const GLOSSARY = [
   { term: "Express sub-buckets",            definition: "Express orders split by promise window (expressminutes): 30–45 min, 45–60 min, 60–90 min, 90+ min. Click the ▸ next to Express in Order Mix or SLA to expand." },
   { term: "Median (P50)",                   definition: "50th percentile of stage duration across orders in the selected period. Weighted average of daily medians, weighted by order count. Less sensitive to outliers than avg." },
   { term: "P90",                            definition: "90th percentile of stage duration. Shows tail latency — the worst 10% of orders. Weighted average of daily P90s." },
-  { term: "DE (Delivery Executive)",       definition: "Last-mile delivery rider. Headcount sourced from rider_events login data, filtered to hours with active logins." },
+  { term: "Empty Queue (mins/day)",         definition: "Total minutes the rider queue had zero available DEs between 6 AM and 11 PM IST. Computed from rider_auto_allocation_events.queuesnapshot: sum of gaps between events where CARDINALITY(queuesnapshot) = 0. Only ADDED_TO_QUEUE / REMOVED_FROM_QUEUE / QUEUE_POLLED events are counted — RIDER_DETAIL_CHANGED is excluded. Averaged over days with active autobatching data." },
+  { term: "Rider Return p50 / p90",         definition: "Time from a rider leaving the queue (QUEUE_POLLED = trip assigned by autobatching) to returning (ADDED_TO_QUEUE). Covers the full trip cycle: hub counter pickup → all deliveries → travel back to hub. p50 = median trip cycle, p90 = 90th percentile (slowest 10%). Exits between 6 AM and 11 PM IST only; same-day returns only; durations 1–180 min. Averaged over days with data." },
+  { term: "DE (Delivery Executive)",        definition: "Last-mile delivery rider. Headcount sourced from rider_events login data, filtered to hours with active logins." },
   { term: "Range 1",                        definition: "The baseline comparison window. Default: DOW-aligned pre-AB period (before Jun 18). Can be set to any date range using the picker." },
   { term: "Range 2",                        definition: "The comparison window. Default: AB live days (Phase 1 Jun 18–21 + Phase 2 Jul 7+). Can be set to any date range — e.g. Phase 1 vs Phase 2." },
   { term: "Gap (Jun 22 – Jul 6)",         definition: "Autobatching was rolled back ~Jun 22 due to ground ops issues and re-released Jul 6 night. These days are excluded from all aggregations." },
@@ -1311,6 +1331,28 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
               { label: "DP Batched %",        pre: preAgg.dp_batched_pct * 100,        post: postAgg.dp_batched_pct * 100,        unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.dp_orders_total,        countPost: postAgg.dp_orders_total },
               { label: "Express Batched %",   pre: preAgg.express_batched_pct * 100,   post: postAgg.express_batched_pct * 100,   unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.express_orders_total,   countPost: postAgg.express_orders_total },
               { label: "Scheduled Batched %", pre: preAgg.scheduled_batched_pct * 100, post: postAgg.scheduled_batched_pct * 100, unit: "%", higherIsBetter: true, decimals: 1, countPre: preAgg.scheduled_orders_total, countPost: postAgg.scheduled_orders_total },
+            ]} />
+          </div>
+
+          {/* Rider Queue */}
+          <div className="mb-5">
+            <SectionHeader>Rider Queue Health</SectionHeader>
+            <ComparisonTable rows={[
+              {
+                label: <><Abbr tip="Total minutes the rider queue had zero available DEs, measured 6 AM–11 PM IST. Lower = riders available more of the time. Averaged over days with active autobatching data.">Empty Queue</Abbr> (avg mins/day)</>,
+                pre: preAgg.avg_empty_queue_mins, post: postAgg.avg_empty_queue_mins,
+                higherIsBetter: false, decimals: 1,
+              },
+              {
+                label: <><Abbr tip="Median time (mins) from a rider leaving the queue (QUEUE_POLLED = trip assigned) to returning (ADDED_TO_QUEUE). Covers the full trip cycle: hub pickup + all deliveries + travel back. Averaged over days with data.">Rider Return p50</Abbr> (mins)</>,
+                pre: preAgg.avg_rider_return_p50, post: postAgg.avg_rider_return_p50,
+                higherIsBetter: false, decimals: 1,
+              },
+              {
+                label: <><Abbr tip="90th percentile of rider trip return time (mins). Shows the slowest 10% of trip cycles — long batched routes or distant deliveries. Averaged over days with data.">Rider Return p90</Abbr> (mins)</>,
+                pre: preAgg.avg_rider_return_p90, post: postAgg.avg_rider_return_p90,
+                higherIsBetter: false, decimals: 1,
+              },
             ]} />
           </div>
 

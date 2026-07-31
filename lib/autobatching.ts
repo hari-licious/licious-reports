@@ -247,6 +247,12 @@ export interface RawDay {
   batched_on_time_rdl: number;
   batched_breach_mins_rdl_sum: number;
   batched_breach_rdl_count: number;
+
+  // Rider queue metrics (rider_auto_allocation_events)
+  empty_queue_mins?: number;
+  rider_return_trip_count?: number;
+  rider_return_p50?: number;
+  rider_return_p90?: number;
 }
 
 export interface AutobatchingData {
