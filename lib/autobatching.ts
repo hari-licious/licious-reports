@@ -82,114 +82,114 @@ export interface RawDay {
   total_to_rdl_cnt: number;
 
   // DP warehouse timeline (created→picked, picked→packed, packed→dispatched)
-  dp_tl_created_to_picked_sum: number;
+  dp_tl_created_to_picked_sum: number | null;
   dp_tl_created_to_picked_cnt: number;
-  dp_tl_picked_to_packed_sum: number;
+  dp_tl_picked_to_packed_sum: number | null;
   dp_tl_picked_to_packed_cnt: number;
-  dp_tl_packed_to_dispatched_sum: number;
+  dp_tl_packed_to_dispatched_sum: number | null;
   dp_tl_packed_to_dispatched_cnt: number;
 
   // DP last-mile timeline
-  dp_tl_dispatch_to_ofd_sum: number;
+  dp_tl_dispatch_to_ofd_sum: number | null;
   dp_tl_dispatch_to_ofd_cnt: number;
-  dp_tl_ofd_to_rdl_sum: number;
+  dp_tl_ofd_to_rdl_sum: number | null;
   dp_tl_ofd_to_rdl_cnt: number;
 
   // Express warehouse + last-mile timeline
-  express_tl_created_to_picked_sum: number;
+  express_tl_created_to_picked_sum: number | null;
   express_tl_created_to_picked_cnt: number;
-  express_tl_picked_to_packed_sum: number;
+  express_tl_picked_to_packed_sum: number | null;
   express_tl_picked_to_packed_cnt: number;
-  express_tl_packed_to_dispatched_sum: number;
+  express_tl_packed_to_dispatched_sum: number | null;
   express_tl_packed_to_dispatched_cnt: number;
-  express_tl_dispatch_to_ofd_sum: number;
+  express_tl_dispatch_to_ofd_sum: number | null;
   express_tl_dispatch_to_ofd_cnt: number;
-  express_tl_ofd_to_rdl_sum: number;
+  express_tl_ofd_to_rdl_sum: number | null;
   express_tl_ofd_to_rdl_cnt: number;
 
   // DP allocation sub-stages (packed→allotted, allotted→accepted, accepted→dispatch)
-  dp_tl_packed_to_allotted_sum: number;
+  dp_tl_packed_to_allotted_sum: number | null;
   dp_tl_packed_to_allotted_cnt: number;
-  dp_tl_allotted_to_accepted_sum: number;
+  dp_tl_allotted_to_accepted_sum: number | null;
   dp_tl_allotted_to_accepted_cnt: number;
-  dp_tl_accepted_to_dispatch_sum: number;
+  dp_tl_accepted_to_dispatch_sum: number | null;
   dp_tl_accepted_to_dispatch_cnt: number;
 
   // Express allocation sub-stages
-  express_tl_packed_to_allotted_sum: number;
+  express_tl_packed_to_allotted_sum: number | null;
   express_tl_packed_to_allotted_cnt: number;
-  express_tl_allotted_to_accepted_sum: number;
+  express_tl_allotted_to_accepted_sum: number | null;
   express_tl_allotted_to_accepted_cnt: number;
-  express_tl_accepted_to_dispatch_sum: number;
+  express_tl_accepted_to_dispatch_sum: number | null;
   express_tl_accepted_to_dispatch_cnt: number;
 
   // Scheduled last-mile timeline
-  sched_tl_allotted_to_accepted_sum: number;
+  sched_tl_allotted_to_accepted_sum: number | null;
   sched_tl_allotted_to_accepted_cnt: number;
-  sched_tl_accepted_to_dispatched_sum: number;
+  sched_tl_accepted_to_dispatched_sum: number | null;
   sched_tl_accepted_to_dispatched_cnt: number;
-  sched_tl_dispatch_to_ofd_sum: number;
+  sched_tl_dispatch_to_ofd_sum: number | null;
   sched_tl_dispatch_to_ofd_cnt: number;
-  sched_tl_ofd_to_rdl_sum: number;
+  sched_tl_ofd_to_rdl_sum: number | null;
   sched_tl_ofd_to_rdl_cnt: number;
 
   // RDL→DEL timeline
-  dp_tl_rdl_to_del_sum: number;
+  dp_tl_rdl_to_del_sum: number | null;
   dp_tl_rdl_to_del_cnt: number;
-  dp_tl_rdl_to_del_p50: number;
-  dp_tl_rdl_to_del_p90: number;
-  express_tl_rdl_to_del_sum: number;
+  dp_tl_rdl_to_del_p50: number | null;
+  dp_tl_rdl_to_del_p90: number | null;
+  express_tl_rdl_to_del_sum: number | null;
   express_tl_rdl_to_del_cnt: number;
-  express_tl_rdl_to_del_p50: number;
-  express_tl_rdl_to_del_p90: number;
-  sched_tl_rdl_to_del_sum: number;
+  express_tl_rdl_to_del_p50: number | null;
+  express_tl_rdl_to_del_p90: number | null;
+  sched_tl_rdl_to_del_sum: number | null;
   sched_tl_rdl_to_del_cnt: number;
-  sched_tl_rdl_to_del_p50: number;
-  sched_tl_rdl_to_del_p90: number;
+  sched_tl_rdl_to_del_p50: number | null;
+  sched_tl_rdl_to_del_p90: number | null;
 
   // Percentiles (p50/p90) per day — weighted avg by cnt used in dashboard aggregation
-  dp_tl_created_to_picked_p50: number;
-  dp_tl_created_to_picked_p90: number;
-  dp_tl_picked_to_packed_p50: number;
-  dp_tl_picked_to_packed_p90: number;
-  dp_tl_packed_to_dispatched_p50: number;
-  dp_tl_packed_to_dispatched_p90: number;
-  dp_tl_dispatch_to_ofd_p50: number;
-  dp_tl_dispatch_to_ofd_p90: number;
-  dp_tl_ofd_to_rdl_p50: number;
-  dp_tl_ofd_to_rdl_p90: number;
-  dp_tl_packed_to_allotted_p50: number;
-  dp_tl_packed_to_allotted_p90: number;
-  dp_tl_allotted_to_accepted_p50: number;
-  dp_tl_allotted_to_accepted_p90: number;
-  dp_tl_accepted_to_dispatch_p50: number;
-  dp_tl_accepted_to_dispatch_p90: number;
+  dp_tl_created_to_picked_p50: number | null;
+  dp_tl_created_to_picked_p90: number | null;
+  dp_tl_picked_to_packed_p50: number | null;
+  dp_tl_picked_to_packed_p90: number | null;
+  dp_tl_packed_to_dispatched_p50: number | null;
+  dp_tl_packed_to_dispatched_p90: number | null;
+  dp_tl_dispatch_to_ofd_p50: number | null;
+  dp_tl_dispatch_to_ofd_p90: number | null;
+  dp_tl_ofd_to_rdl_p50: number | null;
+  dp_tl_ofd_to_rdl_p90: number | null;
+  dp_tl_packed_to_allotted_p50: number | null;
+  dp_tl_packed_to_allotted_p90: number | null;
+  dp_tl_allotted_to_accepted_p50: number | null;
+  dp_tl_allotted_to_accepted_p90: number | null;
+  dp_tl_accepted_to_dispatch_p50: number | null;
+  dp_tl_accepted_to_dispatch_p90: number | null;
 
-  express_tl_created_to_picked_p50: number;
-  express_tl_created_to_picked_p90: number;
-  express_tl_picked_to_packed_p50: number;
-  express_tl_picked_to_packed_p90: number;
-  express_tl_packed_to_dispatched_p50: number;
-  express_tl_packed_to_dispatched_p90: number;
-  express_tl_dispatch_to_ofd_p50: number;
-  express_tl_dispatch_to_ofd_p90: number;
-  express_tl_ofd_to_rdl_p50: number;
-  express_tl_ofd_to_rdl_p90: number;
-  express_tl_packed_to_allotted_p50: number;
-  express_tl_packed_to_allotted_p90: number;
-  express_tl_allotted_to_accepted_p50: number;
-  express_tl_allotted_to_accepted_p90: number;
-  express_tl_accepted_to_dispatch_p50: number;
-  express_tl_accepted_to_dispatch_p90: number;
+  express_tl_created_to_picked_p50: number | null;
+  express_tl_created_to_picked_p90: number | null;
+  express_tl_picked_to_packed_p50: number | null;
+  express_tl_picked_to_packed_p90: number | null;
+  express_tl_packed_to_dispatched_p50: number | null;
+  express_tl_packed_to_dispatched_p90: number | null;
+  express_tl_dispatch_to_ofd_p50: number | null;
+  express_tl_dispatch_to_ofd_p90: number | null;
+  express_tl_ofd_to_rdl_p50: number | null;
+  express_tl_ofd_to_rdl_p90: number | null;
+  express_tl_packed_to_allotted_p50: number | null;
+  express_tl_packed_to_allotted_p90: number | null;
+  express_tl_allotted_to_accepted_p50: number | null;
+  express_tl_allotted_to_accepted_p90: number | null;
+  express_tl_accepted_to_dispatch_p50: number | null;
+  express_tl_accepted_to_dispatch_p90: number | null;
 
-  sched_tl_allotted_to_accepted_p50: number;
-  sched_tl_allotted_to_accepted_p90: number;
-  sched_tl_accepted_to_dispatched_p50: number;
-  sched_tl_accepted_to_dispatched_p90: number;
-  sched_tl_dispatch_to_ofd_p50: number;
-  sched_tl_dispatch_to_ofd_p90: number;
-  sched_tl_ofd_to_rdl_p50: number;
-  sched_tl_ofd_to_rdl_p90: number;
+  sched_tl_allotted_to_accepted_p50: number | null;
+  sched_tl_allotted_to_accepted_p90: number | null;
+  sched_tl_accepted_to_dispatched_p50: number | null;
+  sched_tl_accepted_to_dispatched_p90: number | null;
+  sched_tl_dispatch_to_ofd_p50: number | null;
+  sched_tl_dispatch_to_ofd_p90: number | null;
+  sched_tl_ofd_to_rdl_p50: number | null;
+  sched_tl_ofd_to_rdl_p90: number | null;
 
   // Batching by order type (from SLA query)
   dp_batched: number;
