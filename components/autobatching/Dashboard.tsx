@@ -1243,9 +1243,12 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
         <div className="flex flex-wrap items-center gap-3 pb-3">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
-            <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls} style={{ minWidth: hubSelectMinWidth }}>
-              {availableHubs.map(h => <option key={h} value={h}>{h}</option>)}
-            </select>
+            {/* Width locked to longest hub name — prevents filter bar shift when switching hubs */}
+            <div style={{ width: hubSelectMinWidth }} className="relative">
+              <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={`${inputCls} w-full`}>
+                {availableHubs.map(h => <option key={h} value={h}>{h}</option>)}
+              </select>
+            </div>
           </div>
           <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
           <div className="flex items-center gap-2">
@@ -1253,7 +1256,7 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
             <input type="date" value={preStart} min={allMin} max={allMax} onChange={e => setPreStart(e.target.value)} className={inputCls} />
             <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
             <input type="date" value={preEnd}   min={allMin} max={allMax} onChange={e => setPreEnd(e.target.value)}   className={inputCls} />
-            <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPre.length}d</span>
+            <span className="inline-block w-8 text-right tabular-nums text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPre.length}d</span>
           </div>
           <span className="text-gray-200 dark:text-zinc-700 text-sm">|</span>
           <div className="flex items-center gap-2">
@@ -1261,7 +1264,7 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
             <input type="date" value={postStart} min={allMin} max={allMax} onChange={e => setPostStart(e.target.value)} className={inputCls} />
             <span className="text-gray-300 dark:text-zinc-600 text-sm">→</span>
             <input type="date" value={postEnd}   min={allMin} max={allMax} onChange={e => setPostEnd(e.target.value)}   className={inputCls} />
-            <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPost.length}d</span>
+            <span className="inline-block w-8 text-right tabular-nums text-[11px] text-gray-400 dark:text-zinc-500 font-medium">{selectedPost.length}d</span>
           </div>
         </div>
 
