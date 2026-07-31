@@ -1571,10 +1571,10 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
                         },
                       ];
                       return rows.map((row, i) => (
-                        <tr key={row.label} className={i % 2 === 0 ? "bg-gray-50 dark:bg-zinc-800/50" : ""}>
-                          <td className={`px-4 py-2 text-[12px] text-gray-700 dark:text-zinc-300 font-medium ${row.indent ? "pl-8" : ""}`}>{row.label}</td>
-                          <td className="px-4 py-2 text-[12px] text-right tabular-nums" style={{ color: COLOR_CTRL }}>{row.r1}</td>
-                          <td className="px-4 py-2 text-[12px] text-right tabular-nums" style={{ color: COLOR_POST }}>{row.r2}</td>
+                        <tr key={row.label} className="border-b border-gray-50 dark:border-zinc-700/50 last:border-0 hover:bg-gray-50/60 dark:hover:bg-zinc-700/40 transition-colors">
+                          <td className={`px-4 py-3 text-sm text-gray-700 dark:text-zinc-300 ${row.indent ? "pl-8" : ""}`}>{row.label}</td>
+                          <td className="px-4 py-3 text-sm text-right tabular-nums font-medium text-gray-700 dark:text-zinc-300">{row.r1}</td>
+                          <td className="px-4 py-3 text-sm text-right tabular-nums font-medium text-gray-700 dark:text-zinc-300">{row.r2}</td>
                         </tr>
                       ));
                     })()}
@@ -1645,24 +1645,24 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
               </div>
               {delayFlagSummary.length > 0 && (
                 <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
-                  <table className="w-full text-[12px]">
+                  <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-100 dark:border-zinc-700">
-                        <th className="text-left px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400">Flag</th>
-                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400" style={{ color: COLOR_CTRL }}>① Orders</th>
-                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400" style={{ color: COLOR_CTRL }}>① %</th>
-                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400" style={{ color: COLOR_POST }}>② Orders</th>
-                        <th className="text-right px-4 py-2 font-semibold text-gray-500 dark:text-zinc-400" style={{ color: COLOR_POST }}>② %</th>
+                      <tr className="border-b border-gray-100 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700">
+                        <th className="text-left px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase w-1/2">Flag</th>
+                        <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">R1 Orders</th>
+                        <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">R1 %</th>
+                        <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">R2 Orders</th>
+                        <th className="text-right px-4 py-2.5 text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">R2 %</th>
                       </tr>
                     </thead>
                     <tbody>
                       {delayFlagSummary.map((row, i) => (
-                        <tr key={row.tag} className={i % 2 === 0 ? "bg-gray-50 dark:bg-zinc-800/50" : ""}>
-                          <td className="px-4 py-1.5 text-gray-700 dark:text-zinc-300 font-medium">{row.label}</td>
-                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-900 dark:text-zinc-100">{row.r1Count || "—"}</td>
-                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-500 dark:text-zinc-400">{row.r1Count ? `${(row.r1Pct * 100).toFixed(0)}%` : "—"}</td>
-                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-900 dark:text-zinc-100">{row.r2Count || "—"}</td>
-                          <td className="px-4 py-1.5 text-right tabular-nums text-gray-500 dark:text-zinc-400">{row.r2Count ? `${(row.r2Pct * 100).toFixed(0)}%` : "—"}</td>
+                        <tr key={row.tag} className="border-b border-gray-50 dark:border-zinc-700/50 last:border-0 hover:bg-gray-50/60 dark:hover:bg-zinc-700/40 transition-colors">
+                          <td className="px-4 py-3 text-sm text-gray-700 dark:text-zinc-300">{row.label}</td>
+                          <td className="px-4 py-3 text-sm text-right tabular-nums font-medium text-gray-700 dark:text-zinc-300">{row.r1Count || "—"}</td>
+                          <td className="px-4 py-3 text-sm text-right tabular-nums text-gray-500 dark:text-zinc-400">{row.r1Count ? `${(row.r1Pct * 100).toFixed(0)}%` : "—"}</td>
+                          <td className="px-4 py-3 text-sm text-right tabular-nums font-medium text-gray-700 dark:text-zinc-300">{row.r2Count || "—"}</td>
+                          <td className="px-4 py-3 text-sm text-right tabular-nums text-gray-500 dark:text-zinc-400">{row.r2Count ? `${(row.r2Pct * 100).toFixed(0)}%` : "—"}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -1802,7 +1802,12 @@
       "rider_return_p50": 20.19,
       "rider_return_p90": 35.3,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 199,
+      "manual_alloc": 14,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 224
     },
     {
       "date": "2026-06-02",
@@ -2002,7 +2007,12 @@
       "rider_return_p50": 20.52,
       "rider_return_p90": 52.8,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 180,
+      "manual_alloc": 59,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 255
     },
     {
       "date": "2026-06-03",
@@ -2202,7 +2212,12 @@
       "rider_return_p50": 21.07,
       "rider_return_p90": 39.1,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 231,
+      "manual_alloc": 107,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 358
     },
     {
       "date": "2026-06-04",
@@ -2402,7 +2417,12 @@
       "rider_return_p50": 21.4,
       "rider_return_p90": 34.9,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 191,
+      "manual_alloc": 58,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 276
     },
     {
       "date": "2026-06-05",
@@ -2602,7 +2622,12 @@
       "rider_return_p50": 20.29,
       "rider_return_p90": 39.22,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 257,
+      "manual_alloc": 113,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 391
     },
     {
       "date": "2026-06-06",
@@ -2802,7 +2827,12 @@
       "rider_return_p50": 19.99,
       "rider_return_p90": 33.05,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 322,
+      "manual_alloc": 87,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 448
     },
     {
       "date": "2026-06-07",
@@ -3002,7 +3032,12 @@
       "rider_return_p50": 18.02,
       "rider_return_p90": 39.21,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 243,
+      "manual_alloc": 70,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 349
     },
     {
       "date": "2026-06-08",
@@ -3202,7 +3237,12 @@
       "rider_return_p50": 19.13,
       "rider_return_p90": 35.95,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 223,
+      "manual_alloc": 17,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 246
     },
     {
       "date": "2026-06-09",
@@ -3402,7 +3442,12 @@
       "rider_return_p50": 20.6,
       "rider_return_p90": 41.05,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 218,
+      "manual_alloc": 53,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 280
     },
     {
       "date": "2026-06-10",
@@ -3602,7 +3647,12 @@
       "rider_return_p50": 20.51,
       "rider_return_p90": 35.1,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 278,
+      "manual_alloc": 48,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 335
     },
     {
       "date": "2026-06-11",
@@ -3802,7 +3852,12 @@
       "rider_return_p50": 17.79,
       "rider_return_p90": 30.77,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 216,
+      "manual_alloc": 43,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 263
     },
     {
       "date": "2026-06-12",
@@ -4002,7 +4057,12 @@
       "rider_return_p50": 20.2,
       "rider_return_p90": 38.8,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 290,
+      "manual_alloc": 98,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 398
     },
     {
       "date": "2026-06-13",
@@ -4202,7 +4262,12 @@
       "rider_return_p50": 18.74,
       "rider_return_p90": 39.9,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 215,
+      "manual_alloc": 167,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 404
     },
     {
       "date": "2026-06-14",
@@ -4402,7 +4467,12 @@
       "rider_return_p50": 18.42,
       "rider_return_p90": 38.69,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 244,
+      "manual_alloc": 58,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 319
     },
     {
       "date": "2026-06-15",
@@ -4602,7 +4672,12 @@
       "rider_return_p50": 20.77,
       "rider_return_p90": 36.3,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 191,
+      "manual_alloc": 32,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 224
     },
     {
       "date": "2026-06-16",
@@ -4802,7 +4877,12 @@
       "rider_return_p50": 20.35,
       "rider_return_p90": 40.1,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 221,
+      "manual_alloc": 54,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 285
     },
     {
       "date": "2026-06-17",
@@ -5002,7 +5082,12 @@
       "rider_return_p50": 19.73,
       "rider_return_p90": 32.65,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 301,
+      "manual_alloc": 60,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 372
     },
     {
       "date": "2026-06-18",
@@ -5202,7 +5287,12 @@
       "rider_return_p50": 22.84,
       "rider_return_p90": 44.6,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 223,
+      "manual_alloc": 21,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 266
     },
     {
       "date": "2026-06-19",
@@ -5402,7 +5492,12 @@
       "rider_return_p50": 20.02,
       "rider_return_p90": 45.96,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 263,
+      "manual_alloc": 81,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 364
     },
     {
       "date": "2026-06-20",
@@ -5602,7 +5697,12 @@
       "rider_return_p50": 20.76,
       "rider_return_p90": 50.81,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 301,
+      "manual_alloc": 77,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 404
     },
     {
       "date": "2026-06-21",
@@ -5802,7 +5902,12 @@
       "rider_return_p50": 20.99,
       "rider_return_p90": 47.83,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 270,
+      "manual_alloc": 34,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 343
     },
     {
       "date": "2026-06-22",
@@ -6002,7 +6107,12 @@
       "rider_return_p50": 20.27,
       "rider_return_p90": 36.6,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 148,
+      "manual_alloc": 59,
+      "algo_assigned": 21,
+      "algo_unassigned": 0,
+      "algo_no_data": 205
     },
     {
       "date": "2026-06-23",
@@ -6202,7 +6312,12 @@
       "rider_return_p50": 20.52,
       "rider_return_p90": 38.7,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 209,
+      "manual_alloc": 21,
+      "algo_assigned": 142,
+      "algo_unassigned": 8,
+      "algo_no_data": 87
     },
     {
       "date": "2026-06-24",
@@ -6402,7 +6517,12 @@
       "rider_return_p50": 21.32,
       "rider_return_p90": 42.96,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 288,
+      "manual_alloc": 23,
+      "algo_assigned": 147,
+      "algo_unassigned": 19,
+      "algo_no_data": 172
     },
     {
       "date": "2026-06-25",
@@ -6602,7 +6722,12 @@
       "rider_return_p50": 19.8,
       "rider_return_p90": 39.35,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 273,
+      "manual_alloc": 15,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 298
     },
     {
       "date": "2026-06-26",
@@ -6802,7 +6927,12 @@
       "rider_return_p50": 19.87,
       "rider_return_p90": 35.13,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 286,
+      "manual_alloc": 59,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 355
     },
     {
       "date": "2026-06-27",
@@ -7002,7 +7132,12 @@
       "rider_return_p50": 19.1,
       "rider_return_p90": 33.66,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 325,
+      "manual_alloc": 74,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 424
     },
     {
       "date": "2026-06-28",
@@ -7202,7 +7337,12 @@
       "rider_return_p50": 17.7,
       "rider_return_p90": 33.96,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 289,
+      "manual_alloc": 53,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 348
     },
     {
       "date": "2026-06-29",
@@ -7402,7 +7542,12 @@
       "rider_return_p50": 20.28,
       "rider_return_p90": 31.6,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 195,
+      "manual_alloc": 22,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 221
     },
     {
       "date": "2026-06-30",
@@ -7602,7 +7747,12 @@
       "rider_return_p50": 20.47,
       "rider_return_p90": 43.6,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 244,
+      "manual_alloc": 15,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 263
     },
     {
       "date": "2026-07-01",
@@ -7802,7 +7952,12 @@
       "rider_return_p50": 19.62,
       "rider_return_p90": 38.03,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 339,
+      "manual_alloc": 55,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 394
     },
     {
       "date": "2026-07-02",
@@ -8002,7 +8157,12 @@
       "rider_return_p50": 19.83,
       "rider_return_p90": 32.78,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 270,
+      "manual_alloc": 5,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 279
     },
     {
       "date": "2026-07-03",
@@ -8202,7 +8362,12 @@
       "rider_return_p50": 19.23,
       "rider_return_p90": 33.55,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 322,
+      "manual_alloc": 46,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 370
     },
     {
       "date": "2026-07-04",
@@ -8402,7 +8567,12 @@
       "rider_return_p50": 18.98,
       "rider_return_p90": 29.56,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 378,
+      "manual_alloc": 28,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 413
     },
     {
       "date": "2026-07-05",
@@ -8602,7 +8772,12 @@
       "rider_return_p50": 17.26,
       "rider_return_p90": 33.88,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 332,
+      "manual_alloc": 12,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 346
     },
     {
       "date": "2026-07-06",
@@ -8802,7 +8977,12 @@
       "rider_return_p50": 18.93,
       "rider_return_p90": 31.2,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 205,
+      "manual_alloc": 12,
+      "algo_assigned": 24,
+      "algo_unassigned": 0,
+      "algo_no_data": 195
     },
     {
       "date": "2026-07-07",
@@ -9002,7 +9182,12 @@
       "rider_return_p50": 21.09,
       "rider_return_p90": 51.2,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 231,
+      "manual_alloc": 35,
+      "algo_assigned": 251,
+      "algo_unassigned": 5,
+      "algo_no_data": 26
     },
     {
       "date": "2026-07-08",
@@ -9202,7 +9387,12 @@
       "rider_return_p50": 21.02,
       "rider_return_p90": 36.65,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 269,
+      "manual_alloc": 74,
+      "algo_assigned": 316,
+      "algo_unassigned": 10,
+      "algo_no_data": 27
     },
     {
       "date": "2026-07-09",
@@ -9402,7 +9592,12 @@
       "rider_return_p50": 20.93,
       "rider_return_p90": 37.3,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 199,
+      "manual_alloc": 32,
+      "algo_assigned": 196,
+      "algo_unassigned": 9,
+      "algo_no_data": 39
     },
     {
       "date": "2026-07-10",
@@ -9602,7 +9797,12 @@
       "rider_return_p50": 21.66,
       "rider_return_p90": 46.5,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 258,
+      "manual_alloc": 106,
+      "algo_assigned": 251,
+      "algo_unassigned": 31,
+      "algo_no_data": 139
     },
     {
       "date": "2026-07-11",
@@ -9802,7 +10002,12 @@
       "rider_return_p50": 19.1,
       "rider_return_p90": 40.9,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 2233,
+      "manual_alloc": 617,
+      "algo_assigned": 1262,
+      "algo_unassigned": 57,
+      "algo_no_data": 1732
     },
     {
       "date": "2026-07-12",
@@ -10002,7 +10207,12 @@
       "rider_return_p50": 17.53,
       "rider_return_p90": 30.98,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 210,
+      "manual_alloc": 156,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 370
     },
     {
       "date": "2026-07-13",
@@ -10202,7 +10412,12 @@
       "rider_return_p50": 18.5,
       "rider_return_p90": 34.5,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 146,
+      "manual_alloc": 62,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 233
     },
     {
       "date": "2026-07-14",
@@ -10402,7 +10617,12 @@
       "rider_return_p50": 19.45,
       "rider_return_p90": 32.29,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 250,
+      "manual_alloc": 15,
+      "algo_assigned": 7,
+      "algo_unassigned": 0,
+      "algo_no_data": 261
     },
     {
       "date": "2026-07-15",
@@ -10602,7 +10822,12 @@
       "rider_return_p50": 20.19,
       "rider_return_p90": 39.17,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 368,
+      "manual_alloc": 28,
+      "algo_assigned": 255,
+      "algo_unassigned": 2,
+      "algo_no_data": 154
     },
     {
       "date": "2026-07-16",
@@ -10802,7 +11027,12 @@
       "rider_return_p50": 19.77,
       "rider_return_p90": 38.4,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 255,
+      "manual_alloc": 1,
+      "algo_assigned": 189,
+      "algo_unassigned": 2,
+      "algo_no_data": 65
     },
     {
       "date": "2026-07-17",
@@ -11002,7 +11232,12 @@
       "rider_return_p50": 20.9,
       "rider_return_p90": 37.1,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 327,
+      "manual_alloc": 10,
+      "algo_assigned": 259,
+      "algo_unassigned": 9,
+      "algo_no_data": 75
     },
     {
       "date": "2026-07-18",
@@ -11202,7 +11437,12 @@
       "rider_return_p50": 20.03,
       "rider_return_p90": 41.04,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 423,
+      "manual_alloc": 30,
+      "algo_assigned": 393,
+      "algo_unassigned": 10,
+      "algo_no_data": 58
     },
     {
       "date": "2026-07-19",
@@ -11402,7 +11642,12 @@
       "rider_return_p50": 19.09,
       "rider_return_p90": 33.48,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 335,
+      "manual_alloc": 21,
+      "algo_assigned": 283,
+      "algo_unassigned": 14,
+      "algo_no_data": 61
     },
     {
       "date": "2026-07-20",
@@ -11602,7 +11847,12 @@
       "rider_return_p50": 20.11,
       "rider_return_p90": 34.85,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 220,
+      "manual_alloc": 0,
+      "algo_assigned": 155,
+      "algo_unassigned": 0,
+      "algo_no_data": 67
     },
     {
       "date": "2026-07-21",
@@ -11802,7 +12052,12 @@
       "rider_return_p50": 20.7,
       "rider_return_p90": 37.39,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 232,
+      "manual_alloc": 8,
+      "algo_assigned": 171,
+      "algo_unassigned": 0,
+      "algo_no_data": 74
     },
     {
       "date": "2026-07-22",
@@ -12002,7 +12257,12 @@
       "rider_return_p50": 19.95,
       "rider_return_p90": 36.07,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 338,
+      "manual_alloc": 20,
+      "algo_assigned": 291,
+      "algo_unassigned": 7,
+      "algo_no_data": 69
     },
     {
       "date": "2026-07-23",
@@ -12202,7 +12462,12 @@
       "rider_return_p50": 21.33,
       "rider_return_p90": 38.4,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 257,
+      "manual_alloc": 9,
+      "algo_assigned": 189,
+      "algo_unassigned": 2,
+      "algo_no_data": 83
     },
     {
       "date": "2026-07-24",
@@ -12402,7 +12667,12 @@
       "rider_return_p50": 19.71,
       "rider_return_p90": 34.89,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 342,
+      "manual_alloc": 13,
+      "algo_assigned": 285,
+      "algo_unassigned": 1,
+      "algo_no_data": 70
     },
     {
       "date": "2026-07-25",
@@ -12602,7 +12872,12 @@
       "rider_return_p50": 18.97,
       "rider_return_p90": 29.57,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 366,
+      "manual_alloc": 13,
+      "algo_assigned": 318,
+      "algo_unassigned": 0,
+      "algo_no_data": 63
     },
     {
       "date": "2026-07-26",
@@ -12802,7 +13077,12 @@
       "rider_return_p50": 19.18,
       "rider_return_p90": 36.65,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 313,
+      "manual_alloc": 30,
+      "algo_assigned": 274,
+      "algo_unassigned": 2,
+      "algo_no_data": 69
     },
     {
       "date": "2026-07-27",
@@ -13002,7 +13282,12 @@
       "rider_return_p50": 18.48,
       "rider_return_p90": 29.79,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 240,
+      "manual_alloc": 15,
+      "algo_assigned": 185,
+      "algo_unassigned": 11,
+      "algo_no_data": 62
     },
     {
       "date": "2026-07-28",
@@ -13202,7 +13487,12 @@
       "rider_return_p50": 20.58,
       "rider_return_p90": 32.56,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 236,
+      "manual_alloc": 12,
+      "algo_assigned": 184,
+      "algo_unassigned": 0,
+      "algo_no_data": 65
     },
     {
       "date": "2026-07-29",
@@ -13402,7 +13692,12 @@
       "rider_return_p50": 18.86,
       "rider_return_p90": 32.4,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 284,
+      "manual_alloc": 1,
+      "algo_assigned": 236,
+      "algo_unassigned": 1,
+      "algo_no_data": 51
     },
     {
       "date": "2026-07-30",
@@ -13602,7 +13897,12 @@
       "rider_return_p50": 18.44,
       "rider_return_p90": 31.09,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 217,
+      "manual_alloc": 4,
+      "algo_assigned": 66,
+      "algo_unassigned": 5,
+      "algo_no_data": 157
     },
     {
       "date": "2026-07-31",

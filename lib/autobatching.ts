@@ -249,10 +249,17 @@ export interface RawDay {
   batched_breach_rdl_count: number;
 
   // Rider queue metrics (rider_auto_allocation_events)
-  empty_queue_mins?: number;
-  rider_return_trip_count?: number;
-  rider_return_p50?: number;
-  rider_return_p90?: number;
+  empty_queue_mins?: number | null;
+  rider_return_trip_count?: number | null;
+  rider_return_p50?: number | null;
+  rider_return_p90?: number | null;
+
+  // Allocation split (from order journey CSVs)
+  auto_alloc?: number | null;
+  manual_alloc?: number | null;
+  algo_assigned?: number | null;
+  algo_unassigned?: number | null;
+  algo_no_data?: number | null;
 }
 
 export interface AutobatchingData {
