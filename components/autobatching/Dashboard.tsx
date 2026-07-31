@@ -192,6 +192,16 @@ interface Aggregated {
   p90_sched_ofd_to_rdl_mins: number;
   p90_sched_rdl_to_del_mins: number;
   sched_rdl_to_del_total_cnt: number;
+  // Allocation split
+  auto_alloc_count: number;
+  manual_alloc_count: number;
+  auto_alloc_pct: number;
+  manual_alloc_pct: number;
+  algo_assigned_count: number;
+  algo_unassigned_count: number;
+  algo_no_data_count: number;
+  algo_assigned_pct: number;
+  algo_unassigned_pct: number;
 }
 
 function div(a: number, b: number) { return b > 0 ? a / b : 0; }
@@ -256,6 +266,9 @@ function aggregate(days: RawDay[]): Aggregated {
     p90_sched_allotted_to_accepted_mins: 0, p90_sched_accepted_to_dispatched_mins: 0,
     p90_sched_dispatch_to_ofd_mins: 0, p90_sched_ofd_to_rdl_mins: 0, p90_sched_rdl_to_del_mins: 0,
     sched_rdl_to_del_total_cnt: 0,
+    auto_alloc_count: 0, manual_alloc_count: 0, auto_alloc_pct: 0, manual_alloc_pct: 0,
+    algo_assigned_count: 0, algo_unassigned_count: 0, algo_no_data_count: 0,
+    algo_assigned_pct: 0, algo_unassigned_pct: 0,
   };
   if (days.length === 0) return zero;
 
@@ -459,6 +472,23 @@ function aggregate(days: RawDay[]): Aggregated {
     p90_sched_ofd_to_rdl_mins:             wp("sched_tl_ofd_to_rdl_p90",             "sched_tl_ofd_to_rdl_cnt"),
     p90_sched_rdl_to_del_mins:             wp("sched_tl_rdl_to_del_p90",             "sched_tl_rdl_to_del_cnt"),
     sched_rdl_to_del_total_cnt:            s("sched_tl_rdl_to_del_cnt"),
+
+    ...((): Pick<Aggregated, "auto_alloc_count"|"manual_alloc_count"|"auto_alloc_pct"|"manual_alloc_pct"|"algo_assigned_count"|"algo_unassigned_count"|"algo_no_data_count"|"algo_assigned_pct"|"algo_unassigned_pct"> => {
+      const daysWithAlloc = days.filter(d => d.auto_alloc != null);
+      const autoC   = daysWithAlloc.reduce((a, d) => a + (d.auto_alloc ?? 0), 0);
+      const manualC = daysWithAlloc.reduce((a, d) => a + (d.manual_alloc ?? 0), 0);
+      const allocTotal = autoC + manualC;
+      const assignedC   = daysWithAlloc.reduce((a, d) => a + (d.algo_assigned ?? 0), 0);
+      const unassignedC = daysWithAlloc.reduce((a, d) => a + (d.algo_unassigned ?? 0), 0);
+      const noDataC     = daysWithAlloc.reduce((a, d) => a + (d.algo_no_data ?? 0), 0);
+      const algoTotal = assignedC + unassignedC + noDataC;
+      return {
+        auto_alloc_count: autoC, manual_alloc_count: manualC,
+        auto_alloc_pct: div(autoC, allocTotal), manual_alloc_pct: div(manualC, allocTotal),
+        algo_assigned_count: assignedC, algo_unassigned_count: unassignedC, algo_no_data_count: noDataC,
+        algo_assigned_pct: div(assignedC, algoTotal), algo_unassigned_pct: div(unassignedC, algoTotal),
+      };
+    })(),
   };
 }
 
@@ -860,6 +890,11 @@ const GLOSSARY = [
   { term: "Express sub-buckets",            definition: "Express orders split by promise window (expressminutes): 30–45 min, 45–60 min, 60–90 min, 90+ min. Click the ▸ next to Express in Order Mix or SLA to expand." },
   { term: "Median (P50)",                   definition: "50th percentile of stage duration across orders in the selected period. Weighted average of daily medians, weighted by order count. Less sensitive to outliers than avg." },
   { term: "P90",                            definition: "90th percentile of stage duration. Shows tail latency — the worst 10% of orders. Weighted average of daily P90s." },
+  { term: "Auto Alloc %",                  definition: "% of dispatched Licious-fleet orders where the autobatching algo successfully auto-assigned a rider (allocationtype = AUTO in wms_trip_events). HIGH is good — indicates the algo is running and assigning riders without ops intervention." },
+  { term: "Manual Alloc %",               definition: "% of orders that required manual rider assignment (allocationtype = MANUAL). Includes AUTO_FAIL fallbacks (auto-alloc initiated but not completed, then manually assigned) and direct manual allocations (no auto-alloc initiated). LOW is good." },
+  { term: "Algo Assigned %",              definition: "% of orders with a BATCH_EVENT_TRIPS ASSIGNED row in wms_batch_algo_results_events — i.e. the real-time algo ran and found a trip for the order. Note: algo can run after PACKED (temporal issue) but still produce an assignment." },
+  { term: "Algo Dropped %",               definition: "% of orders the real-time algo dropped (resulttype = UNASSIGNED) — could not fit into any trip within SLA constraints. Dropped orders fall back to manual or 3P dispatch. LOW is good." },
+  { term: "No Real-time Algo %",          definition: "% of orders with no BATCH_EVENT_TRIPS entry — processed only by the pre-schedule BATCH planner or handled outside the real-time algo entirely (e.g. 3P direct, manual from start). Elevated values indicate the real-time algo is not firing for a significant fraction of orders." },
   { term: "Empty Queue (mins/day)",         definition: "Total minutes the rider queue had zero available DEs between 6 AM and 11 PM IST. Computed from rider_auto_allocation_events.queuesnapshot: sum of gaps between events where CARDINALITY(queuesnapshot) = 0. Only ADDED_TO_QUEUE / REMOVED_FROM_QUEUE / QUEUE_POLLED events are counted — RIDER_DETAIL_CHANGED is excluded. Averaged over days with active autobatching data." },
   { term: "Rider Return p50 / p90",         definition: "Time from a rider leaving the queue (QUEUE_POLLED = trip assigned by autobatching) to returning (ADDED_TO_QUEUE). Covers the full trip cycle: hub counter pickup → all deliveries → travel back to hub. p50 = median trip cycle, p90 = 90th percentile (slowest 10%). Exits between 6 AM and 11 PM IST only; same-day returns only; durations 1–180 min. Averaged over days with data." },
   { term: "DE (Delivery Executive)",        definition: "Last-mile delivery rider. Headcount sourced from rider_events login data, filtered to hours with active logins." },
@@ -927,6 +962,10 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
 
   const availableHubs = useMemo(
     () => hubList.map(h => h.id), [hubList]
+  );
+  const hubSelectMinWidth = useMemo(
+    () => `calc(${Math.max(...hubList.map(h => h.id.length))}ch + 3rem)`,
+    [hubList]
   );
   const hubDays = useMemo(() => days.filter(d => d.hub === selectedHub), [days, selectedHub]);
 
@@ -1086,6 +1125,28 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
     return { r1: agg(delayPreDays), r2: agg(delayPostDays) };
   }, [delayPreDays, delayPostDays]);
 
+  const allocChartData = useMemo(() => {
+    const toPoint = (d: RawDay, tag: string) => {
+      const total = (d.auto_alloc ?? 0) + (d.manual_alloc ?? 0);
+      if (!total) return null;
+      return { date: `${tag}${d.date.slice(5)}`, AUTO: d.auto_alloc ?? 0, MANUAL: d.manual_alloc ?? 0 };
+    };
+    const r1 = selectedPre.map(d => toPoint(d, "")).filter(Boolean) as { date: string; AUTO: number; MANUAL: number }[];
+    const r2 = selectedPost.map(d => toPoint(d, "")).filter(Boolean) as { date: string; AUTO: number; MANUAL: number }[];
+    return [...r1, ...(r1.length && r2.length ? [{ date: "│", AUTO: 0, MANUAL: 0 }] : []), ...r2];
+  }, [selectedPre, selectedPost]);
+
+  const algoChartData = useMemo(() => {
+    const toPoint = (d: RawDay) => {
+      const total = (d.algo_assigned ?? 0) + (d.algo_unassigned ?? 0) + (d.algo_no_data ?? 0);
+      if (!total) return null;
+      return { date: d.date.slice(5), Assigned: d.algo_assigned ?? 0, Unassigned: d.algo_unassigned ?? 0, "No data": d.algo_no_data ?? 0 };
+    };
+    const r1 = selectedPre.map(toPoint).filter(Boolean) as { date: string; Assigned: number; Unassigned: number; "No data": number }[];
+    const r2 = selectedPost.map(toPoint).filter(Boolean) as { date: string; Assigned: number; Unassigned: number; "No data": number }[];
+    return [...r1, ...(r1.length && r2.length ? [{ date: "│", Assigned: 0, Unassigned: 0, "No data": 0 }] : []), ...r2];
+  }, [selectedPre, selectedPost]);
+
   const ordersWarn = preAgg.avg_daily_orders > 0
     && Math.abs(postAgg.avg_daily_orders - preAgg.avg_daily_orders) / preAgg.avg_daily_orders > 0.25;
   const ridersWarn = preAgg.avg_daily_riders > 0
@@ -1182,7 +1243,7 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
         <div className="flex flex-wrap items-center gap-3 pb-3">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase">Hub</span>
-            <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls}>
+            <select value={selectedHub} onChange={e => setSelectedHub(e.target.value)} className={inputCls} style={{ minWidth: hubSelectMinWidth }}>
               {availableHubs.map(h => <option key={h} value={h}>{h}</option>)}
             </select>
           </div>
@@ -1355,6 +1416,79 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
               },
             ]} />
           </div>
+
+          {/* Allocation Split */}
+          {(preAgg.auto_alloc_count + preAgg.manual_alloc_count + postAgg.auto_alloc_count + postAgg.manual_alloc_count) > 0 && (
+            <div className="mb-5">
+              <SectionHeader>Allocation Split</SectionHeader>
+              <ComparisonTable rows={[
+                {
+                  label: <><Abbr tip="Orders where the autobatching algo successfully auto-assigned a rider (allocationtype = AUTO). Sourced from WMS trip events.">Auto Alloc %</Abbr></>,
+                  pre: preAgg.auto_alloc_pct * 100, post: postAgg.auto_alloc_pct * 100,
+                  unit: "%", higherIsBetter: true, decimals: 1,
+                  countPre: preAgg.auto_alloc_count, countPost: postAgg.auto_alloc_count,
+                },
+                {
+                  label: <><Abbr tip="Orders that fell through to manual rider assignment (allocationtype = MANUAL). Includes AUTO_FAIL fallbacks and direct manual allocations.">Manual Alloc %</Abbr></>,
+                  pre: preAgg.manual_alloc_pct * 100, post: postAgg.manual_alloc_pct * 100,
+                  unit: "%", higherIsBetter: false, decimals: 1,
+                  countPre: preAgg.manual_alloc_count, countPost: postAgg.manual_alloc_count,
+                },
+                {
+                  label: <><Abbr tip="Orders the algo processed and assigned to a trip (resulttype = ASSIGNED in wms_batch_algo_results_events, eventsource = BATCH_EVENT_TRIPS).">Algo Assigned %</Abbr></>,
+                  pre: preAgg.algo_assigned_pct * 100, post: postAgg.algo_assigned_pct * 100,
+                  unit: "%", higherIsBetter: true, decimals: 1,
+                  countPre: preAgg.algo_assigned_count, countPost: postAgg.algo_assigned_count,
+                },
+                {
+                  label: <><Abbr tip="Orders the algo dropped (resulttype = UNASSIGNED) — could not fit into any trip within SLA constraints. These fall back to manual or 3P.">Algo Dropped %</Abbr></>,
+                  pre: preAgg.algo_unassigned_pct * 100, post: postAgg.algo_unassigned_pct * 100,
+                  unit: "%", higherIsBetter: false, decimals: 1,
+                  countPre: preAgg.algo_unassigned_count, countPost: postAgg.algo_unassigned_count,
+                },
+                {
+                  label: <><Abbr tip="Orders with no BATCH_EVENT_TRIPS algo entry — handled by the pre-schedule BATCH planner or routed directly without the real-time algo.">No Real-time Algo %</Abbr></>,
+                  pre: (1 - preAgg.algo_assigned_pct - preAgg.algo_unassigned_pct) * 100,
+                  post: (1 - postAgg.algo_assigned_pct - postAgg.algo_unassigned_pct) * 100,
+                  unit: "%", higherIsBetter: false, decimals: 1,
+                  countPre: preAgg.algo_no_data_count, countPost: postAgg.algo_no_data_count,
+                },
+              ]} />
+              {allocChartData.length > 0 && (
+                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="bg-white dark:bg-zinc-800 rounded-xl p-4 border border-gray-200 dark:border-zinc-700 shadow-sm">
+                    <p className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase mb-3">Rider Assignment · Count per Day</p>
+                    <ResponsiveContainer width="100%" height={180}>
+                      <BarChart data={allocChartData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }} barSize={14}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+                        <XAxis dataKey="date" tick={{ fontSize: 9, fill: tickFill }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fontSize: 10, fill: tickFill }} axisLine={false} tickLine={false} />
+                        <Tooltip contentStyle={tooltipStyle} />
+                        <Legend {...legendProps} />
+                        <Bar dataKey="AUTO"   stackId="a" fill="#22c55e" />
+                        <Bar dataKey="MANUAL" stackId="a" fill="#f97316" radius={[3, 3, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="bg-white dark:bg-zinc-800 rounded-xl p-4 border border-gray-200 dark:border-zinc-700 shadow-sm">
+                    <p className="text-[10px] font-semibold tracking-widest text-gray-400 dark:text-zinc-500 uppercase mb-3">Algo Assignment · Count per Day</p>
+                    <ResponsiveContainer width="100%" height={180}>
+                      <BarChart data={algoChartData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }} barSize={14}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+                        <XAxis dataKey="date" tick={{ fontSize: 9, fill: tickFill }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fontSize: 10, fill: tickFill }} axisLine={false} tickLine={false} />
+                        <Tooltip contentStyle={tooltipStyle} />
+                        <Legend {...legendProps} />
+                        <Bar dataKey="Assigned"   stackId="a" fill="#3b82f6" />
+                        <Bar dataKey="Unassigned" stackId="a" fill="#ef4444" />
+                        <Bar dataKey="No data"    stackId="a" fill="#d1d5db" radius={[3, 3, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* SLA */}
           <div className="mb-5">
