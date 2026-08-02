@@ -5242,6 +5242,130 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-08-01",
+      "total_breached": 78,
+      "tags": {
+        "TEMPORAL": 10,
+        "OMS_LAG": 3,
+        "SLOW_PICKLIST": 5,
+        "NO_RIDER": 25,
+        "ALGO_DROP": 2,
+        "AUTO_FAIL": 32,
+        "SLOW_ACCEPT": 1,
+        "CASCADE": 15,
+        "RESEQUENCED": 61,
+        "PREDICTED": 69,
+        "LATE_DEP": 2,
+        "SLOW_TRAVEL": 13
+      },
+      "killer": {
+        "service_rdl_to_del": 31,
+        "travel_to_customer": 23,
+        "allocation": 10,
+        "pre_dispatch": 4,
+        "rider_acceptance": 4,
+        "cascade_prev_stops": 3,
+        "MARGINAL": 1,
+        "picklist_gen": 1,
+        "algo_batching": 1
+      },
+      "by_type": {
+        "DP": {
+          "total_breached": 67,
+          "tags": {
+            "TEMPORAL": 10,
+            "OMS_LAG": 3,
+            "NO_RIDER": 23,
+            "ALGO_DROP": 2,
+            "AUTO_FAIL": 28,
+            "SLOW_ACCEPT": 1,
+            "CASCADE": 7,
+            "RESEQUENCED": 53,
+            "PREDICTED": 64,
+            "LATE_DEP": 2,
+            "SLOW_TRAVEL": 7
+          },
+          "killer": {
+            "service_rdl_to_del": 27,
+            "travel_to_customer": 19,
+            "allocation": 10,
+            "pre_dispatch": 4,
+            "rider_acceptance": 4,
+            "picklist_gen": 1,
+            "algo_batching": 1,
+            "cascade_prev_stops": 1
+          }
+        },
+        "EXPRESS": {
+          "total_breached": 9,
+          "tags": {
+            "SLOW_PICKLIST": 3,
+            "NO_RIDER": 2,
+            "AUTO_FAIL": 4,
+            "CASCADE": 6,
+            "RESEQUENCED": 6,
+            "PREDICTED": 5,
+            "SLOW_TRAVEL": 5
+          },
+          "killer": {
+            "travel_to_customer": 4,
+            "service_rdl_to_del": 4,
+            "cascade_prev_stops": 1
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 2,
+          "tags": {
+            "SLOW_PICKLIST": 2,
+            "CASCADE": 2,
+            "RESEQUENCED": 2,
+            "SLOW_TRAVEL": 1
+          },
+          "killer": {
+            "cascade_prev_stops": 1,
+            "MARGINAL": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 29,
+        "true_positive": 15,
+        "false_positive": 14,
+        "unexpected": 63,
+        "hit_rate": 0.517,
+        "predicted_eob_p50": 7.4,
+        "unexpected_eob_p50": 4.7,
+        "error_p50": 0.3,
+        "error_p90": 9.5,
+        "by_type": {
+          "DP": {
+            "algo_predicted": 21,
+            "true_positive": 13,
+            "false_positive": 8,
+            "hit_rate": 0.619,
+            "error_p50": 0.2,
+            "error_p90": 4.7
+          },
+          "EXPRESS": {
+            "algo_predicted": 7,
+            "true_positive": 2,
+            "false_positive": 5,
+            "hit_rate": 0.286,
+            "error_p50": 6.5,
+            "error_p90": 9.9
+          },
+          "SCHEDULED": {
+            "algo_predicted": 1,
+            "true_positive": 0,
+            "false_positive": 1,
+            "hit_rate": 0.0,
+            "error_p50": null,
+            "error_p90": null
+          }
+        }
+      }
     }
   ]
 }
