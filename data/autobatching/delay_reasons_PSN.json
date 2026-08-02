@@ -5144,6 +5144,104 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-07-31",
+      "total_breached": 46,
+      "tags": {
+        "TEMPORAL": 13,
+        "OMS_LAG": 1,
+        "SLOW_PICKLIST": 3,
+        "NO_RIDER": 5,
+        "ALGO_DROP": 2,
+        "AUTO_FAIL": 5,
+        "SLOW_ACCEPT": 3,
+        "CASCADE": 2,
+        "RESEQUENCED": 24,
+        "PREDICTED": 41,
+        "SLOW_TRAVEL": 6
+      },
+      "killer": {
+        "service_rdl_to_del": 26,
+        "travel_to_customer": 15,
+        "picklist_gen": 2,
+        "algo_batching": 2,
+        "cascade_prev_stops": 1
+      },
+      "by_type": {
+        "DP": {
+          "total_breached": 41,
+          "tags": {
+            "TEMPORAL": 13,
+            "OMS_LAG": 1,
+            "NO_RIDER": 5,
+            "ALGO_DROP": 2,
+            "AUTO_FAIL": 5,
+            "SLOW_ACCEPT": 3,
+            "CASCADE": 2,
+            "RESEQUENCED": 22,
+            "PREDICTED": 36,
+            "SLOW_TRAVEL": 5
+          },
+          "killer": {
+            "service_rdl_to_del": 24,
+            "travel_to_customer": 14,
+            "algo_batching": 2,
+            "cascade_prev_stops": 1
+          }
+        },
+        "EXPRESS": {
+          "total_breached": 5,
+          "tags": {
+            "SLOW_PICKLIST": 3,
+            "RESEQUENCED": 2,
+            "PREDICTED": 5,
+            "SLOW_TRAVEL": 1
+          },
+          "killer": {
+            "picklist_gen": 2,
+            "service_rdl_to_del": 2,
+            "travel_to_customer": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 33,
+        "true_positive": 19,
+        "false_positive": 14,
+        "unexpected": 27,
+        "hit_rate": 0.576,
+        "predicted_eob_p50": 3.6,
+        "unexpected_eob_p50": 3.6,
+        "error_p50": -1.7,
+        "error_p90": 1.0,
+        "by_type": {
+          "DP": {
+            "algo_predicted": 25,
+            "true_positive": 16,
+            "false_positive": 9,
+            "hit_rate": 0.64,
+            "error_p50": -1.8,
+            "error_p90": 0.7
+          },
+          "EXPRESS": {
+            "algo_predicted": 7,
+            "true_positive": 3,
+            "false_positive": 4,
+            "hit_rate": 0.429,
+            "error_p50": 0.3,
+            "error_p90": 8.6
+          },
+          "SCHEDULED": {
+            "algo_predicted": 1,
+            "true_positive": 0,
+            "false_positive": 1,
+            "hit_rate": 0.0,
+            "error_p50": null,
+            "error_p90": null
+          }
+        }
+      }
     }
   ]
 }

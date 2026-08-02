@@ -3391,6 +3391,59 @@
         "error_p90": null,
         "by_type": {}
       }
+    },
+    {
+      "date": "2026-07-31",
+      "total_breached": 5,
+      "tags": {
+        "SLOW_ACCEPT": 1,
+        "CASCADE": 3,
+        "RESEQUENCED": 5,
+        "PREDICTED": 5
+      },
+      "killer": {
+        "travel_to_customer": 2,
+        "MARGINAL": 2,
+        "cascade_prev_stops": 1
+      },
+      "by_type": {
+        "EXPRESS": {
+          "total_breached": 4,
+          "tags": {
+            "CASCADE": 2,
+            "RESEQUENCED": 4,
+            "PREDICTED": 4
+          },
+          "killer": {
+            "travel_to_customer": 2,
+            "MARGINAL": 2
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 1,
+          "tags": {
+            "SLOW_ACCEPT": 1,
+            "CASCADE": 1,
+            "RESEQUENCED": 1,
+            "PREDICTED": 1
+          },
+          "killer": {
+            "cascade_prev_stops": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 0,
+        "true_positive": 0,
+        "false_positive": 0,
+        "unexpected": 5,
+        "hit_rate": null,
+        "predicted_eob_p50": null,
+        "unexpected_eob_p50": 10.8,
+        "error_p50": null,
+        "error_p90": null,
+        "by_type": {}
+      }
     }
   ]
 }
