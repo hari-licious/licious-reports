@@ -2,7 +2,7 @@
   "hub": "TBM",
   "pre_range": "2026-07-28 to 2026-07-30",
   "post_range": "2026-07-31 to 2026-08-02",
-  "generated_at": "2026-08-03T14:15:02.836913",
+  "generated_at": "2026-08-03T14:15:47.858740",
   "days": [
     {
       "date": "2026-07-28",
@@ -1334,7 +1334,7 @@
       "trip_sla_breached_trips": 32,
       "trip_sla_first_order_breach": 8,
       "trip_sla_last_order_breach": 13,
-      "trip_sla_breach_pos_sum": 19.73870019877279,
+      "trip_sla_breach_pos_sum": 19.738700198772793,
       "trip_sla_breach_pos_cnt": 32,
       "trip_sla_breached_trips_rdl": 27,
       "trip_sla_first_order_breach_rdl": 4,
