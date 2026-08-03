@@ -260,6 +260,35 @@ export interface RawDay {
   algo_assigned?: number | null;
   algo_unassigned?: number | null;
   algo_no_data?: number | null;
+
+  // OEF → WMS Created
+  dp_tl_oef_to_wms_created_sum?: number | null;
+  dp_tl_oef_to_wms_created_cnt?: number | null;
+  dp_tl_oef_to_wms_created_p50?: number | null;
+  dp_tl_oef_to_wms_created_p90?: number | null;
+  express_tl_oef_to_wms_created_sum?: number | null;
+  express_tl_oef_to_wms_created_cnt?: number | null;
+  express_tl_oef_to_wms_created_p50?: number | null;
+  express_tl_oef_to_wms_created_p90?: number | null;
+  sched_tl_oef_to_wms_created_sum?: number | null;
+  sched_tl_oef_to_wms_created_cnt?: number | null;
+  sched_tl_oef_to_wms_created_p50?: number | null;
+  sched_tl_oef_to_wms_created_p90?: number | null;
+  // Express: WMS Created → Picklist Generated
+  express_tl_created_to_picklist_sum?: number | null;
+  express_tl_created_to_picklist_cnt?: number | null;
+  express_tl_created_to_picklist_p50?: number | null;
+  express_tl_created_to_picklist_p90?: number | null;
+  // Scheduled: WMS Created → Allocated
+  sched_tl_created_to_allocated_sum?: number | null;
+  sched_tl_created_to_allocated_cnt?: number | null;
+  sched_tl_created_to_allocated_p50?: number | null;
+  sched_tl_created_to_allocated_p90?: number | null;
+  // Scheduled: Allocated → Picklist Generated
+  sched_tl_allocated_to_picklist_sum?: number | null;
+  sched_tl_allocated_to_picklist_cnt?: number | null;
+  sched_tl_allocated_to_picklist_p50?: number | null;
+  sched_tl_allocated_to_picklist_p90?: number | null;
 }
 
 export interface AutobatchingData {
@@ -278,8 +307,8 @@ const ALL_HUBS = [
   { id: "PSN",  label: "PSN",  profile: "",            go_live: "2026-06-18" },
   { id: "JPNS", label: "JPNS", profile: "30 + 90",     go_live: "2026-07-30" },
   { id: "OUC",  label: "OUC",  profile: "30",          go_live: "2026-07-30" },
-  { id: "KYN",  label: "KYN",  profile: "Mother Hub",  go_live: "2026-08-04" },
-  { id: "TBM",  label: "TBM",  profile: "High OD",     go_live: "2026-08-04" },
+  { id: "KYN",  label: "KYN",  profile: "Mother Hub",  go_live: "2099-01-01" },
+  { id: "TBM",  label: "TBM",  profile: "High OD",     go_live: "2099-01-01" },
 ] as const;
 
 const TODAY = new Date().toISOString().slice(0, 10);

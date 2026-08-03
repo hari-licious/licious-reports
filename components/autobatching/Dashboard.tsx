@@ -192,6 +192,34 @@ interface Aggregated {
   p90_sched_ofd_to_rdl_mins: number;
   p90_sched_rdl_to_del_mins: number;
   sched_rdl_to_del_total_cnt: number;
+  // OEF → WMS Created
+  avg_dp_oef_to_wms_created_mins: number;
+  p50_dp_oef_to_wms_created_mins: number;
+  p90_dp_oef_to_wms_created_mins: number;
+  dp_oef_to_wms_created_total_cnt: number;
+  avg_express_oef_to_wms_created_mins: number;
+  p50_express_oef_to_wms_created_mins: number;
+  p90_express_oef_to_wms_created_mins: number;
+  express_oef_to_wms_created_total_cnt: number;
+  avg_sched_oef_to_wms_created_mins: number;
+  p50_sched_oef_to_wms_created_mins: number;
+  p90_sched_oef_to_wms_created_mins: number;
+  sched_oef_to_wms_created_total_cnt: number;
+  // Express: WMS Created → Picklist Generated
+  avg_express_created_to_picklist_mins: number;
+  p50_express_created_to_picklist_mins: number;
+  p90_express_created_to_picklist_mins: number;
+  express_created_to_picklist_total_cnt: number;
+  // Scheduled: WMS Created → Allocated
+  avg_sched_created_to_allocated_mins: number;
+  p50_sched_created_to_allocated_mins: number;
+  p90_sched_created_to_allocated_mins: number;
+  sched_created_to_allocated_total_cnt: number;
+  // Scheduled: Allocated → Picklist Generated
+  avg_sched_allocated_to_picklist_mins: number;
+  p50_sched_allocated_to_picklist_mins: number;
+  p90_sched_allocated_to_picklist_mins: number;
+  sched_allocated_to_picklist_total_cnt: number;
   // Allocation split
   auto_alloc_count: number;
   manual_alloc_count: number;
@@ -266,6 +294,12 @@ function aggregate(days: RawDay[]): Aggregated {
     p90_sched_allotted_to_accepted_mins: 0, p90_sched_accepted_to_dispatched_mins: 0,
     p90_sched_dispatch_to_ofd_mins: 0, p90_sched_ofd_to_rdl_mins: 0, p90_sched_rdl_to_del_mins: 0,
     sched_rdl_to_del_total_cnt: 0,
+    avg_dp_oef_to_wms_created_mins: 0, p50_dp_oef_to_wms_created_mins: 0, p90_dp_oef_to_wms_created_mins: 0, dp_oef_to_wms_created_total_cnt: 0,
+    avg_express_oef_to_wms_created_mins: 0, p50_express_oef_to_wms_created_mins: 0, p90_express_oef_to_wms_created_mins: 0, express_oef_to_wms_created_total_cnt: 0,
+    avg_sched_oef_to_wms_created_mins: 0, p50_sched_oef_to_wms_created_mins: 0, p90_sched_oef_to_wms_created_mins: 0, sched_oef_to_wms_created_total_cnt: 0,
+    avg_express_created_to_picklist_mins: 0, p50_express_created_to_picklist_mins: 0, p90_express_created_to_picklist_mins: 0, express_created_to_picklist_total_cnt: 0,
+    avg_sched_created_to_allocated_mins: 0, p50_sched_created_to_allocated_mins: 0, p90_sched_created_to_allocated_mins: 0, sched_created_to_allocated_total_cnt: 0,
+    avg_sched_allocated_to_picklist_mins: 0, p50_sched_allocated_to_picklist_mins: 0, p90_sched_allocated_to_picklist_mins: 0, sched_allocated_to_picklist_total_cnt: 0,
     auto_alloc_count: 0, manual_alloc_count: 0, auto_alloc_pct: 0, manual_alloc_pct: 0,
     algo_assigned_count: 0, algo_unassigned_count: 0, algo_no_data_count: 0,
     algo_assigned_pct: 0, algo_unassigned_pct: 0,
@@ -380,7 +414,7 @@ function aggregate(days: RawDay[]): Aggregated {
     avg_daily_3p_orders:   div(s("dispatched_3p"), n),
 
     avg_empty_queue_mins: (() => {
-      const active = days.filter(d => (d.rider_return_trip_count ?? 0) > 0);
+      const active = days.filter(d => d.empty_queue_mins != null);
       return active.length > 0 ? active.reduce((a, d) => a + (d.empty_queue_mins ?? 0), 0) / active.length : 0;
     })(),
     avg_rider_return_p50: (() => {
@@ -472,6 +506,31 @@ function aggregate(days: RawDay[]): Aggregated {
     p90_sched_ofd_to_rdl_mins:             wp("sched_tl_ofd_to_rdl_p90",             "sched_tl_ofd_to_rdl_cnt"),
     p90_sched_rdl_to_del_mins:             wp("sched_tl_rdl_to_del_p90",             "sched_tl_rdl_to_del_cnt"),
     sched_rdl_to_del_total_cnt:            s("sched_tl_rdl_to_del_cnt"),
+
+    avg_dp_oef_to_wms_created_mins:        div(s("dp_tl_oef_to_wms_created_sum"),       s("dp_tl_oef_to_wms_created_cnt")),
+    p50_dp_oef_to_wms_created_mins:        wp("dp_tl_oef_to_wms_created_p50",           "dp_tl_oef_to_wms_created_cnt"),
+    p90_dp_oef_to_wms_created_mins:        wp("dp_tl_oef_to_wms_created_p90",           "dp_tl_oef_to_wms_created_cnt"),
+    dp_oef_to_wms_created_total_cnt:       s("dp_tl_oef_to_wms_created_cnt"),
+    avg_express_oef_to_wms_created_mins:   div(s("express_tl_oef_to_wms_created_sum"),  s("express_tl_oef_to_wms_created_cnt")),
+    p50_express_oef_to_wms_created_mins:   wp("express_tl_oef_to_wms_created_p50",      "express_tl_oef_to_wms_created_cnt"),
+    p90_express_oef_to_wms_created_mins:   wp("express_tl_oef_to_wms_created_p90",      "express_tl_oef_to_wms_created_cnt"),
+    express_oef_to_wms_created_total_cnt:  s("express_tl_oef_to_wms_created_cnt"),
+    avg_sched_oef_to_wms_created_mins:     div(s("sched_tl_oef_to_wms_created_sum"),    s("sched_tl_oef_to_wms_created_cnt")),
+    p50_sched_oef_to_wms_created_mins:     wp("sched_tl_oef_to_wms_created_p50",        "sched_tl_oef_to_wms_created_cnt"),
+    p90_sched_oef_to_wms_created_mins:     wp("sched_tl_oef_to_wms_created_p90",        "sched_tl_oef_to_wms_created_cnt"),
+    sched_oef_to_wms_created_total_cnt:    s("sched_tl_oef_to_wms_created_cnt"),
+    avg_express_created_to_picklist_mins:  div(s("express_tl_created_to_picklist_sum"), s("express_tl_created_to_picklist_cnt")),
+    p50_express_created_to_picklist_mins:  wp("express_tl_created_to_picklist_p50",     "express_tl_created_to_picklist_cnt"),
+    p90_express_created_to_picklist_mins:  wp("express_tl_created_to_picklist_p90",     "express_tl_created_to_picklist_cnt"),
+    express_created_to_picklist_total_cnt: s("express_tl_created_to_picklist_cnt"),
+    avg_sched_created_to_allocated_mins:   div(s("sched_tl_created_to_allocated_sum"),  s("sched_tl_created_to_allocated_cnt")),
+    p50_sched_created_to_allocated_mins:   wp("sched_tl_created_to_allocated_p50",      "sched_tl_created_to_allocated_cnt"),
+    p90_sched_created_to_allocated_mins:   wp("sched_tl_created_to_allocated_p90",      "sched_tl_created_to_allocated_cnt"),
+    sched_created_to_allocated_total_cnt:  s("sched_tl_created_to_allocated_cnt"),
+    avg_sched_allocated_to_picklist_mins:  div(s("sched_tl_allocated_to_picklist_sum"), s("sched_tl_allocated_to_picklist_cnt")),
+    p50_sched_allocated_to_picklist_mins:  wp("sched_tl_allocated_to_picklist_p50",     "sched_tl_allocated_to_picklist_cnt"),
+    p90_sched_allocated_to_picklist_mins:  wp("sched_tl_allocated_to_picklist_p90",     "sched_tl_allocated_to_picklist_cnt"),
+    sched_allocated_to_picklist_total_cnt: s("sched_tl_allocated_to_picklist_cnt"),
 
     ...((): Pick<Aggregated, "auto_alloc_count"|"manual_alloc_count"|"auto_alloc_pct"|"manual_alloc_pct"|"algo_assigned_count"|"algo_unassigned_count"|"algo_no_data_count"|"algo_assigned_pct"|"algo_unassigned_pct"> => {
       const daysWithAlloc = days.filter(d => d.auto_alloc != null);
@@ -913,6 +972,11 @@ const GLOSSARY = [
   { term: "NO_RIDER flag",              definition: "Zero available riders at the time of auto-allocation scan." },
   { term: "LATE_DEP flag",              definition: "For first-stop orders: actual OFD time was >3 min later than algo's planned departure." },
   { term: "TEMPORAL flag",              definition: "DP order where algo ran AFTER PACKED event — algo had stale data when making the batching decision." },
+  { term: "Algo Prediction — Hit Rate", definition: "Of all orders the algo flagged as BREACHED before dispatch (slastatus = 'BREACHED' in wms_batch_algo_results_events), the fraction that actually breached at delivery. Shown as tp / total_predicted (%). PSN Phase 3 baseline: ~25%." },
+  { term: "Algo Prediction — False Positive", definition: "Complement of hit rate. Orders the algo predicted would breach but were delivered on time. High FP rate (~75% on PSN) means the algo flags genuinely tight orders that end up fine — conservative rather than wrong." },
+  { term: "Prediction Error p50",       definition: "Among algo-predicted breaches that actually did breach (true positives only): median of (actual_breach_mins − algo_predicted_breach_mins). Positive = algo underestimated how bad it would be. Also broken down by order type (DP / Express / Scheduled)." },
+  { term: "Unexpected Breaches",        definition: "Orders that breached at delivery but the algo marked ON TIME before dispatch — algo had no warning. Count only. These represent algo coverage gaps, not just magnitude errors." },
+  { term: "EOB — Unexpected",           definition: "Median extent of breach (minutes late) among unexpected breaches specifically. Typically higher than predicted-order EOB because the algo could not compensate." },
 ];
 
 // ── Date defaults ─────────────────────────────────────────────────────────────
@@ -972,8 +1036,8 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
   const allMin = useMemo(() => hubDays[0]?.date ?? "", [hubDays]);
   const allMax = useMemo(() => hubDays[hubDays.length - 1]?.date ?? "", [hubDays]);
 
-  const selectedPre  = useMemo(() => hubDays.filter(d => d.period !== "gap" && d.date >= preStart && d.date <= preEnd),   [hubDays, preStart, preEnd]);
-  const selectedPost = useMemo(() => hubDays.filter(d => d.period !== "gap" && d.date >= postStart && d.date <= postEnd), [hubDays, postStart, postEnd]);
+  const selectedPre  = useMemo(() => hubDays.filter(d => d.date >= preStart && d.date <= preEnd),   [hubDays, preStart, preEnd]);
+  const selectedPost = useMemo(() => hubDays.filter(d => d.date >= postStart && d.date <= postEnd), [hubDays, postStart, postEnd]);
   const preAgg  = useMemo(() => aggregate(selectedPre),  [selectedPre]);
   const postAgg = useMemo(() => aggregate(selectedPost), [selectedPost]);
 
@@ -1163,6 +1227,7 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
 
     if (timelineType === "dp") {
       return [
+        { stage: "OEF→WMS Created", pre: gOrNull(preAgg, "dp_oef_to_wms_created_mins", "dp_oef_to_wms_created_total_cnt"), post: gOrNull(postAgg, "dp_oef_to_wms_created_mins", "dp_oef_to_wms_created_total_cnt") },
         { stage: "Created→Picked",      pre: g(preAgg,  "dp_created_to_picked_mins"),      post: g(postAgg, "dp_created_to_picked_mins") },
         { stage: "Picked→Packed",       pre: g(preAgg,  "dp_picked_to_packed_mins"),       post: g(postAgg, "dp_picked_to_packed_mins") },
         { stage: "Packed→Allotted",     pre: g(preAgg,  "dp_packed_to_allotted_mins"),     post: g(postAgg, "dp_packed_to_allotted_mins") },
@@ -1175,6 +1240,8 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
     }
     if (timelineType === "express") {
       return [
+        { stage: "OEF→WMS Created",      pre: gOrNull(preAgg, "express_oef_to_wms_created_mins", "express_oef_to_wms_created_total_cnt"), post: gOrNull(postAgg, "express_oef_to_wms_created_mins", "express_oef_to_wms_created_total_cnt") },
+        { stage: "WMS Created→Picklist", pre: gOrNull(preAgg, "express_created_to_picklist_mins", "express_created_to_picklist_total_cnt"), post: gOrNull(postAgg, "express_created_to_picklist_mins", "express_created_to_picklist_total_cnt") },
         { stage: "Created→Picked",      pre: g(preAgg,  "express_created_to_picked_mins"),      post: g(postAgg, "express_created_to_picked_mins") },
         { stage: "Picked→Packed",       pre: g(preAgg,  "express_picked_to_packed_mins"),       post: g(postAgg, "express_picked_to_packed_mins") },
         { stage: "Packed→Allotted",     pre: g(preAgg,  "express_packed_to_allotted_mins"),     post: g(postAgg, "express_packed_to_allotted_mins") },
@@ -1186,6 +1253,9 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
     }
     // scheduled
     return [
+      { stage: "OEF→WMS Created",         pre: gOrNull(preAgg, "sched_oef_to_wms_created_mins", "sched_oef_to_wms_created_total_cnt"), post: gOrNull(postAgg, "sched_oef_to_wms_created_mins", "sched_oef_to_wms_created_total_cnt") },
+      { stage: "WMS Created→Allocated",   pre: gOrNull(preAgg, "sched_created_to_allocated_mins", "sched_created_to_allocated_total_cnt"), post: gOrNull(postAgg, "sched_created_to_allocated_mins", "sched_created_to_allocated_total_cnt") },
+      { stage: "Allocated→Picklist",      pre: gOrNull(preAgg, "sched_allocated_to_picklist_mins", "sched_allocated_to_picklist_total_cnt"), post: gOrNull(postAgg, "sched_allocated_to_picklist_mins", "sched_allocated_to_picklist_total_cnt") },
       { stage: "Allotted→Accepted",   pre: g(preAgg,  "sched_allotted_to_accepted_mins"),   post: g(postAgg, "sched_allotted_to_accepted_mins") },
       { stage: "Accepted→Dispatched", pre: g(preAgg,  "sched_accepted_to_dispatched_mins"), post: g(postAgg, "sched_accepted_to_dispatched_mins") },
       { stage: "OFD→RDL",             pre: g(preAgg,  "sched_ofd_to_rdl_mins"),             post: g(postAgg, "sched_ofd_to_rdl_mins") },
