@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T12:47:08",
+  "generatedAt": "2026-08-03T10:49:57",
   "rows": [
     {
       "week": "W1 Jun03-08",
@@ -597,7 +597,7 @@
       "totalConvos": 12000,
       "aiOptin": 22,
       "ghShipments": 10186,
-      "ghTickets": 3660,
+      "ghTickets": 3721,
       "escalations": 5186,
       "csatConvos": 1528,
       "positiveCsat": 1320,
@@ -605,7 +605,7 @@
       "optinRate": null,
       "controlSanity": 0.0013,
       "escalationRate": 0.4322,
-      "ghO2c": 0.3593,
+      "ghO2c": 0.3653,
       "csatResponseRate": 0.1273,
       "csatPositiveRate": 0.11,
       "csat": 0.8639
@@ -618,7 +618,7 @@
       "totalConvos": 2488,
       "aiOptin": 0,
       "ghShipments": 2322,
-      "ghTickets": 1160,
+      "ghTickets": 1164,
       "escalations": 2470,
       "csatConvos": 45,
       "positiveCsat": 27,
@@ -626,7 +626,7 @@
       "optinRate": null,
       "controlSanity": 0.0,
       "escalationRate": 0.9928,
-      "ghO2c": 0.4996,
+      "ghO2c": 0.5013,
       "csatResponseRate": 0.0181,
       "csatPositiveRate": 0.0109,
       "csat": 0.6
@@ -639,7 +639,7 @@
       "totalConvos": 3346,
       "aiOptin": 2,
       "ghShipments": 3140,
-      "ghTickets": 699,
+      "ghTickets": 704,
       "escalations": 855,
       "csatConvos": 658,
       "positiveCsat": 581,
@@ -647,7 +647,7 @@
       "optinRate": 0.0006,
       "controlSanity": null,
       "escalationRate": 0.2555,
-      "ghO2c": 0.2226,
+      "ghO2c": 0.2242,
       "csatResponseRate": 0.1967,
       "csatPositiveRate": 0.1736,
       "csat": 0.883
@@ -660,7 +660,7 @@
       "totalConvos": 2266,
       "aiOptin": 2259,
       "ghShipments": 1938,
-      "ghTickets": 948,
+      "ghTickets": 956,
       "escalations": 1094,
       "csatConvos": 54,
       "positiveCsat": 26,
@@ -668,7 +668,7 @@
       "optinRate": 0.9969,
       "controlSanity": null,
       "escalationRate": 0.4843,
-      "ghO2c": 0.4892,
+      "ghO2c": 0.4933,
       "csatResponseRate": 0.0239,
       "csatPositiveRate": 0.0115,
       "csat": 0.4815
