@@ -302,6 +302,11 @@ export interface RawDay {
   sched_tl_picklist_to_picked_cnt?: number | null;
   sched_tl_picklist_to_picked_p50?: number | null;
   sched_tl_picklist_to_picked_p90?: number | null;
+  // Scheduled: Picked → Packed
+  sched_tl_picked_to_packed_sum?: number | null;
+  sched_tl_picked_to_packed_cnt?: number | null;
+  sched_tl_picked_to_packed_p50?: number | null;
+  sched_tl_picked_to_packed_p90?: number | null;
 }
 
 export interface AutobatchingData {

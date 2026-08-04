@@ -240,6 +240,11 @@ interface Aggregated {
   p50_sched_picklist_to_picked_mins: number;
   p90_sched_picklist_to_picked_mins: number;
   sched_picklist_to_picked_total_cnt: number;
+  // Scheduled: Picked → Packed
+  avg_sched_picked_to_packed_mins: number;
+  p50_sched_picked_to_packed_mins: number;
+  p90_sched_picked_to_packed_mins: number;
+  sched_picked_to_packed_total_cnt: number;
   // Allocation split
   auto_alloc_count: number;
   manual_alloc_count: number;
@@ -324,6 +329,7 @@ function aggregate(days: RawDay[]): Aggregated {
     avg_sched_allocated_to_picklist_mins: 0, p50_sched_allocated_to_picklist_mins: 0, p90_sched_allocated_to_picklist_mins: 0, sched_allocated_to_picklist_total_cnt: 0,
     avg_express_picklist_to_picked_mins: 0, p50_express_picklist_to_picked_mins: 0, p90_express_picklist_to_picked_mins: 0, express_picklist_to_picked_total_cnt: 0,
     avg_sched_picklist_to_picked_mins: 0, p50_sched_picklist_to_picked_mins: 0, p90_sched_picklist_to_picked_mins: 0, sched_picklist_to_picked_total_cnt: 0,
+    avg_sched_picked_to_packed_mins: 0,   p50_sched_picked_to_packed_mins: 0,   p90_sched_picked_to_packed_mins: 0,   sched_picked_to_packed_total_cnt: 0,
     auto_alloc_count: 0, manual_alloc_count: 0, auto_alloc_pct: 0, manual_alloc_pct: 0,
     algo_assigned_count: 0, algo_unassigned_count: 0, algo_no_data_count: 0,
     algo_assigned_pct: 0, algo_unassigned_pct: 0,
@@ -572,6 +578,10 @@ function aggregate(days: RawDay[]): Aggregated {
     p50_sched_picklist_to_picked_mins:     wp("sched_tl_picklist_to_picked_p50",        "sched_tl_picklist_to_picked_cnt"),
     p90_sched_picklist_to_picked_mins:     wp("sched_tl_picklist_to_picked_p90",        "sched_tl_picklist_to_picked_cnt"),
     sched_picklist_to_picked_total_cnt:    s("sched_tl_picklist_to_picked_cnt"),
+    avg_sched_picked_to_packed_mins:       div(s("sched_tl_picked_to_packed_sum"),      s("sched_tl_picked_to_packed_cnt")),
+    p50_sched_picked_to_packed_mins:       wp("sched_tl_picked_to_packed_p50",          "sched_tl_picked_to_packed_cnt"),
+    p90_sched_picked_to_packed_mins:       wp("sched_tl_picked_to_packed_p90",          "sched_tl_picked_to_packed_cnt"),
+    sched_picked_to_packed_total_cnt:      s("sched_tl_picked_to_packed_cnt"),
 
     ...((): Pick<Aggregated, "auto_alloc_count"|"manual_alloc_count"|"auto_alloc_pct"|"manual_alloc_pct"|"algo_assigned_count"|"algo_unassigned_count"|"algo_no_data_count"|"algo_assigned_pct"|"algo_unassigned_pct"> => {
       const daysWithAlloc = days.filter(d => d.auto_alloc != null);
@@ -1298,7 +1308,8 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
       { stage: "OEF→WMS Created",         pre: gOrNull(preAgg, "sched_oef_to_wms_created_mins", "sched_oef_to_wms_created_total_cnt"), post: gOrNull(postAgg, "sched_oef_to_wms_created_mins", "sched_oef_to_wms_created_total_cnt") },
       { stage: "WMS Created→Allocated",   pre: gOrNull(preAgg, "sched_created_to_allocated_mins", "sched_created_to_allocated_total_cnt"), post: gOrNull(postAgg, "sched_created_to_allocated_mins", "sched_created_to_allocated_total_cnt") },
       { stage: "Allocated→Picklist",      pre: gOrNull(preAgg, "sched_allocated_to_picklist_mins", "sched_allocated_to_picklist_total_cnt"), post: gOrNull(postAgg, "sched_allocated_to_picklist_mins", "sched_allocated_to_picklist_total_cnt") },
-      { stage: "Picklist→Picked",         pre: gOrNull(preAgg, "sched_picklist_to_picked_mins", "sched_picklist_to_picked_total_cnt"), post: gOrNull(postAgg, "sched_picklist_to_picked_mins", "sched_picklist_to_picked_total_cnt") },
+      { stage: "Picklist→Picked",  pre: gOrNull(preAgg, "sched_picklist_to_picked_mins", "sched_picklist_to_picked_total_cnt"), post: gOrNull(postAgg, "sched_picklist_to_picked_mins", "sched_picklist_to_picked_total_cnt") },
+      { stage: "Picked→Packed",    pre: gOrNull(preAgg, "sched_picked_to_packed_mins",   "sched_picked_to_packed_total_cnt"),   post: gOrNull(postAgg, "sched_picked_to_packed_mins",   "sched_picked_to_packed_total_cnt") },
       { stage: "Allotted→Accepted",   pre: g(preAgg,  "sched_allotted_to_accepted_mins"),   post: g(postAgg, "sched_allotted_to_accepted_mins") },
       { stage: "Accepted→Dispatched", pre: g(preAgg,  "sched_accepted_to_dispatched_mins"), post: g(postAgg, "sched_accepted_to_dispatched_mins") },
       { stage: "OFD→RDL",             pre: g(preAgg,  "sched_ofd_to_rdl_mins"),             post: g(postAgg, "sched_ofd_to_rdl_mins") },
