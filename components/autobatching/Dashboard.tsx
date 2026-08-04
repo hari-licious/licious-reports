@@ -1435,8 +1435,8 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
             <SectionHeader>Comparability</SectionHeader>
             <ComparisonTable rows={[
               { label: "Days",                pre: preAgg.num_days,              post: postAgg.num_days,              neutral: true, decimals: 0 },
-              { label: "Total Orders",        pre: preAgg.total_orders_sum,      post: postAgg.total_orders_sum,      neutral: true, decimals: 0 },
-              { label: "Avg Daily Orders",    pre: preAgg.avg_daily_orders,      post: postAgg.avg_daily_orders,      neutral: true, decimals: 1, warn: ordersWarn },
+              { label: "Delivered Orders",     pre: preAgg.overall_with_rdl_count + preAgg.p3_delivered_count,   post: postAgg.overall_with_rdl_count + postAgg.p3_delivered_count,   neutral: true, decimals: 0 },
+              { label: "Avg Daily Delivered", pre: preAgg.num_days > 0 ? (preAgg.overall_with_rdl_count + preAgg.p3_delivered_count) / preAgg.num_days : 0, post: postAgg.num_days > 0 ? (postAgg.overall_with_rdl_count + postAgg.p3_delivered_count) / postAgg.num_days : 0, neutral: true, decimals: 1, warn: ordersWarn },
               { label: "Avg Daily DEs",       pre: preAgg.avg_daily_riders,      post: postAgg.avg_daily_riders,      neutral: true, decimals: 1, warn: ridersWarn },
               { label: <><Abbr tip="On-Demand: orders fulfilled by 3P fleet (Shadowfax, Pidge, etc.)" align="left">OD</Abbr> Orders (avg/day)</>, pre: preAgg.avg_daily_3p_orders, post: postAgg.avg_daily_3p_orders, neutral: true, decimals: 1 },
             ]} />
