@@ -3897,6 +3897,69 @@
         "error_p90": null,
         "by_type": {}
       }
+    },
+    {
+      "date": "2026-08-03",
+      "total_breached": 30,
+      "tags": {
+        "SLOW_PICKLIST": 6,
+        "SLOW_ACCEPT": 15,
+        "CASCADE": 18,
+        "RESEQUENCED": 30,
+        "PREDICTED": 30
+      },
+      "killer": {
+        "MARGINAL": 13,
+        "service_rdl_to_del": 7,
+        "travel_to_customer": 4,
+        "cascade_prev_stops": 4,
+        "packing": 2
+      },
+      "by_type": {
+        "EXPRESS": {
+          "total_breached": 26,
+          "tags": {
+            "SLOW_PICKLIST": 4,
+            "SLOW_ACCEPT": 13,
+            "CASCADE": 14,
+            "RESEQUENCED": 26,
+            "PREDICTED": 26
+          },
+          "killer": {
+            "MARGINAL": 10,
+            "service_rdl_to_del": 7,
+            "cascade_prev_stops": 4,
+            "travel_to_customer": 3,
+            "packing": 2
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 4,
+          "tags": {
+            "SLOW_PICKLIST": 2,
+            "SLOW_ACCEPT": 2,
+            "CASCADE": 4,
+            "RESEQUENCED": 4,
+            "PREDICTED": 4
+          },
+          "killer": {
+            "MARGINAL": 3,
+            "travel_to_customer": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 0,
+        "true_positive": 0,
+        "false_positive": 0,
+        "unexpected": 30,
+        "hit_rate": null,
+        "predicted_eob_p50": null,
+        "unexpected_eob_p50": 13.6,
+        "error_p50": null,
+        "error_p90": null,
+        "by_type": {}
+      }
     }
   ]
 }
