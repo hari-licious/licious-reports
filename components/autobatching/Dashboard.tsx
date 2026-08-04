@@ -147,6 +147,16 @@ interface Aggregated {
   p90_dp_rdl_to_del_mins: number;
   // DP timeline — cnt for null detection
   dp_rdl_to_del_total_cnt: number;
+  // DP: WMS Created → Picklist Generated
+  avg_dp_created_to_picklist_mins: number;
+  p50_dp_created_to_picklist_mins: number;
+  p90_dp_created_to_picklist_mins: number;
+  dp_created_to_picklist_total_cnt: number;
+  // DP: Picklist Generated → Picked
+  avg_dp_picklist_to_picked_mins: number;
+  p50_dp_picklist_to_picked_mins: number;
+  p90_dp_picklist_to_picked_mins: number;
+  dp_picklist_to_picked_total_cnt: number;
   // Express timeline — avg
   avg_express_created_to_picked_mins: number;
   avg_express_picked_to_packed_mins: number;
@@ -220,6 +230,16 @@ interface Aggregated {
   p50_sched_allocated_to_picklist_mins: number;
   p90_sched_allocated_to_picklist_mins: number;
   sched_allocated_to_picklist_total_cnt: number;
+  // Express: Picklist Generated → Picked
+  avg_express_picklist_to_picked_mins: number;
+  p50_express_picklist_to_picked_mins: number;
+  p90_express_picklist_to_picked_mins: number;
+  express_picklist_to_picked_total_cnt: number;
+  // Scheduled: Picklist Generated → Picked
+  avg_sched_picklist_to_picked_mins: number;
+  p50_sched_picklist_to_picked_mins: number;
+  p90_sched_picklist_to_picked_mins: number;
+  sched_picklist_to_picked_total_cnt: number;
   // Allocation split
   auto_alloc_count: number;
   manual_alloc_count: number;
@@ -277,6 +297,8 @@ function aggregate(days: RawDay[]): Aggregated {
     p90_dp_packed_to_allotted_mins: 0, p90_dp_allotted_to_accepted_mins: 0, p90_dp_accepted_to_dispatch_mins: 0,
     p90_dp_dispatch_to_ofd_mins: 0, p90_dp_ofd_to_rdl_mins: 0, p90_dp_rdl_to_del_mins: 0,
     dp_rdl_to_del_total_cnt: 0,
+    avg_dp_created_to_picklist_mins: 0, p50_dp_created_to_picklist_mins: 0, p90_dp_created_to_picklist_mins: 0, dp_created_to_picklist_total_cnt: 0,
+    avg_dp_picklist_to_picked_mins: 0,  p50_dp_picklist_to_picked_mins: 0,  p90_dp_picklist_to_picked_mins: 0,  dp_picklist_to_picked_total_cnt: 0,
     avg_express_created_to_picked_mins: 0, avg_express_picked_to_packed_mins: 0,
     avg_express_packed_to_allotted_mins: 0, avg_express_allotted_to_accepted_mins: 0, avg_express_accepted_to_dispatch_mins: 0,
     avg_express_dispatch_to_ofd_mins: 0, avg_express_ofd_to_rdl_mins: 0, avg_express_rdl_to_del_mins: 0,
@@ -300,6 +322,8 @@ function aggregate(days: RawDay[]): Aggregated {
     avg_express_created_to_picklist_mins: 0, p50_express_created_to_picklist_mins: 0, p90_express_created_to_picklist_mins: 0, express_created_to_picklist_total_cnt: 0,
     avg_sched_created_to_allocated_mins: 0, p50_sched_created_to_allocated_mins: 0, p90_sched_created_to_allocated_mins: 0, sched_created_to_allocated_total_cnt: 0,
     avg_sched_allocated_to_picklist_mins: 0, p50_sched_allocated_to_picklist_mins: 0, p90_sched_allocated_to_picklist_mins: 0, sched_allocated_to_picklist_total_cnt: 0,
+    avg_express_picklist_to_picked_mins: 0, p50_express_picklist_to_picked_mins: 0, p90_express_picklist_to_picked_mins: 0, express_picklist_to_picked_total_cnt: 0,
+    avg_sched_picklist_to_picked_mins: 0, p50_sched_picklist_to_picked_mins: 0, p90_sched_picklist_to_picked_mins: 0, sched_picklist_to_picked_total_cnt: 0,
     auto_alloc_count: 0, manual_alloc_count: 0, auto_alloc_pct: 0, manual_alloc_pct: 0,
     algo_assigned_count: 0, algo_unassigned_count: 0, algo_no_data_count: 0,
     algo_assigned_pct: 0, algo_unassigned_pct: 0,
@@ -460,7 +484,16 @@ function aggregate(days: RawDay[]): Aggregated {
     p90_dp_dispatch_to_ofd_mins:         wp("dp_tl_dispatch_to_ofd_p90",         "dp_tl_dispatch_to_ofd_cnt"),
     p90_dp_ofd_to_rdl_mins:              wp("dp_tl_ofd_to_rdl_p90",              "dp_tl_ofd_to_rdl_cnt"),
     p90_dp_rdl_to_del_mins:              wp("dp_tl_rdl_to_del_p90",              "dp_tl_rdl_to_del_cnt"),
-    dp_rdl_to_del_total_cnt:             s("dp_tl_rdl_to_del_cnt"),
+    dp_rdl_to_del_total_cnt:              s("dp_tl_rdl_to_del_cnt"),
+
+    avg_dp_created_to_picklist_mins:  div(s("dp_tl_created_to_picklist_sum"), s("dp_tl_created_to_picklist_cnt")),
+    p50_dp_created_to_picklist_mins:  wp("dp_tl_created_to_picklist_p50",    "dp_tl_created_to_picklist_cnt"),
+    p90_dp_created_to_picklist_mins:  wp("dp_tl_created_to_picklist_p90",    "dp_tl_created_to_picklist_cnt"),
+    dp_created_to_picklist_total_cnt: s("dp_tl_created_to_picklist_cnt"),
+    avg_dp_picklist_to_picked_mins:   div(s("dp_tl_picklist_to_picked_sum"),  s("dp_tl_picklist_to_picked_cnt")),
+    p50_dp_picklist_to_picked_mins:   wp("dp_tl_picklist_to_picked_p50",     "dp_tl_picklist_to_picked_cnt"),
+    p90_dp_picklist_to_picked_mins:   wp("dp_tl_picklist_to_picked_p90",     "dp_tl_picklist_to_picked_cnt"),
+    dp_picklist_to_picked_total_cnt:  s("dp_tl_picklist_to_picked_cnt"),
 
     avg_express_created_to_picked_mins:       div(s("express_tl_created_to_picked_sum"),       s("express_tl_created_to_picked_cnt")),
     avg_express_picked_to_packed_mins:        div(s("express_tl_picked_to_packed_sum"),        s("express_tl_picked_to_packed_cnt")),
@@ -531,6 +564,14 @@ function aggregate(days: RawDay[]): Aggregated {
     p50_sched_allocated_to_picklist_mins:  wp("sched_tl_allocated_to_picklist_p50",     "sched_tl_allocated_to_picklist_cnt"),
     p90_sched_allocated_to_picklist_mins:  wp("sched_tl_allocated_to_picklist_p90",     "sched_tl_allocated_to_picklist_cnt"),
     sched_allocated_to_picklist_total_cnt: s("sched_tl_allocated_to_picklist_cnt"),
+    avg_express_picklist_to_picked_mins:   div(s("express_tl_picklist_to_picked_sum"),  s("express_tl_picklist_to_picked_cnt")),
+    p50_express_picklist_to_picked_mins:   wp("express_tl_picklist_to_picked_p50",      "express_tl_picklist_to_picked_cnt"),
+    p90_express_picklist_to_picked_mins:   wp("express_tl_picklist_to_picked_p90",      "express_tl_picklist_to_picked_cnt"),
+    express_picklist_to_picked_total_cnt:  s("express_tl_picklist_to_picked_cnt"),
+    avg_sched_picklist_to_picked_mins:     div(s("sched_tl_picklist_to_picked_sum"),    s("sched_tl_picklist_to_picked_cnt")),
+    p50_sched_picklist_to_picked_mins:     wp("sched_tl_picklist_to_picked_p50",        "sched_tl_picklist_to_picked_cnt"),
+    p90_sched_picklist_to_picked_mins:     wp("sched_tl_picklist_to_picked_p90",        "sched_tl_picklist_to_picked_cnt"),
+    sched_picklist_to_picked_total_cnt:    s("sched_tl_picklist_to_picked_cnt"),
 
     ...((): Pick<Aggregated, "auto_alloc_count"|"manual_alloc_count"|"auto_alloc_pct"|"manual_alloc_pct"|"algo_assigned_count"|"algo_unassigned_count"|"algo_no_data_count"|"algo_assigned_pct"|"algo_unassigned_pct"> => {
       const daysWithAlloc = days.filter(d => d.auto_alloc != null);
@@ -935,7 +976,7 @@ const GLOSSARY = [
   { term: "First-Order Breach %",          definition: "Of all breached batched trips: % where the breach was the first delivery on the trip." },
   { term: "Last-Order Breach %",           definition: "Of all breached batched trips: % where the breach was the last delivery on the trip." },
   { term: "Avg Breach Position",           definition: "0.0 = breach was first delivery, 1.0 = breach was last delivery. Mid-values indicate mid-trip breaches." },
-  { term: "Created→Picked",               definition: "Time from WMS ORDER_CREATED to PICKED status. Covers picklist generation + picker travel + item picking." },
+  { term: "Picklist→Picked",              definition: "Time from WMS PICKLIST_GENERATED to PICKED status. Covers picker travel + item picking. Shown per order type (Express / Scheduled)." },
   { term: "Picked→Packed",                definition: "Time from PICKED to PACKED in WMS. Packing station processing time." },
   { term: "Packed→Allotted",              definition: "Time from WMS PACKED to LMS RIDER_ALLOTTED. The batching wait window — how long the algo holds an order before forming a trip and allotting a rider. Key autobatching impact metric: longer post-release = more aggressive batching." },
   { term: "Allotted→Accepted",           definition: "Time from RIDER_ALLOTTED to RIDER_ACCEPTED. The OTP acceptance window — how long the DE takes to accept the trip in-app." },
@@ -1227,9 +1268,10 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
 
     if (timelineType === "dp") {
       return [
-        { stage: "OEF→WMS Created", pre: gOrNull(preAgg, "dp_oef_to_wms_created_mins", "dp_oef_to_wms_created_total_cnt"), post: gOrNull(postAgg, "dp_oef_to_wms_created_mins", "dp_oef_to_wms_created_total_cnt") },
-        { stage: "Created→Picked",      pre: g(preAgg,  "dp_created_to_picked_mins"),      post: g(postAgg, "dp_created_to_picked_mins") },
-        { stage: "Picked→Packed",       pre: g(preAgg,  "dp_picked_to_packed_mins"),       post: g(postAgg, "dp_picked_to_packed_mins") },
+        { stage: "OEF→WMS Created",  pre: gOrNull(preAgg, "dp_oef_to_wms_created_mins", "dp_oef_to_wms_created_total_cnt"), post: gOrNull(postAgg, "dp_oef_to_wms_created_mins", "dp_oef_to_wms_created_total_cnt") },
+        { stage: "Created→Picklist", pre: gOrNull(preAgg, "dp_created_to_picklist_mins", "dp_created_to_picklist_total_cnt"), post: gOrNull(postAgg, "dp_created_to_picklist_mins", "dp_created_to_picklist_total_cnt") },
+        { stage: "Picklist→Picked",  pre: gOrNull(preAgg, "dp_picklist_to_picked_mins",  "dp_picklist_to_picked_total_cnt"),  post: gOrNull(postAgg, "dp_picklist_to_picked_mins",  "dp_picklist_to_picked_total_cnt") },
+        { stage: "Picked→Packed",    pre: g(preAgg,  "dp_picked_to_packed_mins"),       post: g(postAgg, "dp_picked_to_packed_mins") },
         { stage: "Packed→Allotted",     pre: g(preAgg,  "dp_packed_to_allotted_mins"),     post: g(postAgg, "dp_packed_to_allotted_mins") },
         { stage: "Allotted→Accepted",   pre: g(preAgg,  "dp_allotted_to_accepted_mins"),   post: g(postAgg, "dp_allotted_to_accepted_mins") },
         { stage: "Accepted→Dispatched", pre: g(preAgg,  "dp_accepted_to_dispatch_mins"),   post: g(postAgg, "dp_accepted_to_dispatch_mins") },
@@ -1242,7 +1284,7 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
       return [
         { stage: "OEF→WMS Created",      pre: gOrNull(preAgg, "express_oef_to_wms_created_mins", "express_oef_to_wms_created_total_cnt"), post: gOrNull(postAgg, "express_oef_to_wms_created_mins", "express_oef_to_wms_created_total_cnt") },
         { stage: "WMS Created→Picklist", pre: gOrNull(preAgg, "express_created_to_picklist_mins", "express_created_to_picklist_total_cnt"), post: gOrNull(postAgg, "express_created_to_picklist_mins", "express_created_to_picklist_total_cnt") },
-        { stage: "Created→Picked",      pre: g(preAgg,  "express_created_to_picked_mins"),      post: g(postAgg, "express_created_to_picked_mins") },
+        { stage: "Picklist→Picked",     pre: gOrNull(preAgg, "express_picklist_to_picked_mins", "express_picklist_to_picked_total_cnt"), post: gOrNull(postAgg, "express_picklist_to_picked_mins", "express_picklist_to_picked_total_cnt") },
         { stage: "Picked→Packed",       pre: g(preAgg,  "express_picked_to_packed_mins"),       post: g(postAgg, "express_picked_to_packed_mins") },
         { stage: "Packed→Allotted",     pre: g(preAgg,  "express_packed_to_allotted_mins"),     post: g(postAgg, "express_packed_to_allotted_mins") },
         { stage: "Allotted→Accepted",   pre: g(preAgg,  "express_allotted_to_accepted_mins"),   post: g(postAgg, "express_allotted_to_accepted_mins") },
@@ -1256,6 +1298,7 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
       { stage: "OEF→WMS Created",         pre: gOrNull(preAgg, "sched_oef_to_wms_created_mins", "sched_oef_to_wms_created_total_cnt"), post: gOrNull(postAgg, "sched_oef_to_wms_created_mins", "sched_oef_to_wms_created_total_cnt") },
       { stage: "WMS Created→Allocated",   pre: gOrNull(preAgg, "sched_created_to_allocated_mins", "sched_created_to_allocated_total_cnt"), post: gOrNull(postAgg, "sched_created_to_allocated_mins", "sched_created_to_allocated_total_cnt") },
       { stage: "Allocated→Picklist",      pre: gOrNull(preAgg, "sched_allocated_to_picklist_mins", "sched_allocated_to_picklist_total_cnt"), post: gOrNull(postAgg, "sched_allocated_to_picklist_mins", "sched_allocated_to_picklist_total_cnt") },
+      { stage: "Picklist→Picked",         pre: gOrNull(preAgg, "sched_picklist_to_picked_mins", "sched_picklist_to_picked_total_cnt"), post: gOrNull(postAgg, "sched_picklist_to_picked_mins", "sched_picklist_to_picked_total_cnt") },
       { stage: "Allotted→Accepted",   pre: g(preAgg,  "sched_allotted_to_accepted_mins"),   post: g(postAgg, "sched_allotted_to_accepted_mins") },
       { stage: "Accepted→Dispatched", pre: g(preAgg,  "sched_accepted_to_dispatched_mins"), post: g(postAgg, "sched_accepted_to_dispatched_mins") },
       { stage: "OFD→RDL",             pre: g(preAgg,  "sched_ofd_to_rdl_mins"),             post: g(postAgg, "sched_ofd_to_rdl_mins") },
@@ -1781,6 +1824,113 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
         </>
       )}
 
+      {/* Feedback & Requests */}
+      <FeedbackSection />
+
     </DashboardLayout>
+  );
+}
+
+// ── Feedback Section ──────────────────────────────────────────────────────────
+const FEEDBACK_TYPES = [
+  "Hub Request",
+  "Pre-Period Date Change",
+  "Bug Report",
+  "Feature Request",
+  "Other",
+];
+
+function FeedbackSection() {
+  const [name,    setName]    = useState("");
+  const [type,    setType]    = useState(FEEDBACK_TYPES[0]);
+  const [message, setMessage] = useState("");
+  const [status,  setStatus]  = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!message.trim()) return;
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, type, message }),
+      });
+      setStatus(res.ok ? "sent" : "error");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <div className="mt-8">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-[10px] font-semibold tracking-widest uppercase text-gray-400 dark:text-zinc-500">Feedback &amp; Requests</span>
+        <div className="flex-1 h-px bg-gray-100 dark:bg-zinc-700" />
+      </div>
+      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm p-5">
+        {status === "sent" ? (
+          <div className="flex flex-col items-center py-6 gap-2">
+            <span className="text-2xl">✓</span>
+            <p className="text-sm font-semibold text-gray-700 dark:text-zinc-200">Got it — thanks!</p>
+            <p className="text-xs text-gray-400 dark:text-zinc-500">Your message has been sent.</p>
+            <button
+              className="mt-3 text-xs text-indigo-500 hover:text-indigo-600 underline"
+              onClick={() => { setMessage(""); setName(""); setType(FEEDBACK_TYPES[0]); setStatus("idle"); }}
+            >
+              Send another
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label className="block text-[10px] font-semibold tracking-widest uppercase text-gray-400 dark:text-zinc-500 mb-1">Type</label>
+                <select
+                  value={type}
+                  onChange={e => setType(e.target.value)}
+                  className="w-full text-sm bg-gray-50 dark:bg-zinc-700 border border-gray-200 dark:border-zinc-600 rounded-lg px-3 py-2 text-gray-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                >
+                  {FEEDBACK_TYPES.map(t => <option key={t}>{t}</option>)}
+                </select>
+              </div>
+              <div className="flex-1">
+                <label className="block text-[10px] font-semibold tracking-widest uppercase text-gray-400 dark:text-zinc-500 mb-1">Your Name <span className="normal-case font-normal">(optional)</span></label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="e.g. Rahul"
+                  className="w-full text-sm bg-gray-50 dark:bg-zinc-700 border border-gray-200 dark:border-zinc-600 rounded-lg px-3 py-2 text-gray-800 dark:text-zinc-100 placeholder-gray-300 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold tracking-widest uppercase text-gray-400 dark:text-zinc-500 mb-1">Message</label>
+              <textarea
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                required
+                rows={3}
+                placeholder="e.g. Please add KYN hub once it goes live, or change PSN pre-period to Jun 1–14."
+                className="w-full text-sm bg-gray-50 dark:bg-zinc-700 border border-gray-200 dark:border-zinc-600 rounded-lg px-3 py-2 text-gray-800 dark:text-zinc-100 placeholder-gray-300 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                type="submit"
+                disabled={status === "sending" || !message.trim()}
+                className="px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                {status === "sending" ? "Sending…" : "Send"}
+              </button>
+              {status === "error" && (
+                <span className="text-xs text-red-500">Something went wrong — try again.</span>
+              )}
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }

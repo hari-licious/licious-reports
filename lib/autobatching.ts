@@ -4,14 +4,9 @@ import rawDelayReasons from "@/data/autobatching/delay_reasons.json";
 import rawPSN  from "@/data/autobatching/raw_daily_PSN.json";
 import rawJPNS from "@/data/autobatching/raw_daily_JPNS.json";
 import rawOUC  from "@/data/autobatching/raw_daily_OUC.json";
-import rawKYN  from "@/data/autobatching/raw_daily_KYN.json";
-import rawTBM  from "@/data/autobatching/raw_daily_TBM.json";
-
 import delayPSN  from "@/data/autobatching/delay_reasons_PSN.json";
 import delayJPNS from "@/data/autobatching/delay_reasons_JPNS.json";
 import delayOUC  from "@/data/autobatching/delay_reasons_OUC.json";
-import delayKYN  from "@/data/autobatching/delay_reasons_KYN.json";
-import delayTBM  from "@/data/autobatching/delay_reasons_TBM.json";
 
 export interface RawDay {
   date: string;
@@ -84,6 +79,14 @@ export interface RawDay {
   // DP warehouse timeline (created→picked, picked→packed, packed→dispatched)
   dp_tl_created_to_picked_sum: number | null;
   dp_tl_created_to_picked_cnt: number;
+  dp_tl_created_to_picklist_sum?: number | null;
+  dp_tl_created_to_picklist_cnt?: number;
+  dp_tl_created_to_picklist_p50?: number | null;
+  dp_tl_created_to_picklist_p90?: number | null;
+  dp_tl_picklist_to_picked_sum?: number | null;
+  dp_tl_picklist_to_picked_cnt?: number;
+  dp_tl_picklist_to_picked_p50?: number | null;
+  dp_tl_picklist_to_picked_p90?: number | null;
   dp_tl_picked_to_packed_sum: number | null;
   dp_tl_picked_to_packed_cnt: number;
   dp_tl_packed_to_dispatched_sum: number | null;
@@ -289,6 +292,16 @@ export interface RawDay {
   sched_tl_allocated_to_picklist_cnt?: number | null;
   sched_tl_allocated_to_picklist_p50?: number | null;
   sched_tl_allocated_to_picklist_p90?: number | null;
+  // Express: Picklist Generated → Picked
+  express_tl_picklist_to_picked_sum?: number | null;
+  express_tl_picklist_to_picked_cnt?: number | null;
+  express_tl_picklist_to_picked_p50?: number | null;
+  express_tl_picklist_to_picked_p90?: number | null;
+  // Scheduled: Picklist Generated → Picked
+  sched_tl_picklist_to_picked_sum?: number | null;
+  sched_tl_picklist_to_picked_cnt?: number | null;
+  sched_tl_picklist_to_picked_p50?: number | null;
+  sched_tl_picklist_to_picked_p90?: number | null;
 }
 
 export interface AutobatchingData {
@@ -304,11 +317,9 @@ export function getAutobatchingData(): AutobatchingData {
 }
 
 const ALL_HUBS = [
-  { id: "PSN",  label: "PSN",  profile: "",            go_live: "2026-06-18" },
-  { id: "JPNS", label: "JPNS", profile: "30 + 90",     go_live: "2026-07-30" },
-  { id: "OUC",  label: "OUC",  profile: "30",          go_live: "2026-07-30" },
-  { id: "KYN",  label: "KYN",  profile: "Mother Hub",  go_live: "2099-01-01" },
-  { id: "TBM",  label: "TBM",  profile: "High OD",     go_live: "2099-01-01" },
+  { id: "PSN",  label: "PSN",  profile: "",        go_live: "2026-06-18" },
+  { id: "JPNS", label: "JPNS", profile: "30 + 90", go_live: "2026-07-30" },
+  { id: "OUC",  label: "OUC",  profile: "30",      go_live: "2026-07-30" },
 ] as const;
 
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -365,16 +376,12 @@ const ALL_RAW_DATA: Record<HubId, AutobatchingData> = {
   PSN:  rawPSN  as AutobatchingData,
   JPNS: rawJPNS as AutobatchingData,
   OUC:  rawOUC  as AutobatchingData,
-  KYN:  rawKYN  as AutobatchingData,
-  TBM:  rawTBM  as AutobatchingData,
 };
 
 const ALL_DELAY_DATA: Record<HubId, DelayReasonsData> = {
   PSN:  delayPSN  as unknown as DelayReasonsData,
   JPNS: delayJPNS as unknown as DelayReasonsData,
   OUC:  delayOUC  as unknown as DelayReasonsData,
-  KYN:  delayKYN  as unknown as DelayReasonsData,
-  TBM:  delayTBM  as unknown as DelayReasonsData,
 };
 
 export function getAutobatchingDataForHub(hub: HubId): AutobatchingData {
