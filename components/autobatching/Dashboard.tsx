@@ -13,6 +13,7 @@ import { useChartTheme } from "@/lib/useChartTheme";
 import { DashboardLayout } from "@/components/ui/DashboardLayout";
 import { DashboardHeader } from "@/components/ui/DashboardHeader";
 import { TimelineContent } from "@/components/autobatching/Timeline";
+import { SlaSmallMultiples } from "@/components/autobatching/SlaSmallMultiples";
 
 interface HubMeta { id: string; label: string; profile: string; }
 interface Props {
@@ -1636,6 +1637,7 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
                 </div>
               </div>
             </div>
+            <SlaSmallMultiples selectedPre={selectedPre} selectedPost={selectedPost} slaMode={slaMode} />
             <SlaTable pre={preAgg} post={postAgg} expressExpanded={expressExpanded} onToggleExpress={() => setExpressExpanded(x => !x)} slaMode={slaMode} />
             {(delayPredictedStats.r1.algoPred + delayPredictedStats.r1.unexp + delayPredictedStats.r2.algoPred + delayPredictedStats.r2.unexp) > 0 && (
               <div className="mt-2 bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
@@ -1835,8 +1837,8 @@ export default function Dashboard({ hubList, days, allDelayReasons, allGenerated
         </>
       )}
 
-      {/* Feedback & Requests */}
-      <FeedbackSection />
+      {/* Feedback & Requests — hidden until Slack integration is ready */}
+      {/* <FeedbackSection /> */}
 
     </DashboardLayout>
   );
