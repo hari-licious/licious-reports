@@ -3589,6 +3589,115 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-08-05",
+      "total_breached": 119,
+      "tags": {
+        "SLOW_PICKLIST": 15,
+        "NO_RIDER": 47,
+        "ALGO_DROP": 10,
+        "AUTO_FAIL": 25,
+        "SLOW_ACCEPT": 25,
+        "CASCADE": 66,
+        "RESEQUENCED": 104,
+        "PREDICTED": 92,
+        "MULTI_RUN": 5,
+        "LATE_DEP": 5,
+        "SLOW_TRAVEL": 16
+      },
+      "killer": {
+        "travel_to_customer": 38,
+        "allocation": 22,
+        "service_rdl_to_del": 22,
+        "cascade_prev_stops": 16,
+        "pre_dispatch": 6,
+        "packing": 5,
+        "rider_acceptance": 4,
+        "picklist_gen": 2,
+        "ofd_event_delay": 2,
+        "picking": 1,
+        "algo_batching": 1
+      },
+      "by_type": {
+        "EXPRESS": {
+          "total_breached": 110,
+          "tags": {
+            "SLOW_PICKLIST": 9,
+            "NO_RIDER": 44,
+            "ALGO_DROP": 9,
+            "AUTO_FAIL": 20,
+            "SLOW_ACCEPT": 21,
+            "CASCADE": 58,
+            "RESEQUENCED": 97,
+            "PREDICTED": 89,
+            "MULTI_RUN": 5,
+            "LATE_DEP": 5,
+            "SLOW_TRAVEL": 13
+          },
+          "killer": {
+            "travel_to_customer": 35,
+            "allocation": 22,
+            "service_rdl_to_del": 22,
+            "cascade_prev_stops": 11,
+            "pre_dispatch": 6,
+            "packing": 5,
+            "rider_acceptance": 4,
+            "ofd_event_delay": 2,
+            "picklist_gen": 1,
+            "picking": 1,
+            "algo_batching": 1
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 9,
+          "tags": {
+            "SLOW_PICKLIST": 6,
+            "NO_RIDER": 3,
+            "ALGO_DROP": 1,
+            "AUTO_FAIL": 5,
+            "SLOW_ACCEPT": 4,
+            "CASCADE": 8,
+            "RESEQUENCED": 7,
+            "PREDICTED": 3,
+            "SLOW_TRAVEL": 3
+          },
+          "killer": {
+            "cascade_prev_stops": 5,
+            "travel_to_customer": 3,
+            "picklist_gen": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 46,
+        "true_positive": 18,
+        "false_positive": 28,
+        "unexpected": 101,
+        "hit_rate": 0.391,
+        "predicted_eob_p50": 9.6,
+        "unexpected_eob_p50": 15.2,
+        "error_p50": 3.6,
+        "error_p90": 42.8,
+        "by_type": {
+          "EXPRESS": {
+            "algo_predicted": 40,
+            "true_positive": 16,
+            "false_positive": 24,
+            "hit_rate": 0.4,
+            "error_p50": 2.4,
+            "error_p90": 45.1
+          },
+          "SCHEDULED": {
+            "algo_predicted": 6,
+            "true_positive": 2,
+            "false_positive": 4,
+            "hit_rate": 0.333,
+            "error_p50": 4.8,
+            "error_p90": 4.8
+          }
+        }
+      }
     }
   ]
 }
