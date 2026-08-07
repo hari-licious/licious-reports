@@ -5676,6 +5676,100 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-08-06",
+      "total_breached": 47,
+      "tags": {
+        "TEMPORAL": 13,
+        "OMS_LAG": 2,
+        "SLOW_PICKLIST": 4,
+        "ALGO_DROP": 2,
+        "AUTO_FAIL": 1,
+        "SLOW_ACCEPT": 4,
+        "CASCADE": 13,
+        "RESEQUENCED": 36,
+        "PREDICTED": 42,
+        "MULTI_RUN": 2,
+        "SLOW_TRAVEL": 6
+      },
+      "killer": {
+        "travel_to_customer": 20,
+        "service_rdl_to_del": 16,
+        "cascade_prev_stops": 7,
+        "ofd_event_delay": 2,
+        "MARGINAL": 1,
+        "allocation": 1
+      },
+      "by_type": {
+        "DP": {
+          "total_breached": 41,
+          "tags": {
+            "TEMPORAL": 13,
+            "OMS_LAG": 2,
+            "ALGO_DROP": 2,
+            "AUTO_FAIL": 1,
+            "SLOW_ACCEPT": 4,
+            "CASCADE": 8,
+            "RESEQUENCED": 30,
+            "PREDICTED": 39,
+            "SLOW_TRAVEL": 4
+          },
+          "killer": {
+            "travel_to_customer": 18,
+            "service_rdl_to_del": 15,
+            "cascade_prev_stops": 4,
+            "ofd_event_delay": 2,
+            "MARGINAL": 1,
+            "allocation": 1
+          }
+        },
+        "EXPRESS": {
+          "total_breached": 6,
+          "tags": {
+            "SLOW_PICKLIST": 4,
+            "CASCADE": 5,
+            "RESEQUENCED": 6,
+            "PREDICTED": 3,
+            "MULTI_RUN": 2,
+            "SLOW_TRAVEL": 2
+          },
+          "killer": {
+            "cascade_prev_stops": 3,
+            "travel_to_customer": 2,
+            "service_rdl_to_del": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 25,
+        "true_positive": 14,
+        "false_positive": 11,
+        "unexpected": 33,
+        "hit_rate": 0.56,
+        "predicted_eob_p50": 7.9,
+        "unexpected_eob_p50": 5.8,
+        "error_p50": 2.0,
+        "error_p90": 29.5,
+        "by_type": {
+          "DP": {
+            "algo_predicted": 18,
+            "true_positive": 12,
+            "false_positive": 6,
+            "hit_rate": 0.667,
+            "error_p50": 0.8,
+            "error_p90": 15.8
+          },
+          "EXPRESS": {
+            "algo_predicted": 7,
+            "true_positive": 2,
+            "false_positive": 5,
+            "hit_rate": 0.286,
+            "error_p50": 22.2,
+            "error_p90": 29.5
+          }
+        }
+      }
     }
   ]
 }

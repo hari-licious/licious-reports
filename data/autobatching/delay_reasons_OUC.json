@@ -3698,6 +3698,104 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-08-06",
+      "total_breached": 51,
+      "tags": {
+        "SLOW_PICKLIST": 10,
+        "NO_RIDER": 26,
+        "ALGO_DROP": 3,
+        "AUTO_FAIL": 12,
+        "SLOW_ACCEPT": 8,
+        "CASCADE": 24,
+        "RESEQUENCED": 47,
+        "PREDICTED": 42,
+        "MULTI_RUN": 4,
+        "LATE_DEP": 2,
+        "SLOW_TRAVEL": 3
+      },
+      "killer": {
+        "travel_to_customer": 18,
+        "service_rdl_to_del": 13,
+        "cascade_prev_stops": 8,
+        "allocation": 7,
+        "pre_dispatch": 3,
+        "rider_acceptance": 1,
+        "MARGINAL": 1
+      },
+      "by_type": {
+        "EXPRESS": {
+          "total_breached": 50,
+          "tags": {
+            "SLOW_PICKLIST": 9,
+            "NO_RIDER": 25,
+            "ALGO_DROP": 3,
+            "AUTO_FAIL": 11,
+            "SLOW_ACCEPT": 7,
+            "CASCADE": 23,
+            "RESEQUENCED": 46,
+            "PREDICTED": 42,
+            "MULTI_RUN": 3,
+            "LATE_DEP": 2,
+            "SLOW_TRAVEL": 2
+          },
+          "killer": {
+            "travel_to_customer": 18,
+            "service_rdl_to_del": 13,
+            "cascade_prev_stops": 7,
+            "allocation": 7,
+            "pre_dispatch": 3,
+            "rider_acceptance": 1,
+            "MARGINAL": 1
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 1,
+          "tags": {
+            "SLOW_PICKLIST": 1,
+            "NO_RIDER": 1,
+            "AUTO_FAIL": 1,
+            "SLOW_ACCEPT": 1,
+            "CASCADE": 1,
+            "RESEQUENCED": 1,
+            "MULTI_RUN": 1,
+            "SLOW_TRAVEL": 1
+          },
+          "killer": {
+            "cascade_prev_stops": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 29,
+        "true_positive": 8,
+        "false_positive": 21,
+        "unexpected": 43,
+        "hit_rate": 0.276,
+        "predicted_eob_p50": 14.4,
+        "unexpected_eob_p50": 12.4,
+        "error_p50": 1.8,
+        "error_p90": 55.7,
+        "by_type": {
+          "EXPRESS": {
+            "algo_predicted": 26,
+            "true_positive": 8,
+            "false_positive": 18,
+            "hit_rate": 0.308,
+            "error_p50": 1.8,
+            "error_p90": 55.7
+          },
+          "SCHEDULED": {
+            "algo_predicted": 2,
+            "true_positive": 0,
+            "false_positive": 2,
+            "hit_rate": 0.0,
+            "error_p50": null,
+            "error_p90": null
+          }
+        }
+      }
     }
   ]
 }
