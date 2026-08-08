@@ -3796,6 +3796,80 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-08-07",
+      "total_breached": 78,
+      "tags": {
+        "NO_RIDER": 26,
+        "AUTO_FAIL": 13,
+        "SLOW_ACCEPT": 14,
+        "CASCADE": 41,
+        "RESEQUENCED": 69,
+        "PREDICTED": 70,
+        "MULTI_RUN": 2,
+        "LATE_DEP": 3,
+        "SLOW_TRAVEL": 7
+      },
+      "killer": {
+        "travel_to_customer": 30,
+        "service_rdl_to_del": 24,
+        "cascade_prev_stops": 14,
+        "allocation": 6,
+        "rider_acceptance": 4
+      },
+      "by_type": {
+        "EXPRESS": {
+          "total_breached": 78,
+          "tags": {
+            "NO_RIDER": 26,
+            "AUTO_FAIL": 13,
+            "SLOW_ACCEPT": 14,
+            "CASCADE": 41,
+            "RESEQUENCED": 69,
+            "PREDICTED": 70,
+            "MULTI_RUN": 2,
+            "LATE_DEP": 3,
+            "SLOW_TRAVEL": 7
+          },
+          "killer": {
+            "travel_to_customer": 30,
+            "service_rdl_to_del": 24,
+            "cascade_prev_stops": 14,
+            "allocation": 6,
+            "rider_acceptance": 4
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 10,
+        "true_positive": 2,
+        "false_positive": 8,
+        "unexpected": 76,
+        "hit_rate": 0.2,
+        "predicted_eob_p50": 20.6,
+        "unexpected_eob_p50": 9.2,
+        "error_p50": 16.4,
+        "error_p90": 23.7,
+        "by_type": {
+          "EXPRESS": {
+            "algo_predicted": 9,
+            "true_positive": 2,
+            "false_positive": 7,
+            "hit_rate": 0.222,
+            "error_p50": 16.4,
+            "error_p90": 23.7
+          },
+          "SCHEDULED": {
+            "algo_predicted": 1,
+            "true_positive": 0,
+            "false_positive": 1,
+            "hit_rate": 0.0,
+            "error_p50": null,
+            "error_p90": null
+          }
+        }
+      }
     }
   ]
 }
