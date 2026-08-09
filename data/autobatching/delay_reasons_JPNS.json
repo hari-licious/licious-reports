@@ -4033,6 +4033,66 @@
         "error_p90": null,
         "by_type": {}
       }
+    },
+    {
+      "date": "2026-08-08",
+      "total_breached": 22,
+      "tags": {
+        "SLOW_PICKLIST": 3,
+        "SLOW_ACCEPT": 16,
+        "CASCADE": 13,
+        "RESEQUENCED": 22,
+        "PREDICTED": 22
+      },
+      "killer": {
+        "MARGINAL": 17,
+        "service_rdl_to_del": 3,
+        "travel_to_customer": 1,
+        "cascade_prev_stops": 1
+      },
+      "by_type": {
+        "EXPRESS": {
+          "total_breached": 21,
+          "tags": {
+            "SLOW_PICKLIST": 2,
+            "SLOW_ACCEPT": 15,
+            "CASCADE": 12,
+            "RESEQUENCED": 21,
+            "PREDICTED": 21
+          },
+          "killer": {
+            "MARGINAL": 16,
+            "service_rdl_to_del": 3,
+            "travel_to_customer": 1,
+            "cascade_prev_stops": 1
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 1,
+          "tags": {
+            "SLOW_PICKLIST": 1,
+            "SLOW_ACCEPT": 1,
+            "CASCADE": 1,
+            "RESEQUENCED": 1,
+            "PREDICTED": 1
+          },
+          "killer": {
+            "MARGINAL": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 0,
+        "true_positive": 0,
+        "false_positive": 0,
+        "unexpected": 22,
+        "hit_rate": null,
+        "predicted_eob_p50": null,
+        "unexpected_eob_p50": 7.4,
+        "error_p50": null,
+        "error_p90": null,
+        "by_type": {}
+      }
     }
   ]
 }
