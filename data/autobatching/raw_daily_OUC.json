@@ -1,8 +1,8 @@
 {
   "hub": "OUC",
   "pre_range": "2026-07-02 to 2026-07-29",
-  "post_range": "2026-07-30 to 2026-08-09",
-  "generated_at": "2026-08-10T10:01:50.650318",
+  "post_range": "2026-07-30 to 2026-08-10",
+  "generated_at": "2026-08-11T09:51:43.634584",
   "days": [
     {
       "date": "2026-07-02",
@@ -246,7 +246,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 347
     },
     {
       "date": "2026-07-03",
@@ -490,7 +495,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 428
     },
     {
       "date": "2026-07-04",
@@ -734,7 +744,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 390
     },
     {
       "date": "2026-07-05",
@@ -978,7 +993,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 803
     },
     {
       "date": "2026-07-06",
@@ -1222,7 +1242,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 292
     },
     {
       "date": "2026-07-07",
@@ -1466,7 +1491,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 369
     },
     {
       "date": "2026-07-08",
@@ -1710,7 +1740,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 458
     },
     {
       "date": "2026-07-09",
@@ -1954,7 +1989,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 362
     },
     {
       "date": "2026-07-10",
@@ -2198,7 +2238,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 428
     },
     {
       "date": "2026-07-11",
@@ -2442,7 +2487,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 424
     },
     {
       "date": "2026-07-12",
@@ -2686,7 +2736,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 777
     },
     {
       "date": "2026-07-13",
@@ -2930,7 +2985,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 281
     },
     {
       "date": "2026-07-14",
@@ -3174,7 +3234,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 329
     },
     {
       "date": "2026-07-15",
@@ -3418,7 +3483,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 473
     },
     {
       "date": "2026-07-16",
@@ -3662,7 +3732,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 328
     },
     {
       "date": "2026-07-17",
@@ -3906,7 +3981,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 423
     },
     {
       "date": "2026-07-18",
@@ -4150,7 +4230,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 450
     },
     {
       "date": "2026-07-19",
@@ -4394,7 +4479,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 780
     },
     {
       "date": "2026-07-20",
@@ -4638,7 +4728,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 253
     },
     {
       "date": "2026-07-21",
@@ -4882,7 +4977,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 342
     },
     {
       "date": "2026-07-22",
@@ -5126,7 +5226,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 455
     },
     {
       "date": "2026-07-23",
@@ -5370,7 +5475,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 322
     },
     {
       "date": "2026-07-24",
@@ -5614,7 +5724,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 452
     },
     {
       "date": "2026-07-25",
@@ -5858,7 +5973,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 353
     },
     {
       "date": "2026-07-26",
@@ -6102,7 +6222,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 782
     },
     {
       "date": "2026-07-27",
@@ -6346,7 +6471,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 292
     },
     {
       "date": "2026-07-28",
@@ -6590,7 +6720,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 320
     },
     {
       "date": "2026-07-29",
@@ -6834,7 +6969,12 @@
       "rider_return_p50": null,
       "rider_return_p90": null,
       "hub": "OUC",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 0,
+      "manual_alloc": 0,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 400
     },
     {
       "date": "2026-07-30",
@@ -7078,7 +7218,12 @@
       "rider_return_p50": 30.34,
       "rider_return_p90": 58.5,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 150,
+      "manual_alloc": 19,
+      "algo_assigned": 230,
+      "algo_unassigned": 18,
+      "algo_no_data": 102
     },
     {
       "date": "2026-07-31",
@@ -7322,7 +7467,12 @@
       "rider_return_p50": 23.97,
       "rider_return_p90": 41.97,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 251,
+      "manual_alloc": 52,
+      "algo_assigned": 164,
+      "algo_unassigned": 12,
+      "algo_no_data": 278
     },
     {
       "date": "2026-08-01",
@@ -7566,7 +7716,12 @@
       "rider_return_p50": 22.08,
       "rider_return_p90": 38.18,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 233,
+      "manual_alloc": 45,
+      "algo_assigned": 74,
+      "algo_unassigned": 6,
+      "algo_no_data": 295
     },
     {
       "date": "2026-08-02",
@@ -7810,7 +7965,12 @@
       "rider_return_p50": 21.96,
       "rider_return_p90": 52.36,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 226,
+      "manual_alloc": 40,
+      "algo_assigned": 394,
+      "algo_unassigned": 12,
+      "algo_no_data": 289
     },
     {
       "date": "2026-08-03",
@@ -8054,7 +8214,12 @@
       "rider_return_p50": 20.45,
       "rider_return_p90": 35.1,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 101,
+      "manual_alloc": 16,
+      "algo_assigned": 31,
+      "algo_unassigned": 8,
+      "algo_no_data": 213
     },
     {
       "date": "2026-08-04",
@@ -8298,7 +8463,12 @@
       "rider_return_p50": 20.39,
       "rider_return_p90": 38.67,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 163,
+      "manual_alloc": 42,
+      "algo_assigned": 112,
+      "algo_unassigned": 7,
+      "algo_no_data": 232
     },
     {
       "date": "2026-08-05",
@@ -8542,7 +8712,12 @@
       "rider_return_p50": 27.83,
       "rider_return_p90": 54.4,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 177,
+      "manual_alloc": 32,
+      "algo_assigned": 160,
+      "algo_unassigned": 16,
+      "algo_no_data": 271
     },
     {
       "date": "2026-08-06",
@@ -8786,7 +8961,12 @@
       "rider_return_p50": 25.9,
       "rider_return_p90": 48.2,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 115,
+      "manual_alloc": 27,
+      "algo_assigned": 137,
+      "algo_unassigned": 2,
+      "algo_no_data": 195
     },
     {
       "date": "2026-08-07",
@@ -9030,7 +9210,12 @@
       "rider_return_p50": 23.78,
       "rider_return_p90": 47.8,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 163,
+      "manual_alloc": 31,
+      "algo_assigned": 86,
+      "algo_unassigned": 1,
+      "algo_no_data": 312
     },
     {
       "date": "2026-08-08",
@@ -9274,7 +9459,12 @@
       "rider_return_p50": 3.21,
       "rider_return_p90": 40.0,
       "hub": "OUC",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 46,
+      "manual_alloc": 78,
+      "algo_assigned": 184,
+      "algo_unassigned": 2,
+      "algo_no_data": 147
     },
     {
       "date": "2026-08-09",
@@ -9517,6 +9707,260 @@
       "rider_return_trip_count": 160,
       "rider_return_p50": 3.75,
       "rider_return_p90": 36.8,
+      "hub": "OUC",
+      "period": "post",
+      "auto_alloc": 66,
+      "manual_alloc": 41,
+      "algo_assigned": 167,
+      "algo_unassigned": 28,
+      "algo_no_data": 176
+    },
+    {
+      "date": "2026-08-10",
+      "total_orders": 289,
+      "dispatched_licious": 143,
+      "dispatched_3p": 125,
+      "p3_delivered": 119,
+      "p3_on_time": 55,
+      "total_licious_dispatched": 140,
+      "total_orders_batched": 119,
+      "total_trips": 43,
+      "single_order_trips": 21,
+      "trip_duration_sum": 1331.5,
+      "total_riders": 10,
+      "de_hc": 10,
+      "total_login_hrs": 46.2,
+      "total_licious": 140,
+      "orders_with_rdl": 137,
+      "on_time_orders": 50,
+      "breached_orders": 87,
+      "breach_mins_sum": 5818.5,
+      "breach_count": 87,
+      "scheduled_orders": 51,
+      "scheduled_with_rdl": 49,
+      "scheduled_on_time": 30,
+      "express_orders": 15,
+      "express_with_rdl": 15,
+      "express_on_time": 4,
+      "dp_orders": 73,
+      "dp_with_rdl": 73,
+      "dp_on_time": 16,
+      "dp_batched": 57,
+      "express_batched": 13,
+      "scheduled_batched": 48,
+      "batched_with_rdl": 117,
+      "batched_on_time": 37,
+      "batched_breach_mins_sum": 5438.1,
+      "batched_breach_count": 80,
+      "breach_p50_mins": 44.425,
+      "batched_breach_p50_mins": 45.4,
+      "ex_30_45_orders": 0,
+      "ex_30_45_with_rdl": 0,
+      "ex_30_45_on_time": 0,
+      "ex_45_60_orders": 0,
+      "ex_45_60_with_rdl": 0,
+      "ex_45_60_on_time": 0,
+      "ex_60_90_orders": 12,
+      "ex_60_90_with_rdl": 12,
+      "ex_60_90_on_time": 1,
+      "ex_90p_orders": 3,
+      "ex_90p_with_rdl": 3,
+      "ex_90p_on_time": 3,
+      "orders_with_rdl_ts": 136,
+      "on_time_rdl": 53,
+      "breached_rdl": 83,
+      "breach_mins_rdl_sum": 5408.0,
+      "scheduled_with_rdl_ts": 48,
+      "scheduled_on_time_rdl": 30,
+      "express_with_rdl_ts": 15,
+      "express_on_time_rdl": 5,
+      "dp_with_rdl_ts": 73,
+      "dp_on_time_rdl": 18,
+      "batched_with_rdl_ts": 116,
+      "batched_on_time_rdl": 39,
+      "batched_breach_mins_rdl_sum": 5060.9,
+      "batched_breach_rdl_count": 77,
+      "orders_in_timeline": 157,
+      "tl_created_to_picklist_sum": 10345.8,
+      "tl_created_to_picklist_cnt": 143,
+      "tl_picklist_to_picked_sum": 750.4,
+      "tl_picklist_to_picked_cnt": 146,
+      "tl_picked_to_packed_sum": 575.4,
+      "tl_picked_to_packed_cnt": 157,
+      "tl_packed_to_allotted_sum": 6982.2,
+      "tl_packed_to_allotted_cnt": 156,
+      "tl_allotted_to_accepted_sum": 477.9,
+      "tl_allotted_to_accepted_cnt": 140,
+      "tl_accepted_to_dispatch_sum": 645.4,
+      "tl_accepted_to_dispatch_cnt": 140,
+      "tl_dispatch_to_ofd_sum": 4473.2,
+      "tl_dispatch_to_ofd_cnt": 137,
+      "tl_ofd_to_rdl_sum": 1029.4,
+      "tl_ofd_to_rdl_cnt": 137,
+      "warehouse_sum": 12821.4,
+      "warehouse_cnt": 154,
+      "staging_sum": 7799.1,
+      "staging_cnt": 139,
+      "lastmile_sum": 5503.5,
+      "lastmile_cnt": 137,
+      "total_to_rdl_sum": 25513.0,
+      "total_to_rdl_cnt": 136,
+      "dp_tl_created_to_picked_sum": 252.9,
+      "dp_tl_created_to_picked_cnt": 84,
+      "dp_tl_created_to_picklist_sum": 1.5,
+      "dp_tl_created_to_picklist_cnt": 79,
+      "dp_tl_picklist_to_picked_sum": 250.5,
+      "dp_tl_picklist_to_picked_cnt": 79,
+      "dp_tl_picked_to_packed_sum": 261.6,
+      "dp_tl_picked_to_packed_cnt": 84,
+      "dp_tl_packed_to_dispatched_sum": 2577.4,
+      "dp_tl_packed_to_dispatched_cnt": 73,
+      "express_tl_created_to_picked_sum": 90.2,
+      "express_tl_created_to_picked_cnt": 15,
+      "express_tl_picklist_to_picked_sum": 45.3,
+      "express_tl_picklist_to_picked_cnt": 14,
+      "express_tl_picked_to_packed_sum": 67.7,
+      "express_tl_picked_to_packed_cnt": 15,
+      "express_tl_packed_to_dispatched_sum": 837.2,
+      "express_tl_packed_to_dispatched_cnt": 15,
+      "express_tl_dispatch_to_ofd_sum": 599.6,
+      "express_tl_dispatch_to_ofd_cnt": 15,
+      "express_tl_ofd_to_rdl_sum": 103.5,
+      "express_tl_ofd_to_rdl_cnt": 15,
+      "dp_tl_dispatch_to_ofd_sum": 1549.2,
+      "dp_tl_dispatch_to_ofd_cnt": 73,
+      "dp_tl_ofd_to_rdl_sum": 552.3,
+      "dp_tl_ofd_to_rdl_cnt": 73,
+      "dp_tl_packed_to_allotted_sum": 2084.8,
+      "dp_tl_packed_to_allotted_cnt": 84,
+      "dp_tl_allotted_to_accepted_sum": 267.4,
+      "dp_tl_allotted_to_accepted_cnt": 73,
+      "dp_tl_accepted_to_dispatch_sum": 296.2,
+      "dp_tl_accepted_to_dispatch_cnt": 73,
+      "express_tl_packed_to_allotted_sum": 742.6,
+      "express_tl_packed_to_allotted_cnt": 15,
+      "express_tl_allotted_to_accepted_sum": 49.2,
+      "express_tl_allotted_to_accepted_cnt": 15,
+      "express_tl_accepted_to_dispatch_sum": 45.4,
+      "express_tl_accepted_to_dispatch_cnt": 15,
+      "sched_tl_picklist_to_picked_sum": 438.0,
+      "sched_tl_picklist_to_picked_cnt": 52,
+      "sched_tl_picked_to_packed_sum": 242.3,
+      "sched_tl_picked_to_packed_cnt": 57,
+      "sched_tl_allotted_to_accepted_sum": 159.3,
+      "sched_tl_allotted_to_accepted_cnt": 51,
+      "sched_tl_accepted_to_dispatched_sum": 297.9,
+      "sched_tl_accepted_to_dispatched_cnt": 51,
+      "sched_tl_dispatch_to_ofd_sum": 2324.4,
+      "sched_tl_dispatch_to_ofd_cnt": 49,
+      "sched_tl_ofd_to_rdl_sum": 373.6,
+      "sched_tl_ofd_to_rdl_cnt": 49,
+      "dp_tl_created_to_picked_p50": 1.8,
+      "dp_tl_created_to_picked_p90": 6.0,
+      "dp_tl_created_to_picklist_p50": 0.0,
+      "dp_tl_created_to_picklist_p90": 0.0,
+      "dp_tl_picklist_to_picked_p50": 1.775,
+      "dp_tl_picklist_to_picked_p90": 6.1,
+      "dp_tl_picked_to_packed_p50": 1.95,
+      "dp_tl_picked_to_packed_p90": 6.2,
+      "dp_tl_packed_to_dispatched_p50": 17.4,
+      "dp_tl_packed_to_dispatched_p90": 97.1,
+      "dp_tl_dispatch_to_ofd_p50": 12.6,
+      "dp_tl_dispatch_to_ofd_p90": 57.1,
+      "dp_tl_ofd_to_rdl_p50": 6.8,
+      "dp_tl_ofd_to_rdl_p90": 12.8,
+      "dp_tl_packed_to_allotted_p50": 7.2,
+      "dp_tl_packed_to_allotted_p90": 69.8,
+      "dp_tl_allotted_to_accepted_p50": 1.7,
+      "dp_tl_allotted_to_accepted_p90": 13.1,
+      "dp_tl_accepted_to_dispatch_p50": 2.7,
+      "dp_tl_accepted_to_dispatch_p90": 9.7,
+      "express_tl_created_to_picked_p50": 5.2,
+      "express_tl_created_to_picked_p90": 12.8,
+      "express_tl_picklist_to_picked_p50": 3.1,
+      "express_tl_picklist_to_picked_p90": 8.2,
+      "express_tl_picked_to_packed_p50": 4.8,
+      "express_tl_picked_to_packed_p90": 10.3,
+      "express_tl_packed_to_dispatched_p50": 35.7,
+      "express_tl_packed_to_dispatched_p90": 105.1,
+      "express_tl_dispatch_to_ofd_p50": 30.6,
+      "express_tl_dispatch_to_ofd_p90": 76.4,
+      "express_tl_ofd_to_rdl_p50": 5.4,
+      "express_tl_ofd_to_rdl_p90": 13.1,
+      "express_tl_packed_to_allotted_p50": 32.0,
+      "express_tl_packed_to_allotted_p90": 104.0,
+      "express_tl_allotted_to_accepted_p50": 2.7,
+      "express_tl_allotted_to_accepted_p90": 5.1,
+      "express_tl_accepted_to_dispatch_p50": 1.8,
+      "express_tl_accepted_to_dispatch_p90": 4.9,
+      "sched_tl_picklist_to_picked_p50": 5.5,
+      "sched_tl_picklist_to_picked_p90": 23.9,
+      "sched_tl_picked_to_packed_p50": 4.0,
+      "sched_tl_picked_to_packed_p90": 8.0,
+      "sched_tl_allotted_to_accepted_p50": 2.3,
+      "sched_tl_allotted_to_accepted_p90": 7.7,
+      "sched_tl_accepted_to_dispatched_p50": 5.6,
+      "sched_tl_accepted_to_dispatched_p90": 11.7,
+      "sched_tl_dispatch_to_ofd_p50": 38.0,
+      "sched_tl_dispatch_to_ofd_p90": 104.0,
+      "sched_tl_ofd_to_rdl_p50": 6.0,
+      "sched_tl_ofd_to_rdl_p90": 14.9,
+      "dp_tl_rdl_to_del_sum": 307.2,
+      "dp_tl_rdl_to_del_cnt": 65,
+      "dp_tl_rdl_to_del_p50": 4.0,
+      "dp_tl_rdl_to_del_p90": 8.2,
+      "express_tl_rdl_to_del_sum": 57.1,
+      "express_tl_rdl_to_del_cnt": 14,
+      "express_tl_rdl_to_del_p50": 3.2,
+      "express_tl_rdl_to_del_p90": 7.1,
+      "sched_tl_rdl_to_del_sum": 242.7,
+      "sched_tl_rdl_to_del_cnt": 48,
+      "sched_tl_rdl_to_del_p50": 3.5,
+      "sched_tl_rdl_to_del_p90": 13.1,
+      "dp_tl_oef_to_wms_created_sum": 662.0,
+      "dp_tl_oef_to_wms_created_cnt": 83,
+      "dp_tl_oef_to_wms_created_p50": 0.2125,
+      "dp_tl_oef_to_wms_created_p90": 1.0,
+      "express_tl_oef_to_wms_created_sum": 4.2,
+      "express_tl_oef_to_wms_created_cnt": 14,
+      "express_tl_oef_to_wms_created_p50": 0.2,
+      "express_tl_oef_to_wms_created_p90": 0.6,
+      "sched_tl_oef_to_wms_created_sum": 3336.6,
+      "sched_tl_oef_to_wms_created_cnt": 56,
+      "sched_tl_oef_to_wms_created_p50": 0.2,
+      "sched_tl_oef_to_wms_created_p90": 139.3,
+      "express_tl_created_to_picklist_sum": 32.8,
+      "express_tl_created_to_picklist_cnt": 14,
+      "express_tl_created_to_picklist_p50": 2.3,
+      "express_tl_created_to_picklist_p90": 5.0,
+      "sched_tl_created_to_allocated_sum": 10023.3,
+      "sched_tl_created_to_allocated_cnt": 55,
+      "sched_tl_created_to_allocated_p50": 43.6,
+      "sched_tl_created_to_allocated_p90": 514.4,
+      "sched_tl_allocated_to_picklist_sum": 1279.7,
+      "sched_tl_allocated_to_picklist_cnt": 52,
+      "sched_tl_allocated_to_picklist_p50": 12.4,
+      "sched_tl_allocated_to_picklist_p90": 62.7,
+      "trip_sla_batched_trips": 22,
+      "trip_sla_breached_trips": 21,
+      "trip_sla_first_order_breach": 11,
+      "trip_sla_last_order_breach": 3,
+      "trip_sla_breach_pos_sum": 6.714102564102564,
+      "trip_sla_breach_pos_cnt": 21,
+      "trip_sla_breached_trips_rdl": 21,
+      "trip_sla_first_order_breach_rdl": 9,
+      "trip_sla_last_order_breach_rdl": 6,
+      "trip_sla_breach_pos_sum_rdl": 8.825213675213675,
+      "trip_sla_breach_pos_cnt_rdl": 21,
+      "empty_queue_mins": 847.2,
+      "rider_return_trip_count": 27,
+      "rider_return_p50": 3.9,
+      "rider_return_p90": 38.8,
+      "auto_alloc": 12,
+      "manual_alloc": 23,
+      "algo_assigned": 100,
+      "algo_unassigned": 9,
+      "algo_no_data": 147,
       "hub": "OUC",
       "period": "post"
     }

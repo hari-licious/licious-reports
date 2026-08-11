@@ -4086,6 +4086,114 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-08-10",
+      "total_breached": 76,
+      "tags": {
+        "SLOW_PICKLIST": 16,
+        "NO_RIDER": 56,
+        "ALGO_DROP": 6,
+        "AUTO_FAIL": 53,
+        "SLOW_ACCEPT": 29,
+        "CASCADE": 59,
+        "RESEQUENCED": 75,
+        "PREDICTED": 61,
+        "MULTI_RUN": 18,
+        "LATE_DEP": 1,
+        "SLOW_TRAVEL": 4
+      },
+      "killer": {
+        "cascade_prev_stops": 31,
+        "allocation": 26,
+        "service_rdl_to_del": 4,
+        "rider_acceptance": 3,
+        "travel_to_customer": 3,
+        "pre_dispatch": 3,
+        "MARGINAL": 3,
+        "packing": 1,
+        "picklist_gen": 1,
+        "picking": 1
+      },
+      "by_type": {
+        "EXPRESS": {
+          "total_breached": 60,
+          "tags": {
+            "SLOW_PICKLIST": 3,
+            "NO_RIDER": 46,
+            "ALGO_DROP": 5,
+            "AUTO_FAIL": 43,
+            "SLOW_ACCEPT": 22,
+            "CASCADE": 44,
+            "RESEQUENCED": 60,
+            "PREDICTED": 58,
+            "MULTI_RUN": 5
+          },
+          "killer": {
+            "cascade_prev_stops": 23,
+            "allocation": 20,
+            "rider_acceptance": 3,
+            "pre_dispatch": 3,
+            "MARGINAL": 3,
+            "service_rdl_to_del": 3,
+            "travel_to_customer": 2,
+            "packing": 1,
+            "picklist_gen": 1,
+            "picking": 1
+          }
+        },
+        "SCHEDULED": {
+          "total_breached": 16,
+          "tags": {
+            "SLOW_PICKLIST": 13,
+            "NO_RIDER": 10,
+            "ALGO_DROP": 1,
+            "AUTO_FAIL": 10,
+            "SLOW_ACCEPT": 7,
+            "CASCADE": 15,
+            "RESEQUENCED": 15,
+            "PREDICTED": 3,
+            "MULTI_RUN": 13,
+            "LATE_DEP": 1,
+            "SLOW_TRAVEL": 4
+          },
+          "killer": {
+            "cascade_prev_stops": 8,
+            "allocation": 6,
+            "travel_to_customer": 1,
+            "service_rdl_to_del": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 26,
+        "true_positive": 7,
+        "false_positive": 19,
+        "unexpected": 69,
+        "hit_rate": 0.269,
+        "predicted_eob_p50": 75.2,
+        "unexpected_eob_p50": 42.9,
+        "error_p50": 126.6,
+        "error_p90": 126.6,
+        "by_type": {
+          "EXPRESS": {
+            "algo_predicted": 18,
+            "true_positive": 5,
+            "false_positive": 13,
+            "hit_rate": 0.278,
+            "error_p50": null,
+            "error_p90": null
+          },
+          "SCHEDULED": {
+            "algo_predicted": 6,
+            "true_positive": 2,
+            "false_positive": 4,
+            "hit_rate": 0.333,
+            "error_p50": 126.6,
+            "error_p90": 126.6
+          }
+        }
+      }
     }
   ]
 }

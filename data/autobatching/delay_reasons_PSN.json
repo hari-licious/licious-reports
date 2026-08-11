@@ -6093,6 +6093,91 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-08-10",
+      "total_breached": 30,
+      "tags": {
+        "TEMPORAL": 5,
+        "OMS_LAG": 3,
+        "NO_RIDER": 5,
+        "ALGO_DROP": 2,
+        "AUTO_FAIL": 5,
+        "CASCADE": 7,
+        "RESEQUENCED": 26,
+        "PREDICTED": 28,
+        "SLOW_TRAVEL": 2
+      },
+      "killer": {
+        "service_rdl_to_del": 17,
+        "travel_to_customer": 5,
+        "pre_dispatch": 2,
+        "cascade_prev_stops": 2,
+        "algo_batching": 1,
+        "allocation": 1,
+        "rider_acceptance": 1,
+        "ofd_event_delay": 1
+      },
+      "by_type": {
+        "DP": {
+          "total_breached": 28,
+          "tags": {
+            "TEMPORAL": 5,
+            "OMS_LAG": 3,
+            "NO_RIDER": 3,
+            "ALGO_DROP": 2,
+            "AUTO_FAIL": 3,
+            "CASCADE": 5,
+            "RESEQUENCED": 24,
+            "PREDICTED": 27,
+            "SLOW_TRAVEL": 2
+          },
+          "killer": {
+            "service_rdl_to_del": 15,
+            "travel_to_customer": 5,
+            "pre_dispatch": 2,
+            "cascade_prev_stops": 2,
+            "algo_batching": 1,
+            "allocation": 1,
+            "rider_acceptance": 1,
+            "ofd_event_delay": 1
+          }
+        },
+        "EXPRESS": {
+          "total_breached": 2,
+          "tags": {
+            "NO_RIDER": 2,
+            "AUTO_FAIL": 2,
+            "CASCADE": 2,
+            "RESEQUENCED": 2,
+            "PREDICTED": 1
+          },
+          "killer": {
+            "service_rdl_to_del": 2
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 11,
+        "true_positive": 5,
+        "false_positive": 6,
+        "unexpected": 25,
+        "hit_rate": 0.455,
+        "predicted_eob_p50": 10.6,
+        "unexpected_eob_p50": 4.7,
+        "error_p50": 1.4,
+        "error_p90": 7.1,
+        "by_type": {
+          "DP": {
+            "algo_predicted": 11,
+            "true_positive": 5,
+            "false_positive": 6,
+            "hit_rate": 0.455,
+            "error_p50": 1.4,
+            "error_p90": 7.1
+          }
+        }
+      }
     }
   ]
 }

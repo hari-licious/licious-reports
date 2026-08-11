@@ -1,9 +1,258 @@
 {
   "hub": "PSN",
-  "pre_range": "2026-05-15 to 2026-06-17",
-  "post_range": "2026-06-18 to 2026-06-21 + 2026-07-07 to 2026-07-10 + 2026-07-15 to 2026-08-09",
-  "generated_at": "2026-08-10T09:59:52.845622",
+  "pre_range": "2026-05-14 to 2026-06-17",
+  "post_range": "2026-06-18 to 2026-06-21 + 2026-07-07 to 2026-07-10 + 2026-07-15 to 2026-08-10",
+  "generated_at": "2026-08-11T09:49:39.572937",
   "days": [
+    {
+      "date": "2026-05-14",
+      "total_orders": 262,
+      "dispatched_licious": 250,
+      "dispatched_3p": 0,
+      "p3_delivered": 0,
+      "p3_on_time": 0,
+      "total_licious_dispatched": 249,
+      "total_orders_batched": 53,
+      "total_trips": 209,
+      "single_order_trips": 196,
+      "trip_duration_sum": 2387.7,
+      "total_riders": 12,
+      "de_hc": 11,
+      "total_login_hrs": 120.7,
+      "total_licious": 249,
+      "orders_with_rdl": 248,
+      "on_time_orders": 208,
+      "breached_orders": 40,
+      "breach_mins_sum": 1100.0,
+      "breach_count": 40,
+      "scheduled_orders": 46,
+      "scheduled_with_rdl": 46,
+      "scheduled_on_time": 44,
+      "express_orders": 0,
+      "express_with_rdl": 0,
+      "express_on_time": 0,
+      "dp_orders": 202,
+      "dp_with_rdl": 202,
+      "dp_on_time": 164,
+      "dp_batched": 9,
+      "express_batched": 0,
+      "scheduled_batched": 44,
+      "batched_with_rdl": 53,
+      "batched_on_time": 47,
+      "batched_breach_mins_sum": 927.6,
+      "batched_breach_count": 6,
+      "breach_p50_mins": 3.7,
+      "batched_breach_p50_mins": 35.4,
+      "ex_30_45_orders": 0,
+      "ex_30_45_with_rdl": 0,
+      "ex_30_45_on_time": 0,
+      "ex_45_60_orders": 0,
+      "ex_45_60_with_rdl": 0,
+      "ex_45_60_on_time": 0,
+      "ex_60_90_orders": 0,
+      "ex_60_90_with_rdl": 0,
+      "ex_60_90_on_time": 0,
+      "ex_90p_orders": 0,
+      "ex_90p_with_rdl": 0,
+      "ex_90p_on_time": 0,
+      "orders_with_rdl_ts": 248,
+      "on_time_rdl": 227,
+      "breached_rdl": 21,
+      "breach_mins_rdl_sum": 994.9,
+      "scheduled_with_rdl_ts": 46,
+      "scheduled_on_time_rdl": 44,
+      "express_with_rdl_ts": 0,
+      "express_on_time_rdl": 0,
+      "dp_with_rdl_ts": 202,
+      "dp_on_time_rdl": 183,
+      "batched_with_rdl_ts": 53,
+      "batched_on_time_rdl": 47,
+      "batched_breach_mins_rdl_sum": 917.4,
+      "batched_breach_rdl_count": 6,
+      "orders_in_timeline": 249,
+      "tl_created_to_picklist_sum": 17621.5,
+      "tl_created_to_picklist_cnt": 237,
+      "tl_picklist_to_picked_sum": 397.8,
+      "tl_picklist_to_picked_cnt": 237,
+      "tl_picked_to_packed_sum": 254.4,
+      "tl_picked_to_packed_cnt": 249,
+      "tl_packed_to_allotted_sum": 3465.1,
+      "tl_packed_to_allotted_cnt": 249,
+      "tl_allotted_to_accepted_sum": 217.9,
+      "tl_allotted_to_accepted_cnt": 249,
+      "tl_accepted_to_dispatch_sum": 238.0,
+      "tl_accepted_to_dispatch_cnt": 249,
+      "tl_dispatch_to_ofd_sum": 1127.0,
+      "tl_dispatch_to_ofd_cnt": 249,
+      "tl_ofd_to_rdl_sum": 1676.7,
+      "tl_ofd_to_rdl_cnt": 248,
+      "warehouse_sum": 19719.9,
+      "warehouse_cnt": 248,
+      "staging_sum": 3923.7,
+      "staging_cnt": 249,
+      "lastmile_sum": 2806.6,
+      "lastmile_cnt": 248,
+      "total_to_rdl_sum": 26449.8,
+      "total_to_rdl_cnt": 248,
+      "dp_tl_created_to_picked_sum": 177.6,
+      "dp_tl_created_to_picked_cnt": 202,
+      "dp_tl_created_to_picklist_sum": 19.4,
+      "dp_tl_created_to_picklist_cnt": 194,
+      "dp_tl_picklist_to_picked_sum": 159.1,
+      "dp_tl_picklist_to_picked_cnt": 194,
+      "dp_tl_picked_to_packed_sum": 102.4,
+      "dp_tl_picked_to_packed_cnt": 202,
+      "dp_tl_packed_to_dispatched_sum": 368.9,
+      "dp_tl_packed_to_dispatched_cnt": 202,
+      "express_tl_created_to_picked_sum": null,
+      "express_tl_created_to_picked_cnt": 0,
+      "express_tl_picklist_to_picked_sum": null,
+      "express_tl_picklist_to_picked_cnt": 0,
+      "express_tl_picked_to_packed_sum": null,
+      "express_tl_picked_to_packed_cnt": 0,
+      "express_tl_packed_to_dispatched_sum": null,
+      "express_tl_packed_to_dispatched_cnt": 0,
+      "express_tl_dispatch_to_ofd_sum": null,
+      "express_tl_dispatch_to_ofd_cnt": 0,
+      "express_tl_ofd_to_rdl_sum": null,
+      "express_tl_ofd_to_rdl_cnt": 0,
+      "dp_tl_dispatch_to_ofd_sum": 63.7,
+      "dp_tl_dispatch_to_ofd_cnt": 202,
+      "dp_tl_ofd_to_rdl_sum": 1384.9,
+      "dp_tl_ofd_to_rdl_cnt": 202,
+      "dp_tl_packed_to_allotted_sum": 126.0,
+      "dp_tl_packed_to_allotted_cnt": 202,
+      "dp_tl_allotted_to_accepted_sum": 131.3,
+      "dp_tl_allotted_to_accepted_cnt": 202,
+      "dp_tl_accepted_to_dispatch_sum": 108.7,
+      "dp_tl_accepted_to_dispatch_cnt": 202,
+      "express_tl_packed_to_allotted_sum": null,
+      "express_tl_packed_to_allotted_cnt": 0,
+      "express_tl_allotted_to_accepted_sum": null,
+      "express_tl_allotted_to_accepted_cnt": 0,
+      "express_tl_accepted_to_dispatch_sum": null,
+      "express_tl_accepted_to_dispatch_cnt": 0,
+      "sched_tl_picklist_to_picked_sum": 238.7,
+      "sched_tl_picklist_to_picked_cnt": 43,
+      "sched_tl_picked_to_packed_sum": 151.1,
+      "sched_tl_picked_to_packed_cnt": 46,
+      "sched_tl_allotted_to_accepted_sum": 86.3,
+      "sched_tl_allotted_to_accepted_cnt": 46,
+      "sched_tl_accepted_to_dispatched_sum": 129.1,
+      "sched_tl_accepted_to_dispatched_cnt": 46,
+      "sched_tl_dispatch_to_ofd_sum": 1063.3,
+      "sched_tl_dispatch_to_ofd_cnt": 46,
+      "sched_tl_ofd_to_rdl_sum": 291.8,
+      "sched_tl_ofd_to_rdl_cnt": 46,
+      "dp_tl_created_to_picked_p50": 0.7,
+      "dp_tl_created_to_picked_p90": 1.69,
+      "dp_tl_created_to_picklist_p50": 0.1,
+      "dp_tl_created_to_picklist_p90": 0.1,
+      "dp_tl_picklist_to_picked_p50": 0.68,
+      "dp_tl_picklist_to_picked_p90": 1.6,
+      "dp_tl_picked_to_packed_p50": 0.31111112,
+      "dp_tl_picked_to_packed_p90": 1.09,
+      "dp_tl_packed_to_dispatched_p50": 0.8833333,
+      "dp_tl_packed_to_dispatched_p90": 4.7400002,
+      "dp_tl_dispatch_to_ofd_p50": 0.0,
+      "dp_tl_dispatch_to_ofd_p90": 0.0,
+      "dp_tl_ofd_to_rdl_p50": 6.2388887,
+      "dp_tl_ofd_to_rdl_p90": 10.86,
+      "dp_tl_packed_to_allotted_p50": 0.0,
+      "dp_tl_packed_to_allotted_p90": 1.62,
+      "dp_tl_allotted_to_accepted_p50": 0.3,
+      "dp_tl_allotted_to_accepted_p90": 1.19,
+      "dp_tl_accepted_to_dispatch_p50": 0.4,
+      "dp_tl_accepted_to_dispatch_p90": 0.99,
+      "express_tl_created_to_picked_p50": null,
+      "express_tl_created_to_picked_p90": null,
+      "express_tl_picklist_to_picked_p50": null,
+      "express_tl_picklist_to_picked_p90": null,
+      "express_tl_picked_to_packed_p50": null,
+      "express_tl_picked_to_packed_p90": null,
+      "express_tl_packed_to_dispatched_p50": null,
+      "express_tl_packed_to_dispatched_p90": null,
+      "express_tl_dispatch_to_ofd_p50": null,
+      "express_tl_dispatch_to_ofd_p90": null,
+      "express_tl_ofd_to_rdl_p50": null,
+      "express_tl_ofd_to_rdl_p90": null,
+      "express_tl_packed_to_allotted_p50": null,
+      "express_tl_packed_to_allotted_p90": null,
+      "express_tl_allotted_to_accepted_p50": null,
+      "express_tl_allotted_to_accepted_p90": null,
+      "express_tl_accepted_to_dispatch_p50": null,
+      "express_tl_accepted_to_dispatch_p90": null,
+      "sched_tl_picklist_to_picked_p50": 4.6,
+      "sched_tl_picklist_to_picked_p90": 13.2,
+      "sched_tl_picked_to_packed_p50": 1.9,
+      "sched_tl_picked_to_packed_p90": 4.9,
+      "sched_tl_allotted_to_accepted_p50": 0.9,
+      "sched_tl_allotted_to_accepted_p90": 4.4,
+      "sched_tl_accepted_to_dispatched_p50": 3.2,
+      "sched_tl_accepted_to_dispatched_p90": 4.1,
+      "sched_tl_dispatch_to_ofd_p50": 18.0,
+      "sched_tl_dispatch_to_ofd_p90": 56.3,
+      "sched_tl_ofd_to_rdl_p50": 5.0,
+      "sched_tl_ofd_to_rdl_p90": 11.2,
+      "dp_tl_rdl_to_del_sum": 495.9,
+      "dp_tl_rdl_to_del_cnt": 191,
+      "dp_tl_rdl_to_del_p50": 2.204,
+      "dp_tl_rdl_to_del_p90": 5.4,
+      "express_tl_rdl_to_del_sum": null,
+      "express_tl_rdl_to_del_cnt": 0,
+      "express_tl_rdl_to_del_p50": null,
+      "express_tl_rdl_to_del_p90": null,
+      "sched_tl_rdl_to_del_sum": 141.3,
+      "sched_tl_rdl_to_del_cnt": 42,
+      "sched_tl_rdl_to_del_p50": 2.7,
+      "sched_tl_rdl_to_del_p90": 7.2,
+      "dp_tl_oef_to_wms_created_sum": 90.0,
+      "dp_tl_oef_to_wms_created_cnt": 200,
+      "dp_tl_oef_to_wms_created_p50": 0.29000002,
+      "dp_tl_oef_to_wms_created_p90": 0.5,
+      "express_tl_oef_to_wms_created_sum": null,
+      "express_tl_oef_to_wms_created_cnt": 0,
+      "express_tl_oef_to_wms_created_p50": null,
+      "express_tl_oef_to_wms_created_p90": null,
+      "sched_tl_oef_to_wms_created_sum": 195.5,
+      "sched_tl_oef_to_wms_created_cnt": 45,
+      "sched_tl_oef_to_wms_created_p50": 0.3,
+      "sched_tl_oef_to_wms_created_p90": 0.6,
+      "express_tl_created_to_picklist_sum": null,
+      "express_tl_created_to_picklist_cnt": 0,
+      "express_tl_created_to_picklist_p50": null,
+      "express_tl_created_to_picklist_p90": null,
+      "sched_tl_created_to_allocated_sum": 14736.6,
+      "sched_tl_created_to_allocated_cnt": 46,
+      "sched_tl_created_to_allocated_p50": 266.4,
+      "sched_tl_created_to_allocated_p90": 658.1,
+      "sched_tl_allocated_to_picklist_sum": 4084.0,
+      "sched_tl_allocated_to_picklist_cnt": 43,
+      "sched_tl_allocated_to_picklist_p50": 133.9,
+      "sched_tl_allocated_to_picklist_p90": 157.8,
+      "trip_sla_batched_trips": 13,
+      "trip_sla_breached_trips": 4,
+      "trip_sla_first_order_breach": 3,
+      "trip_sla_last_order_breach": 0,
+      "trip_sla_breach_pos_sum": 0.5,
+      "trip_sla_breach_pos_cnt": 4,
+      "trip_sla_breached_trips_rdl": 4,
+      "trip_sla_first_order_breach_rdl": 3,
+      "trip_sla_last_order_breach_rdl": 0,
+      "trip_sla_breach_pos_sum_rdl": 0.5,
+      "trip_sla_breach_pos_cnt_rdl": 4,
+      "empty_queue_mins": 138.0,
+      "rider_return_trip_count": 181,
+      "rider_return_p50": 18.28,
+      "rider_return_p90": 35.6,
+      "auto_alloc": 178,
+      "manual_alloc": 22,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 248,
+      "hub": "PSN",
+      "period": "pre"
+    },
     {
       "date": "2026-05-15",
       "total_orders": 393,
@@ -246,7 +495,12 @@
       "rider_return_p50": 17.85,
       "rider_return_p90": 36.73,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 182,
+      "manual_alloc": 48,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 376
     },
     {
       "date": "2026-05-16",
@@ -490,7 +744,12 @@
       "rider_return_p50": 18.81,
       "rider_return_p90": 35.47,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 191,
+      "manual_alloc": 22,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 319
     },
     {
       "date": "2026-05-17",
@@ -734,7 +993,12 @@
       "rider_return_p50": 18.03,
       "rider_return_p90": 34.8,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 147,
+      "manual_alloc": 49,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 357
     },
     {
       "date": "2026-05-18",
@@ -978,7 +1242,12 @@
       "rider_return_p50": 17.86,
       "rider_return_p90": 44.5,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 106,
+      "manual_alloc": 25,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 222
     },
     {
       "date": "2026-05-19",
@@ -1222,7 +1491,12 @@
       "rider_return_p50": 19.55,
       "rider_return_p90": 35.9,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 121,
+      "manual_alloc": 32,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 237
     },
     {
       "date": "2026-05-20",
@@ -1466,7 +1740,12 @@
       "rider_return_p50": 19.75,
       "rider_return_p90": 42.45,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 189,
+      "manual_alloc": 38,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 353
     },
     {
       "date": "2026-05-21",
@@ -1710,7 +1989,12 @@
       "rider_return_p50": 19.9,
       "rider_return_p90": 46.9,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 167,
+      "manual_alloc": 10,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 223
     },
     {
       "date": "2026-05-22",
@@ -1954,7 +2238,12 @@
       "rider_return_p50": 19.96,
       "rider_return_p90": 33.28,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 194,
+      "manual_alloc": 64,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 343
     },
     {
       "date": "2026-05-23",
@@ -2198,7 +2487,12 @@
       "rider_return_p50": 19.6,
       "rider_return_p90": 32.03,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 206,
+      "manual_alloc": 70,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 376
     },
     {
       "date": "2026-05-24",
@@ -2442,7 +2736,12 @@
       "rider_return_p50": 19.29,
       "rider_return_p90": 42.46,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 214,
+      "manual_alloc": 45,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 393
     },
     {
       "date": "2026-05-25",
@@ -2686,7 +2985,12 @@
       "rider_return_p50": 18.83,
       "rider_return_p90": 34.8,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 183,
+      "manual_alloc": 9,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 227
     },
     {
       "date": "2026-05-26",
@@ -2930,7 +3234,12 @@
       "rider_return_p50": 19.21,
       "rider_return_p90": 36.0,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 131,
+      "manual_alloc": 11,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 187
     },
     {
       "date": "2026-05-27",
@@ -3174,7 +3483,12 @@
       "rider_return_p50": 20.33,
       "rider_return_p90": 34.66,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 263,
+      "manual_alloc": 41,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 395
     },
     {
       "date": "2026-05-28",
@@ -3418,7 +3732,12 @@
       "rider_return_p50": 17.97,
       "rider_return_p90": 33.65,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 219,
+      "manual_alloc": 10,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 282
     },
     {
       "date": "2026-05-29",
@@ -3662,7 +3981,12 @@
       "rider_return_p50": 19.23,
       "rider_return_p90": 45.59,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 224,
+      "manual_alloc": 14,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 324
     },
     {
       "date": "2026-05-30",
@@ -3906,7 +4230,12 @@
       "rider_return_p50": 19.32,
       "rider_return_p90": 44.15,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 207,
+      "manual_alloc": 56,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 377
     },
     {
       "date": "2026-05-31",
@@ -4150,7 +4479,12 @@
       "rider_return_p50": 18.8,
       "rider_return_p90": 55.28,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 193,
+      "manual_alloc": 38,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 350
     },
     {
       "date": "2026-06-01",
@@ -4394,7 +4728,12 @@
       "rider_return_p50": 20.2,
       "rider_return_p90": 35.3,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 178,
+      "manual_alloc": 7,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 218
     },
     {
       "date": "2026-06-02",
@@ -4638,7 +4977,12 @@
       "rider_return_p50": 20.59,
       "rider_return_p90": 52.8,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 139,
+      "manual_alloc": 28,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 225
     },
     {
       "date": "2026-06-03",
@@ -4882,7 +5226,12 @@
       "rider_return_p50": 21.11,
       "rider_return_p90": 39.0,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 207,
+      "manual_alloc": 77,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 375
     },
     {
       "date": "2026-06-04",
@@ -5126,7 +5475,12 @@
       "rider_return_p50": 21.42,
       "rider_return_p90": 34.9,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 147,
+      "manual_alloc": 31,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 249
     },
     {
       "date": "2026-06-05",
@@ -5370,7 +5724,12 @@
       "rider_return_p50": 20.32,
       "rider_return_p90": 39.2,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 212,
+      "manual_alloc": 62,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 391
     },
     {
       "date": "2026-06-06",
@@ -5614,7 +5973,12 @@
       "rider_return_p50": 20.01,
       "rider_return_p90": 33.36,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 269,
+      "manual_alloc": 42,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 410
     },
     {
       "date": "2026-06-07",
@@ -5858,7 +6222,12 @@
       "rider_return_p50": 18.04,
       "rider_return_p90": 39.23,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 206,
+      "manual_alloc": 42,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 396
     },
     {
       "date": "2026-06-08",
@@ -6102,7 +6471,12 @@
       "rider_return_p50": 19.12,
       "rider_return_p90": 35.95,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 204,
+      "manual_alloc": 7,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 239
     },
     {
       "date": "2026-06-09",
@@ -6346,7 +6720,12 @@
       "rider_return_p50": 20.52,
       "rider_return_p90": 41.05,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 195,
+      "manual_alloc": 24,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 265
     },
     {
       "date": "2026-06-10",
@@ -6590,7 +6969,12 @@
       "rider_return_p50": 20.5,
       "rider_return_p90": 35.38,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 264,
+      "manual_alloc": 36,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 357
     },
     {
       "date": "2026-06-11",
@@ -6834,7 +7218,12 @@
       "rider_return_p50": 17.77,
       "rider_return_p90": 30.65,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 203,
+      "manual_alloc": 5,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 231
     },
     {
       "date": "2026-06-12",
@@ -7078,7 +7467,12 @@
       "rider_return_p50": 20.18,
       "rider_return_p90": 38.7,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 251,
+      "manual_alloc": 61,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 393
     },
     {
       "date": "2026-06-13",
@@ -7322,7 +7716,12 @@
       "rider_return_p50": 18.72,
       "rider_return_p90": 39.9,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 175,
+      "manual_alloc": 87,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 394
     },
     {
       "date": "2026-06-14",
@@ -7566,7 +7965,12 @@
       "rider_return_p50": 18.39,
       "rider_return_p90": 38.83,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 218,
+      "manual_alloc": 40,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 351
     },
     {
       "date": "2026-06-15",
@@ -7810,7 +8214,12 @@
       "rider_return_p50": 20.81,
       "rider_return_p90": 36.3,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 176,
+      "manual_alloc": 19,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 227
     },
     {
       "date": "2026-06-16",
@@ -8054,7 +8463,12 @@
       "rider_return_p50": 20.38,
       "rider_return_p90": 40.1,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 194,
+      "manual_alloc": 22,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 252
     },
     {
       "date": "2026-06-17",
@@ -8298,7 +8712,12 @@
       "rider_return_p50": 19.7,
       "rider_return_p90": 32.94,
       "hub": "PSN",
-      "period": "pre"
+      "period": "pre",
+      "auto_alloc": 264,
+      "manual_alloc": 41,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 393
     },
     {
       "date": "2026-06-18",
@@ -8542,7 +8961,12 @@
       "rider_return_p50": 22.88,
       "rider_return_p90": 44.6,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 174,
+      "manual_alloc": 14,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 240
     },
     {
       "date": "2026-06-19",
@@ -8786,7 +9210,12 @@
       "rider_return_p50": 20.03,
       "rider_return_p90": 45.96,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 212,
+      "manual_alloc": 37,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 365
     },
     {
       "date": "2026-06-20",
@@ -9030,7 +9459,12 @@
       "rider_return_p50": 20.78,
       "rider_return_p90": 50.88,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 223,
+      "manual_alloc": 35,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 394
     },
     {
       "date": "2026-06-21",
@@ -9274,7 +9708,12 @@
       "rider_return_p50": 20.99,
       "rider_return_p90": 47.83,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 207,
+      "manual_alloc": 26,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 378
     },
     {
       "date": "2026-06-22",
@@ -9518,7 +9957,12 @@
       "rider_return_p50": 20.32,
       "rider_return_p90": 36.6,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 136,
+      "manual_alloc": 24,
+      "algo_assigned": 10,
+      "algo_unassigned": 0,
+      "algo_no_data": 212
     },
     {
       "date": "2026-06-23",
@@ -9762,7 +10206,12 @@
       "rider_return_p50": 20.48,
       "rider_return_p90": 38.7,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 160,
+      "manual_alloc": 18,
+      "algo_assigned": 131,
+      "algo_unassigned": 1,
+      "algo_no_data": 84
     },
     {
       "date": "2026-06-24",
@@ -10006,7 +10455,12 @@
       "rider_return_p50": 21.31,
       "rider_return_p90": 42.86,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 229,
+      "manual_alloc": 18,
+      "algo_assigned": 182,
+      "algo_unassigned": 11,
+      "algo_no_data": 155
     },
     {
       "date": "2026-06-25",
@@ -10250,7 +10704,12 @@
       "rider_return_p50": 19.76,
       "rider_return_p90": 39.0,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 211,
+      "manual_alloc": 9,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 267
     },
     {
       "date": "2026-06-26",
@@ -10494,7 +10953,12 @@
       "rider_return_p50": 19.85,
       "rider_return_p90": 35.3,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 246,
+      "manual_alloc": 31,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 366
     },
     {
       "date": "2026-06-27",
@@ -10738,7 +11202,12 @@
       "rider_return_p50": 19.06,
       "rider_return_p90": 33.73,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 259,
+      "manual_alloc": 46,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 400
     },
     {
       "date": "2026-06-28",
@@ -10982,7 +11451,12 @@
       "rider_return_p50": 17.72,
       "rider_return_p90": 34.07,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 257,
+      "manual_alloc": 33,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 384
     },
     {
       "date": "2026-06-29",
@@ -11226,7 +11700,12 @@
       "rider_return_p50": 20.3,
       "rider_return_p90": 31.6,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 172,
+      "manual_alloc": 14,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 215
     },
     {
       "date": "2026-06-30",
@@ -11470,7 +11949,12 @@
       "rider_return_p50": 20.54,
       "rider_return_p90": 43.59,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 215,
+      "manual_alloc": 4,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 243
     },
     {
       "date": "2026-07-01",
@@ -11714,7 +12198,12 @@
       "rider_return_p50": 19.64,
       "rider_return_p90": 37.99,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 300,
+      "manual_alloc": 36,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 402
     },
     {
       "date": "2026-07-02",
@@ -11958,7 +12447,12 @@
       "rider_return_p50": 19.85,
       "rider_return_p90": 32.77,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 226,
+      "manual_alloc": 3,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 265
     },
     {
       "date": "2026-07-03",
@@ -12202,7 +12696,12 @@
       "rider_return_p50": 19.18,
       "rider_return_p90": 33.51,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 282,
+      "manual_alloc": 24,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 375
     },
     {
       "date": "2026-07-04",
@@ -12446,7 +12945,12 @@
       "rider_return_p50": 18.99,
       "rider_return_p90": 29.52,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 329,
+      "manual_alloc": 17,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 393
     },
     {
       "date": "2026-07-05",
@@ -12690,7 +13194,12 @@
       "rider_return_p50": 17.3,
       "rider_return_p90": 34.08,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 282,
+      "manual_alloc": 13,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 370
     },
     {
       "date": "2026-07-06",
@@ -12934,7 +13443,12 @@
       "rider_return_p50": 18.98,
       "rider_return_p90": 31.2,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 177,
+      "manual_alloc": 7,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 211
     },
     {
       "date": "2026-07-07",
@@ -13178,7 +13692,12 @@
       "rider_return_p50": 21.15,
       "rider_return_p90": 51.2,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 177,
+      "manual_alloc": 12,
+      "algo_assigned": 245,
+      "algo_unassigned": 5,
+      "algo_no_data": 19
     },
     {
       "date": "2026-07-08",
@@ -13422,7 +13941,12 @@
       "rider_return_p50": 21.05,
       "rider_return_p90": 36.28,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 229,
+      "manual_alloc": 43,
+      "algo_assigned": 334,
+      "algo_unassigned": 10,
+      "algo_no_data": 25
     },
     {
       "date": "2026-07-09",
@@ -13666,7 +14190,12 @@
       "rider_return_p50": 20.99,
       "rider_return_p90": 37.3,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 160,
+      "manual_alloc": 18,
+      "algo_assigned": 194,
+      "algo_unassigned": 9,
+      "algo_no_data": 31
     },
     {
       "date": "2026-07-10",
@@ -13910,7 +14439,12 @@
       "rider_return_p50": 21.75,
       "rider_return_p90": 46.5,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 171,
+      "manual_alloc": 66,
+      "algo_assigned": 249,
+      "algo_unassigned": 31,
+      "algo_no_data": 79
     },
     {
       "date": "2026-07-11",
@@ -14154,7 +14688,12 @@
       "rider_return_p50": 19.12,
       "rider_return_p90": 41.73,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 266,
+      "manual_alloc": 54,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 436
     },
     {
       "date": "2026-07-12",
@@ -14398,7 +14937,12 @@
       "rider_return_p50": 17.51,
       "rider_return_p90": 30.98,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 182,
+      "manual_alloc": 78,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 420
     },
     {
       "date": "2026-07-13",
@@ -14642,7 +15186,12 @@
       "rider_return_p50": 18.4,
       "rider_return_p90": 34.5,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 133,
+      "manual_alloc": 18,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 224
     },
     {
       "date": "2026-07-14",
@@ -14886,7 +15435,12 @@
       "rider_return_p50": 19.47,
       "rider_return_p90": 32.29,
       "hub": "PSN",
-      "period": "gap"
+      "period": "gap",
+      "auto_alloc": 204,
+      "manual_alloc": 10,
+      "algo_assigned": 0,
+      "algo_unassigned": 0,
+      "algo_no_data": 250
     },
     {
       "date": "2026-07-15",
@@ -15130,7 +15684,12 @@
       "rider_return_p50": 20.19,
       "rider_return_p90": 39.04,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 285,
+      "manual_alloc": 18,
+      "algo_assigned": 237,
+      "algo_unassigned": 2,
+      "algo_no_data": 139
     },
     {
       "date": "2026-07-16",
@@ -15374,7 +15933,12 @@
       "rider_return_p50": 19.74,
       "rider_return_p90": 38.47,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 203,
+      "manual_alloc": 1,
+      "algo_assigned": 172,
+      "algo_unassigned": 2,
+      "algo_no_data": 67
     },
     {
       "date": "2026-07-17",
@@ -15618,7 +16182,12 @@
       "rider_return_p50": 20.91,
       "rider_return_p90": 36.95,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 260,
+      "manual_alloc": 8,
+      "algo_assigned": 257,
+      "algo_unassigned": 9,
+      "algo_no_data": 72
     },
     {
       "date": "2026-07-18",
@@ -15862,7 +16431,12 @@
       "rider_return_p50": 20.05,
       "rider_return_p90": 40.69,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 325,
+      "manual_alloc": 14,
+      "algo_assigned": 387,
+      "algo_unassigned": 6,
+      "algo_no_data": 58
     },
     {
       "date": "2026-07-19",
@@ -16106,7 +16680,12 @@
       "rider_return_p50": 19.15,
       "rider_return_p90": 33.86,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 270,
+      "manual_alloc": 15,
+      "algo_assigned": 317,
+      "algo_unassigned": 14,
+      "algo_no_data": 58
     },
     {
       "date": "2026-07-20",
@@ -16350,7 +16929,12 @@
       "rider_return_p50": 20.15,
       "rider_return_p90": 34.85,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 193,
+      "manual_alloc": 0,
+      "algo_assigned": 149,
+      "algo_unassigned": 0,
+      "algo_no_data": 69
     },
     {
       "date": "2026-07-21",
@@ -16594,7 +17178,12 @@
       "rider_return_p50": 20.72,
       "rider_return_p90": 37.39,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 198,
+      "manual_alloc": 0,
+      "algo_assigned": 157,
+      "algo_unassigned": 0,
+      "algo_no_data": 69
     },
     {
       "date": "2026-07-22",
@@ -16838,7 +17427,12 @@
       "rider_return_p50": 19.93,
       "rider_return_p90": 36.07,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 316,
+      "manual_alloc": 6,
+      "algo_assigned": 306,
+      "algo_unassigned": 6,
+      "algo_no_data": 64
     },
     {
       "date": "2026-07-23",
@@ -17082,7 +17676,12 @@
       "rider_return_p50": 21.36,
       "rider_return_p90": 38.02,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 206,
+      "manual_alloc": 8,
+      "algo_assigned": 171,
+      "algo_unassigned": 2,
+      "algo_no_data": 82
     },
     {
       "date": "2026-07-24",
@@ -17326,7 +17925,12 @@
       "rider_return_p50": 19.6,
       "rider_return_p90": 34.82,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 293,
+      "manual_alloc": 6,
+      "algo_assigned": 293,
+      "algo_unassigned": 1,
+      "algo_no_data": 70
     },
     {
       "date": "2026-07-25",
@@ -17570,7 +18174,12 @@
       "rider_return_p50": 18.96,
       "rider_return_p90": 29.57,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 301,
+      "manual_alloc": 6,
+      "algo_assigned": 305,
+      "algo_unassigned": 0,
+      "algo_no_data": 62
     },
     {
       "date": "2026-07-26",
@@ -17814,7 +18423,12 @@
       "rider_return_p50": 19.23,
       "rider_return_p90": 36.62,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 274,
+      "manual_alloc": 12,
+      "algo_assigned": 304,
+      "algo_unassigned": 1,
+      "algo_no_data": 60
     },
     {
       "date": "2026-07-27",
@@ -18058,7 +18672,12 @@
       "rider_return_p50": 18.52,
       "rider_return_p90": 29.79,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 210,
+      "manual_alloc": 13,
+      "algo_assigned": 183,
+      "algo_unassigned": 9,
+      "algo_no_data": 68
     },
     {
       "date": "2026-07-28",
@@ -18302,7 +18921,12 @@
       "rider_return_p50": 20.6,
       "rider_return_p90": 32.56,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 211,
+      "manual_alloc": 2,
+      "algo_assigned": 180,
+      "algo_unassigned": 0,
+      "algo_no_data": 64
     },
     {
       "date": "2026-07-29",
@@ -18546,7 +19170,12 @@
       "rider_return_p50": 18.87,
       "rider_return_p90": 32.28,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 239,
+      "manual_alloc": 2,
+      "algo_assigned": 230,
+      "algo_unassigned": 1,
+      "algo_no_data": 50
     },
     {
       "date": "2026-07-30",
@@ -18790,7 +19419,12 @@
       "rider_return_p50": 18.44,
       "rider_return_p90": 30.78,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 204,
+      "manual_alloc": 1,
+      "algo_assigned": 89,
+      "algo_unassigned": 5,
+      "algo_no_data": 156
     },
     {
       "date": "2026-07-31",
@@ -19034,7 +19668,12 @@
       "rider_return_p50": 18.19,
       "rider_return_p90": 31.51,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 295,
+      "manual_alloc": 6,
+      "algo_assigned": 116,
+      "algo_unassigned": 5,
+      "algo_no_data": 227
     },
     {
       "date": "2026-08-01",
@@ -19278,7 +19917,12 @@
       "rider_return_p50": 18.24,
       "rider_return_p90": 38.38,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 251,
+      "manual_alloc": 39,
+      "algo_assigned": 114,
+      "algo_unassigned": 4,
+      "algo_no_data": 268
     },
     {
       "date": "2026-08-02",
@@ -19522,7 +20166,12 @@
       "rider_return_p50": 17.6,
       "rider_return_p90": 29.8,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 282,
+      "manual_alloc": 4,
+      "algo_assigned": 106,
+      "algo_unassigned": 9,
+      "algo_no_data": 229
     },
     {
       "date": "2026-08-03",
@@ -19766,7 +20415,12 @@
       "rider_return_p50": 19.2,
       "rider_return_p90": 32.3,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 164,
+      "manual_alloc": 4,
+      "algo_assigned": 65,
+      "algo_unassigned": 0,
+      "algo_no_data": 118
     },
     {
       "date": "2026-08-04",
@@ -20010,7 +20664,12 @@
       "rider_return_p50": 18.66,
       "rider_return_p90": 30.28,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 207,
+      "manual_alloc": 3,
+      "algo_assigned": 76,
+      "algo_unassigned": 2,
+      "algo_no_data": 155
     },
     {
       "date": "2026-08-05",
@@ -20254,7 +20913,12 @@
       "rider_return_p50": 19.55,
       "rider_return_p90": 38.1,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 261,
+      "manual_alloc": 14,
+      "algo_assigned": 129,
+      "algo_unassigned": 4,
+      "algo_no_data": 231
     },
     {
       "date": "2026-08-06",
@@ -20498,7 +21162,12 @@
       "rider_return_p50": 20.47,
       "rider_return_p90": 43.9,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 164,
+      "manual_alloc": 6,
+      "algo_assigned": 101,
+      "algo_unassigned": 2,
+      "algo_no_data": 128
     },
     {
       "date": "2026-08-07",
@@ -20742,7 +21411,12 @@
       "rider_return_p50": 20.69,
       "rider_return_p90": 45.61,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 247,
+      "manual_alloc": 5,
+      "algo_assigned": 158,
+      "algo_unassigned": 2,
+      "algo_no_data": 181
     },
     {
       "date": "2026-08-08",
@@ -20986,7 +21660,12 @@
       "rider_return_p50": 21.46,
       "rider_return_p90": 45.37,
       "hub": "PSN",
-      "period": "post"
+      "period": "post",
+      "auto_alloc": 267,
+      "manual_alloc": 26,
+      "algo_assigned": 151,
+      "algo_unassigned": 3,
+      "algo_no_data": 246
     },
     {
       "date": "2026-08-09",
@@ -21229,6 +21908,260 @@
       "rider_return_trip_count": 165,
       "rider_return_p50": 21.4,
       "rider_return_p90": 48.3,
+      "hub": "PSN",
+      "period": "post",
+      "auto_alloc": 166,
+      "manual_alloc": 11,
+      "algo_assigned": 133,
+      "algo_unassigned": 6,
+      "algo_no_data": 175
+    },
+    {
+      "date": "2026-08-10",
+      "total_orders": 235,
+      "dispatched_licious": 222,
+      "dispatched_3p": 2,
+      "p3_delivered": 2,
+      "p3_on_time": 0,
+      "total_licious_dispatched": 222,
+      "total_orders_batched": 74,
+      "total_trips": 167,
+      "single_order_trips": 148,
+      "trip_duration_sum": 2463.4,
+      "total_riders": 12,
+      "de_hc": 11,
+      "total_login_hrs": 142.5,
+      "total_licious": 222,
+      "orders_with_rdl": 221,
+      "on_time_orders": 188,
+      "breached_orders": 33,
+      "breach_mins_sum": 345.9,
+      "breach_count": 33,
+      "scheduled_orders": 41,
+      "scheduled_with_rdl": 40,
+      "scheduled_on_time": 40,
+      "express_orders": 8,
+      "express_with_rdl": 8,
+      "express_on_time": 8,
+      "dp_orders": 173,
+      "dp_with_rdl": 173,
+      "dp_on_time": 140,
+      "dp_batched": 28,
+      "express_batched": 6,
+      "scheduled_batched": 40,
+      "batched_with_rdl": 74,
+      "batched_on_time": 58,
+      "batched_breach_mins_sum": 257.2,
+      "batched_breach_count": 16,
+      "breach_p50_mins": 5.3,
+      "batched_breach_p50_mins": 10.1,
+      "ex_30_45_orders": 0,
+      "ex_30_45_with_rdl": 0,
+      "ex_30_45_on_time": 0,
+      "ex_45_60_orders": 0,
+      "ex_45_60_with_rdl": 0,
+      "ex_45_60_on_time": 0,
+      "ex_60_90_orders": 8,
+      "ex_60_90_with_rdl": 8,
+      "ex_60_90_on_time": 8,
+      "ex_90p_orders": 0,
+      "ex_90p_with_rdl": 0,
+      "ex_90p_on_time": 0,
+      "orders_with_rdl_ts": 221,
+      "on_time_rdl": 206,
+      "breached_rdl": 15,
+      "breach_mins_rdl_sum": 153.0,
+      "scheduled_with_rdl_ts": 40,
+      "scheduled_on_time_rdl": 40,
+      "express_with_rdl_ts": 8,
+      "express_on_time_rdl": 8,
+      "dp_with_rdl_ts": 173,
+      "dp_on_time_rdl": 158,
+      "batched_with_rdl_ts": 74,
+      "batched_on_time_rdl": 63,
+      "batched_breach_mins_rdl_sum": 112.8,
+      "batched_breach_rdl_count": 11,
+      "orders_in_timeline": 222,
+      "tl_created_to_picklist_sum": 15642.1,
+      "tl_created_to_picklist_cnt": 210,
+      "tl_picklist_to_picked_sum": 518.6,
+      "tl_picklist_to_picked_cnt": 209,
+      "tl_picked_to_packed_sum": 279.6,
+      "tl_picked_to_packed_cnt": 222,
+      "tl_packed_to_allotted_sum": 1149.1,
+      "tl_packed_to_allotted_cnt": 222,
+      "tl_allotted_to_accepted_sum": 104.8,
+      "tl_allotted_to_accepted_cnt": 222,
+      "tl_accepted_to_dispatch_sum": 277.3,
+      "tl_accepted_to_dispatch_cnt": 222,
+      "tl_dispatch_to_ofd_sum": 1658.4,
+      "tl_dispatch_to_ofd_cnt": 222,
+      "tl_ofd_to_rdl_sum": 1444.1,
+      "tl_ofd_to_rdl_cnt": 221,
+      "warehouse_sum": 17053.0,
+      "warehouse_cnt": 221,
+      "staging_sum": 1532.8,
+      "staging_cnt": 222,
+      "lastmile_sum": 3040.7,
+      "lastmile_cnt": 221,
+      "total_to_rdl_sum": 21598.8,
+      "total_to_rdl_cnt": 221,
+      "dp_tl_created_to_picked_sum": 184.3,
+      "dp_tl_created_to_picked_cnt": 173,
+      "dp_tl_created_to_picklist_sum": 0.2,
+      "dp_tl_created_to_picklist_cnt": 164,
+      "dp_tl_picklist_to_picked_sum": 182.8,
+      "dp_tl_picklist_to_picked_cnt": 164,
+      "dp_tl_picked_to_packed_sum": 145.4,
+      "dp_tl_picked_to_packed_cnt": 173,
+      "dp_tl_packed_to_dispatched_sum": 393.9,
+      "dp_tl_packed_to_dispatched_cnt": 173,
+      "express_tl_created_to_picked_sum": 50.0,
+      "express_tl_created_to_picked_cnt": 8,
+      "express_tl_picklist_to_picked_sum": 11.0,
+      "express_tl_picklist_to_picked_cnt": 8,
+      "express_tl_picked_to_packed_sum": 7.1,
+      "express_tl_picked_to_packed_cnt": 8,
+      "express_tl_packed_to_dispatched_sum": 37.2,
+      "express_tl_packed_to_dispatched_cnt": 8,
+      "express_tl_dispatch_to_ofd_sum": 57.3,
+      "express_tl_dispatch_to_ofd_cnt": 8,
+      "express_tl_ofd_to_rdl_sum": 97.8,
+      "express_tl_ofd_to_rdl_cnt": 8,
+      "dp_tl_dispatch_to_ofd_sum": 166.7,
+      "dp_tl_dispatch_to_ofd_cnt": 173,
+      "dp_tl_ofd_to_rdl_sum": 1086.5,
+      "dp_tl_ofd_to_rdl_cnt": 173,
+      "dp_tl_packed_to_allotted_sum": 186.7,
+      "dp_tl_packed_to_allotted_cnt": 173,
+      "dp_tl_allotted_to_accepted_sum": 78.0,
+      "dp_tl_allotted_to_accepted_cnt": 173,
+      "dp_tl_accepted_to_dispatch_sum": 127.1,
+      "dp_tl_accepted_to_dispatch_cnt": 173,
+      "express_tl_packed_to_allotted_sum": 19.9,
+      "express_tl_packed_to_allotted_cnt": 8,
+      "express_tl_allotted_to_accepted_sum": 3.5,
+      "express_tl_allotted_to_accepted_cnt": 8,
+      "express_tl_accepted_to_dispatch_sum": 13.3,
+      "express_tl_accepted_to_dispatch_cnt": 8,
+      "sched_tl_picklist_to_picked_sum": 324.8,
+      "sched_tl_picklist_to_picked_cnt": 37,
+      "sched_tl_picked_to_packed_sum": 127.1,
+      "sched_tl_picked_to_packed_cnt": 41,
+      "sched_tl_allotted_to_accepted_sum": 23.3,
+      "sched_tl_allotted_to_accepted_cnt": 41,
+      "sched_tl_accepted_to_dispatched_sum": 136.9,
+      "sched_tl_accepted_to_dispatched_cnt": 41,
+      "sched_tl_dispatch_to_ofd_sum": 1434.4,
+      "sched_tl_dispatch_to_ofd_cnt": 41,
+      "sched_tl_ofd_to_rdl_sum": 259.8,
+      "sched_tl_ofd_to_rdl_cnt": 40,
+      "dp_tl_created_to_picked_p50": 0.58000004,
+      "dp_tl_created_to_picked_p90": 2.5,
+      "dp_tl_created_to_picklist_p50": 0.0,
+      "dp_tl_created_to_picklist_p90": 0.0,
+      "dp_tl_picklist_to_picked_p50": 0.6,
+      "dp_tl_picklist_to_picked_p90": 2.5,
+      "dp_tl_picked_to_packed_p50": 0.52,
+      "dp_tl_picked_to_packed_p90": 1.9,
+      "dp_tl_packed_to_dispatched_p50": 1.1600001,
+      "dp_tl_packed_to_dispatched_p90": 4.9,
+      "dp_tl_dispatch_to_ofd_p50": 0.0,
+      "dp_tl_dispatch_to_ofd_p90": 0.0,
+      "dp_tl_ofd_to_rdl_p50": 6.2200003,
+      "dp_tl_ofd_to_rdl_p90": 9.9,
+      "dp_tl_packed_to_allotted_p50": 0.2,
+      "dp_tl_packed_to_allotted_p90": 2.7,
+      "dp_tl_allotted_to_accepted_p50": 0.2,
+      "dp_tl_allotted_to_accepted_p90": 1.1,
+      "dp_tl_accepted_to_dispatch_p50": 0.4,
+      "dp_tl_accepted_to_dispatch_p90": 1.3,
+      "express_tl_created_to_picked_p50": 6.1,
+      "express_tl_created_to_picked_p90": 15.2,
+      "express_tl_picklist_to_picked_p50": 0.9,
+      "express_tl_picklist_to_picked_p90": 2.9,
+      "express_tl_picked_to_packed_p50": 1.2,
+      "express_tl_picked_to_packed_p90": 1.8,
+      "express_tl_packed_to_dispatched_p50": 4.1,
+      "express_tl_packed_to_dispatched_p90": 7.9,
+      "express_tl_dispatch_to_ofd_p50": 8.2,
+      "express_tl_dispatch_to_ofd_p90": 24.6,
+      "express_tl_ofd_to_rdl_p50": 10.9,
+      "express_tl_ofd_to_rdl_p90": 23.8,
+      "express_tl_packed_to_allotted_p50": 1.9,
+      "express_tl_packed_to_allotted_p90": 5.3,
+      "express_tl_allotted_to_accepted_p50": 0.5,
+      "express_tl_allotted_to_accepted_p90": 1.1,
+      "express_tl_accepted_to_dispatch_p50": 1.2,
+      "express_tl_accepted_to_dispatch_p90": 5.8,
+      "sched_tl_picklist_to_picked_p50": 9.8,
+      "sched_tl_picklist_to_picked_p90": 20.4,
+      "sched_tl_picked_to_packed_p50": 1.7,
+      "sched_tl_picked_to_packed_p90": 10.2,
+      "sched_tl_allotted_to_accepted_p50": 0.2,
+      "sched_tl_allotted_to_accepted_p90": 0.8,
+      "sched_tl_accepted_to_dispatched_p50": 3.0,
+      "sched_tl_accepted_to_dispatched_p90": 4.5,
+      "sched_tl_dispatch_to_ofd_p50": 27.7,
+      "sched_tl_dispatch_to_ofd_p90": 75.8,
+      "sched_tl_ofd_to_rdl_p50": 6.6,
+      "sched_tl_ofd_to_rdl_p90": 14.4,
+      "dp_tl_rdl_to_del_sum": 666.3,
+      "dp_tl_rdl_to_del_cnt": 160,
+      "dp_tl_rdl_to_del_p50": 3.3625,
+      "dp_tl_rdl_to_del_p90": 7.1,
+      "express_tl_rdl_to_del_sum": 27.4,
+      "express_tl_rdl_to_del_cnt": 8,
+      "express_tl_rdl_to_del_p50": 3.9,
+      "express_tl_rdl_to_del_p90": 7.0,
+      "sched_tl_rdl_to_del_sum": 237.5,
+      "sched_tl_rdl_to_del_cnt": 38,
+      "sched_tl_rdl_to_del_p50": 4.1,
+      "sched_tl_rdl_to_del_p90": 15.2,
+      "dp_tl_oef_to_wms_created_sum": 106.8,
+      "dp_tl_oef_to_wms_created_cnt": 173,
+      "dp_tl_oef_to_wms_created_p50": 0.24000001,
+      "dp_tl_oef_to_wms_created_p90": 0.8,
+      "express_tl_oef_to_wms_created_sum": 2.7,
+      "express_tl_oef_to_wms_created_cnt": 8,
+      "express_tl_oef_to_wms_created_p50": 0.4,
+      "express_tl_oef_to_wms_created_p90": 0.5,
+      "sched_tl_oef_to_wms_created_sum": 368.2,
+      "sched_tl_oef_to_wms_created_cnt": 41,
+      "sched_tl_oef_to_wms_created_p50": 0.3,
+      "sched_tl_oef_to_wms_created_p90": 0.6,
+      "express_tl_created_to_picklist_sum": 39.0,
+      "express_tl_created_to_picklist_cnt": 8,
+      "express_tl_created_to_picklist_p50": 3.4,
+      "express_tl_created_to_picklist_p90": 14.3,
+      "sched_tl_created_to_allocated_sum": 14421.1,
+      "sched_tl_created_to_allocated_cnt": 41,
+      "sched_tl_created_to_allocated_p50": 271.8,
+      "sched_tl_created_to_allocated_p90": 702.7,
+      "sched_tl_allocated_to_picklist_sum": 1818.4,
+      "sched_tl_allocated_to_picklist_cnt": 38,
+      "sched_tl_allocated_to_picklist_p50": 60.0,
+      "sched_tl_allocated_to_picklist_p90": 91.8,
+      "trip_sla_batched_trips": 19,
+      "trip_sla_breached_trips": 11,
+      "trip_sla_first_order_breach": 5,
+      "trip_sla_last_order_breach": 4,
+      "trip_sla_breach_pos_sum": 5.233333333333333,
+      "trip_sla_breach_pos_cnt": 11,
+      "trip_sla_breached_trips_rdl": 9,
+      "trip_sla_first_order_breach_rdl": 3,
+      "trip_sla_last_order_breach_rdl": 4,
+      "trip_sla_breach_pos_sum_rdl": 5.233333333333333,
+      "trip_sla_breach_pos_cnt_rdl": 9,
+      "empty_queue_mins": 60.2,
+      "rider_return_trip_count": 161,
+      "rider_return_p50": 21.15,
+      "rider_return_p90": 40.8,
+      "auto_alloc": 163,
+      "manual_alloc": 3,
+      "algo_assigned": 80,
+      "algo_unassigned": 2,
+      "algo_no_data": 141,
       "hub": "PSN",
       "period": "post"
     }
