@@ -2,7 +2,7 @@
   "hub": "OUC",
   "pre_range": "2026-07-02 to 2026-07-29",
   "post_range": "2026-07-30 to 2026-08-11",
-  "generated_at": "2026-08-12T09:58:23.773843",
+  "generated_at": "2026-08-12T09:59:00.207837",
   "days": [
     {
       "date": "2026-07-02",
@@ -10199,7 +10199,7 @@
       "trip_sla_breached_trips_rdl": 24,
       "trip_sla_first_order_breach_rdl": 10,
       "trip_sla_last_order_breach_rdl": 6,
-      "trip_sla_breach_pos_sum_rdl": 9.333333333333334,
+      "trip_sla_breach_pos_sum_rdl": 9.333333333333332,
       "trip_sla_breach_pos_cnt_rdl": 24,
       "empty_queue_mins": 690.2,
       "rider_return_trip_count": 80,
