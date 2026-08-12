@@ -6178,6 +6178,94 @@
           }
         }
       }
+    },
+    {
+      "date": "2026-08-11",
+      "total_breached": 37,
+      "tags": {
+        "TEMPORAL": 8,
+        "OMS_LAG": 1,
+        "NO_RIDER": 4,
+        "ALGO_DROP": 4,
+        "AUTO_FAIL": 5,
+        "CASCADE": 8,
+        "RESEQUENCED": 28,
+        "PREDICTED": 34,
+        "SLOW_TRAVEL": 5
+      },
+      "killer": {
+        "service_rdl_to_del": 20,
+        "travel_to_customer": 13,
+        "cascade_prev_stops": 2,
+        "algo_batching": 1,
+        "pre_dispatch": 1
+      },
+      "by_type": {
+        "DP": {
+          "total_breached": 34,
+          "tags": {
+            "TEMPORAL": 8,
+            "OMS_LAG": 1,
+            "NO_RIDER": 2,
+            "ALGO_DROP": 4,
+            "AUTO_FAIL": 3,
+            "CASCADE": 6,
+            "RESEQUENCED": 25,
+            "PREDICTED": 31,
+            "SLOW_TRAVEL": 5
+          },
+          "killer": {
+            "service_rdl_to_del": 18,
+            "travel_to_customer": 12,
+            "cascade_prev_stops": 2,
+            "algo_batching": 1,
+            "pre_dispatch": 1
+          }
+        },
+        "EXPRESS": {
+          "total_breached": 3,
+          "tags": {
+            "NO_RIDER": 2,
+            "AUTO_FAIL": 2,
+            "CASCADE": 2,
+            "RESEQUENCED": 3,
+            "PREDICTED": 3
+          },
+          "killer": {
+            "service_rdl_to_del": 2,
+            "travel_to_customer": 1
+          }
+        }
+      },
+      "predicted_stats": {
+        "algo_predicted": 18,
+        "true_positive": 10,
+        "false_positive": 8,
+        "unexpected": 27,
+        "hit_rate": 0.556,
+        "predicted_eob_p50": 5.6,
+        "unexpected_eob_p50": 2.6,
+        "error_p50": 1.5,
+        "error_p90": 5.0,
+        "by_type": {
+          "DP": {
+            "algo_predicted": 17,
+            "true_positive": 10,
+            "false_positive": 7,
+            "hit_rate": 0.588,
+            "error_p50": 1.5,
+            "error_p90": 5.0
+          },
+          "SCHEDULED": {
+            "algo_predicted": 1,
+            "true_positive": 0,
+            "false_positive": 1,
+            "hit_rate": 0.0,
+            "error_p50": null,
+            "error_p90": null
+          }
+        }
+      }
     }
   ]
 }
